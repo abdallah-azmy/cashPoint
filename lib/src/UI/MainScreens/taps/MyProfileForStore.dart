@@ -563,7 +563,74 @@ var _image ;
                           ),
                         ],
                       )
-                          : Container()
+                          :  details.isPaid == 1 ?
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25),
+                        child: Container(
+                          color: Colors.green[900],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10),
+                          width:
+                          MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              Text(
+                                "تم تأكيد الدفع",
+                                style:
+                                MyColors.styleNormalWhite,
+                              ),
+                              Icon(Icons.check_circle,size: 20,color: Colors.white,),
+
+                              SizedBox(
+                                height: 3,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ):   details.isPaid == 2 ?
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25),
+                        child: Column(
+                          children: [
+                            Container(
+                              color: Colors.red[900],
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10),
+                              width:
+                              MediaQuery.of(context).size.width,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "تم رفض طلب السداد",
+                                    style:
+                                    MyColors.styleNormalWhite,
+                                  ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                                  SizedBox(
+                                    height: 3,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 10,),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: SpecialButton(
+                                text: "تسديد",
+                                onTap: (){
+
+                                  chooseFiltrationMethod(context);
+
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ): details.isPaid == 4  ? Container()  : Container()
                     ],
                   ),
                 ],

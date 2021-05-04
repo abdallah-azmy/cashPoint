@@ -39,6 +39,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
   var imgFromCach;
   var name;
 
+  var detailsOfGeneralData;
+
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -63,11 +65,27 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         setState(() {
           details = value.data[0];
         });
+//        Navigator.pop(context);
+      } else {
+        print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+        LoadingDialog(_key, context).showNotification(value.error[0].value);
+      }
+    });
+
+
+    await ApiProvider(_key, context)
+        .getGeneralData()
+        .then((value) async {
+      if (value.code == 200) {
+        setState(() {
+          detailsOfGeneralData = value.data;
+        });
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
-
         LoadingDialog(_key, context).showNotification(value.error[0].value);
       }
     });
@@ -200,29 +218,28 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
 
         Future.delayed(Duration(milliseconds: 750), () {
           Navigator.pop(context);
-          getData().then((anotherValue){
-
-            if(value.data.paymentUrl != null){
+          print(">>> here <<<< 11111111111111111");
+          getData().then((anotherValue) {
+            print(">>> here <<<< 22222222222222222");
+            if (value.data.paymentUrl != null) {
+              print(">>> here <<<< 333333333333333333");
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => OnlinePaymentScreen(
-                      url: value.data.paymentUrl,
-                    )),
+                          url: value.data.paymentUrl,
+                        )),
               );
             }
           });
+          print(">>> here <<<< 444444444444444444444");
         });
-
-
-
-
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
-        if(value.error[0].value == "my fatoora لاغٍ"){
+        if (value.error[0].value == "my fatoora لاغٍ") {
           LoadingDialog(_key, context).alertPopUp("يرجي المحاولة لاحقا");
-        }else{
+        } else {
           LoadingDialog(_key, context).alertPopUp(value.error[0].value);
         }
       }
@@ -342,7 +359,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
 //                                  : details.logo == null
 //                                      ? " "
 //                                      : "${details.logo}",
-                                "$imgFromCach",
+                                  "$imgFromCach",
                               imageBuilder: (context, imageProvider) =>
                                   ClipRRect(
                                 borderRadius: BorderRadius.circular(10000.0),
@@ -408,8 +425,11 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                       width: 120,
                                       color: MyColors.grey,
                                       child: Center(
-                                          child:
-                                          Icon(Icons.error,color: Colors.white,size: 30,)),
+                                          child: Icon(
+                                        Icons.error,
+                                        color: Colors.white,
+                                        size: 30,
+                                      )),
                                     ),
                                   ),
                                 ),
@@ -446,67 +466,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                             ),
                             details == null
                                 ? Container()
-
-
-                                :
-//
-//                            ( double.parse(
-//                                "${details.currentCommissions}") >=
-//                                double.parse(
-//                                    "${details.maxCommission}")) && (details.isPaid == 1) == true ?
-//
-//
-//
-//                            Padding(
-//                              padding:
-//                              const EdgeInsets.only(top: 25),
-//                              child: Container(
-//                                color: Colors.red,
-//                                padding:
-//                                const EdgeInsets.symmetric(
-//                                    vertical: 10),
-//                                width: MediaQuery.of(context)
-//                                    .size
-//                                    .width,
-//                                child: Column(
-//                                  children: [
-//                                    Text(
-//                                      "يجب سداد العمولة المستحقة",
-//                                      style: MyColors
-//                                          .styleNormalWhite,
-//                                    ),
-//                                    Text(
-//                                      "${details.currentCommissions}",
-//                                      style: MyColors
-//                                          .styleNormalWhite,
-//                                    ),
-//                                    SizedBox(
-//                                      height: 12,
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets
-//                                          .symmetric(
-//                                          horizontal: 25),
-//                                      child: SpecialButton(
-//                                        onTap: () {
-//                                          chooseFiltrationMethod(
-//                                              context);
-//                                        },
-//                                        text: "دفع",
-//                                      ),
-//                                    ),
-//                                  ],
-//                                ),
-//                              ),
-//                            )
-//
-//
-//                                :
-
-
-                            (details.isPaid == 0)
-
-
+                                : (details.isPaid == 0)
                                     ? Padding(
                                         padding: const EdgeInsets.only(top: 25),
                                         child: Container(
@@ -577,7 +537,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                               ),
                                             ),
                                           )
-                                        : (details.isPaid == 1)
+                                        : (details.isPaid == 1 ||
+                                                details.isPaid == 4)
                                             ? Column(
                                                 children: [
                                                   Padding(
@@ -666,6 +627,48 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                   SizedBox(
                                                     height: 20,
                                                   ),
+                                                  details.isPaid == 4
+                                                      ? Container()
+                                                      : Column(
+                                                          children: [
+                                                            Container(
+                                                              color: Colors
+                                                                  .green[900],
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          10),
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              child: Column(
+                                                                children: [
+                                                                  Text(
+                                                                    "تم تأكيد الدفع",
+                                                                    style: MyColors
+                                                                        .styleNormalWhite,
+                                                                  ),
+                                                                  Icon(
+                                                                    Icons
+                                                                        .check_circle,
+                                                                    size: 20,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 3,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                          ],
+                                                        ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -710,7 +713,69 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                   ),
                                                 ],
                                               )
-                                            : Container(),
+                                            : details.isPaid == 2
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 25),
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          color: Colors.red[900],
+                                                          padding: const EdgeInsets
+                                                                  .symmetric(
+                                                              vertical: 10),
+                                                          width:
+                                                              MediaQuery.of(context)
+                                                                  .size
+                                                                  .width,
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                "تم رفض طلب السداد",
+                                                                style: MyColors
+                                                                    .styleNormalWhite,
+                                                              ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                                                              SizedBox(
+                                                                height: 3,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+
+
+
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+
+                                                        Text(
+                                                          "${details.currentCommissions}",
+                                                          style: MyColors
+                                                              .styleNormal1,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 12,
+                                                        ),
+                                                        Padding(
+                                                          padding: const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 25),
+                                                          child: SpecialButton(
+                                                            onTap: () {
+                                                              chooseFiltrationMethod(
+                                                                  context);
+                                                            },
+                                                            text: "دفع",
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Container(),
                             SizedBox(
                               height: 120,
                             ),
@@ -1082,6 +1147,20 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
 //                    },
 //                  ),
 //                ),
+                details.onlinePayment == 0 ? Container() :  Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SpecialButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                      chooseMyFatoora(context);
+//                      payOffCommission(1, 1);
+                      //مدي واحد
+                    },
+                    text: "دفع ماي فاتورة",
+                  ),
+                ),
+
+                details.onlinePayment == 0 ? Container() :    Divider(),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
@@ -1098,22 +1177,27 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                   ),
                 ),
 
-                details.onlinePayment == 0
-                    ? Container()
-                    : Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: SpecialButton(
-                          onTap: () {
-                            Navigator.pop(context);
-                            chooseMyFatoora(context);
-//                      payOffCommission(1, 1);
-                            //مدي واحد
-                          },
-                          text: "دفع ماي فاتورة",
-                        ),
-                      ),
+                detailsOfGeneralData == null ? Container() :  Column(
+                  children: [
+
+                    detailsOfGeneralData.bankName == null ? Container() :
+                    Text("${detailsOfGeneralData.bankName}"),
+
+                    SizedBox(
+                      height: 3,
+                    ),
+                    detailsOfGeneralData.bankName == null ? Container() :
+                    Text("SA${detailsOfGeneralData.bankAccount}"),
+
+//                          SizedBox(
+//                            height: 60,
+//                          ),
+                  ],
+                ),
+
+
                 SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
               ]),
             ),

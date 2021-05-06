@@ -335,7 +335,27 @@ class LoadingDialog {
     );
   }
 
-
+  showHighNotification(msg) {
+    scafold.currentState.showSnackBar(
+      SnackBar(
+        content: Padding(
+          padding: const EdgeInsets.only(bottom: 90),
+          child: Text(
+            msg,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                // fontFamily: "Tajawal",
+                fontWeight: FontWeight.bold
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        backgroundColor: Colors.black.withOpacity(.5),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 
 
 

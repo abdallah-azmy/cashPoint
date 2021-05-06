@@ -14,11 +14,9 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 class CategoryItemDetails extends StatefulWidget {
   final scaffold;
   final id;
-  final name;
   CategoryItemDetails({
     this.scaffold,
     this.id,
-    this.name,
   });
   @override
   _CategoryItemDetailsState createState() => _CategoryItemDetailsState();
@@ -126,7 +124,11 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
                           padding: const EdgeInsets.only(
                               top: 9, right: 15, left: 15, bottom: 3),
                           child: Text(
-                            "${widget.name}",
+                              details == null
+                                  ? ""
+                                  : details.name == null
+                                  ? ""
+                                  : "${details.name}",
                             style: MyColors.styleBold2,
                           )),
                       Padding(

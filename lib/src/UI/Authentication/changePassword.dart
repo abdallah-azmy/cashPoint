@@ -16,7 +16,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePassword extends StatefulWidget {
   final phone ;
-  ChangePassword({this.phone});
+  final logInType;
+
+  ChangePassword({this.phone,this.logInType});
   @override
   _ChangePasswordState createState() => _ChangePasswordState();
 }
@@ -31,13 +33,13 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
   SharedPreferences _prefs;
-  var logInType ;
+//  var logInType ;
   var logo ;
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      logInType = _prefs.getString("login");
+//      logInType = _prefs.getString("login");
       logo = _prefs.getString("logo");
     });
   }
@@ -57,7 +59,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       LoadingDialog(_scafold,context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
       await ApiProvider(_scafold, context)
-          .resetPassword(password: password,password_confirmation: confirmPassword,type:logInType == "متجر" ? 2 : 1 ,phone: widget.phone )
+          .resetPassword(password: password,password_confirmation: confirmPassword,type:widget.logInType ,phone: widget.phone )
           .then((value) async {
         if (value.code == 200) {
           print('Name >>> ' + value.data);

@@ -5,6 +5,7 @@ import 'package:cashpoint/src/LoadingDialog.dart';
 import 'package:cashpoint/src/MyColors.dart';
 import 'package:cashpoint/src/Network/api_provider.dart';
 import 'package:cashpoint/src/UI/Authentication/login.dart';
+import 'package:cashpoint/src/UI/MainScreens/CategoryItemDetails.dart';
 import 'package:cashpoint/src/UI/MainScreens/taps/MyHomeForStore.dart';
 import 'package:cashpoint/src/UI/MainWidgets/CustomProductImage.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Home_Card.dart';
@@ -51,8 +52,7 @@ class HomeScreenState extends State<HomeScreen> {
   var filteredCategories = [];
   var name;
 
-
-  String aaa ;
+  String aaa;
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
@@ -68,9 +68,7 @@ class HomeScreenState extends State<HomeScreen> {
   getData() async {
     LoadingDialog(_key, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
-    await ApiProvider(_key, context)
-        .getGeneralSlider()
-        .then((value) async {
+    await ApiProvider(_key, context).getGeneralSlider().then((value) async {
       if (value.code == 200) {
         print("correct connection");
         setState(() {
@@ -91,13 +89,13 @@ class HomeScreenState extends State<HomeScreen> {
       if (value.code == 200) {
         setState(() {
           details = value.data;
-          loadingWelcomeMessage = false ;
+          loadingWelcomeMessage = false;
         });
 //        Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
         setState(() {
-          loadingWelcomeMessage = false ;
+          loadingWelcomeMessage = false;
         });
 //        Navigator.pop(context);
 //        LoadingDialog(_key, context).showNotification(value.error[0].value);
@@ -105,7 +103,7 @@ class HomeScreenState extends State<HomeScreen> {
     });
 
     await ApiProvider(_key, context)
-        .getCategories( networkError: false)
+        .getCategories(networkError: false)
         .then((value) async {
       if (value.code == 200) {
         print("correct connection");
@@ -157,10 +155,9 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration.zero,(){
+    Future.delayed(Duration.zero, () {
       this._getShared();
     });
-
   }
 
   @override
@@ -196,7 +193,7 @@ class HomeScreenState extends State<HomeScreen> {
                         if (value == null || value == "") {
                           setState(() {
                             filteredCategories = homeCategories;
-                            noDataFound = false ;
+                            noDataFound = false;
                           });
                         }
                       },
@@ -268,13 +265,61 @@ class HomeScreenState extends State<HomeScreen> {
                             return Builder(
                               builder: (BuildContext context) {
                                 return InkWell(
-                                  onTap: () {
-                                    _launchURL(slider[index].link);
-                                  },
-                                  child:
-                                  Container(  height: 200.0,
-                                      width:
-                                      MediaQuery.of(context).size.width - 30,child: CustomProductImage(image:  slider[index].image,))
+                                    onTap: () {
+
+                                      if(slider[index].adminId == 0){
+
+                                        slider[index].typeOfAdvertisement == 0 ?
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CategoryItemDetails(
+                                                      id: slider[index]
+                                                          .userId,
+                                                    )))
+
+                                            :  _launchURL(slider[index].link);
+
+
+
+
+                                      }else {
+
+
+                                        if (slider[index].link != "") {
+                                          _launchURL(slider[index].link);
+                                        } else  {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CategoryItemDetails(
+                                                        id: slider[index]
+                                                            .userId,
+                                                      )));
+                                        }
+
+                                      }
+
+
+
+
+
+
+
+
+
+                                    },
+                                    child: Container(
+                                        height: 200.0,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                30,
+                                        child: CustomProductImage(
+                                          image: slider[index].image,
+                                        ))
 //                                  CachedNetworkImage(
 //                                    height: 200.0,
 //                                    width:
@@ -310,7 +355,7 @@ class HomeScreenState extends State<HomeScreen> {
 //                                      color: MyColors.grey,
 //                                    ),
 //                                  ),
-                                );
+                                    );
                               },
                             );
                           }).toList(),
@@ -322,25 +367,22 @@ class HomeScreenState extends State<HomeScreen> {
                 loadingWelcomeMessage == null
                     ? Container()
                     : Text(
-                  details == null
-                      ? ""
-                      : details.minText == null
-                      ? "يا هلا فيك ${name == null ? "نورتنا" : "$name"}"
-                      : "${details.minText}",
-
+                        details == null
+                            ? ""
+                            : details.minText == null
+                                ? "يا هلا فيك ${name == null ? "نورتنا" : "$name"}"
+                                : "${details.minText}",
                         textAlign: TextAlign.center,
                         style: MyColors.styleBold1,
                       ),
                 loadingWelcomeMessage == null
                     ? Container()
                     : Text(
-                  details == null
-                      ? ""
-                      : details.subMinText == null
-                      ?  "من وين حابب تجمع نقاطك اليوم"
-                      : "${details.subMinText}",
-
-
+                        details == null
+                            ? ""
+                            : details.subMinText == null
+                                ? "من وين حابب تجمع نقاطك اليوم"
+                                : "${details.subMinText}",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.black,
@@ -393,18 +435,20 @@ class HomeScreenState extends State<HomeScreen> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       CategoryScreen(
-                                                        id: filteredCategories[
-                                                                index]
-                                                            .id,
-                                                        categoryName:
-                                                            filteredCategories[
-                                                                    index]
-                                                                .name,
-                                                        img: filteredCategories[
-                                                                index]
-                                                            .image,
-                                                          homeCategories:homeCategories
-                                                      )));
+                                                          id:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  .id,
+                                                          categoryName:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  .name,
+                                                          img:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  .image,
+                                                          homeCategories:
+                                                              homeCategories)));
                                         },
                                         child: HomeCard(
                                           id: filteredCategories[index].id,

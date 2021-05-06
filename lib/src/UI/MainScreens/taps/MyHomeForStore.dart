@@ -65,6 +65,11 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         setState(() {
           details = value.data[0];
         });
+
+        details.isPaid == 1 ? LoadingDialog(_key, context).showHighNotification("تم تأكيد الدفع") : print("aaa");
+
+
+
 //        Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
@@ -103,13 +108,13 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         });
         Navigator.pop(context);
       } else {
-        print('error >>> ' + value.error[0].value);
+        print('error >>> ' + value.error);
         Navigator.pop(context);
 
-        if (value.error[0].value == "membership num لاغٍ") {
+        if (value.error == "Sorry something went wrong, please try again") {
           LoadingDialog(_key, context).alertPopUp("لا يوجد عميل بهذا الرقم");
         } else {
-          LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+          LoadingDialog(_key, context).alertPopUp(value.error);
         }
       }
     });
@@ -127,13 +132,13 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         });
         Navigator.pop(context);
       } else {
-        print('error >>> ' + value.error[0].value);
+        print('error >>> ' + value.error);
         Navigator.pop(context);
 
-        if (value.error[0].value == "membership num لاغٍ") {
-          LoadingDialog(_key, context).alertPopUp("لا يوجد عميل بهذا الرقم");
+        if (value.error == "Sorry something went wrong, please try again") {
+          LoadingDialog(_key, context).alertPopUp("حدث خطأ لم يتم العثور علي العميل");
         } else {
-          LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+          LoadingDialog(_key, context).alertPopUp(value.error);
         }
       }
     });
@@ -627,48 +632,48 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                   SizedBox(
                                                     height: 20,
                                                   ),
-                                                  details.isPaid == 4
-                                                      ? Container()
-                                                      : Column(
-                                                          children: [
-                                                            Container(
-                                                              color: Colors
-                                                                  .green[900],
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          10),
-                                                              width:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
-                                                              child: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    "تم تأكيد الدفع",
-                                                                    style: MyColors
-                                                                        .styleNormalWhite,
-                                                                  ),
-                                                                  Icon(
-                                                                    Icons
-                                                                        .check_circle,
-                                                                    size: 20,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 3,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                          ],
-                                                        ),
+//                                                  details.isPaid == 4
+//                                                      ? Container()
+//                                                      : Column(
+//                                                          children: [
+//                                                            Container(
+//                                                              color: Colors
+//                                                                  .green[900],
+//                                                              padding:
+//                                                                  const EdgeInsets
+//                                                                          .symmetric(
+//                                                                      vertical:
+//                                                                          10),
+//                                                              width:
+//                                                                  MediaQuery.of(
+//                                                                          context)
+//                                                                      .size
+//                                                                      .width,
+//                                                              child: Column(
+//                                                                children: [
+//                                                                  Text(
+//                                                                    "تم تأكيد الدفع",
+//                                                                    style: MyColors
+//                                                                        .styleNormalWhite,
+//                                                                  ),
+//                                                                  Icon(
+//                                                                    Icons
+//                                                                        .check_circle,
+//                                                                    size: 20,
+//                                                                    color: Colors
+//                                                                        .white,
+//                                                                  ),
+//                                                                  SizedBox(
+//                                                                    height: 3,
+//                                                                  ),
+//                                                                ],
+//                                                              ),
+//                                                            ),
+//                                                            SizedBox(
+//                                                              height: 10,
+//                                                            ),
+//                                                          ],
+//                                                        ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(

@@ -19,20 +19,20 @@ class MemberShipModel {
   int mainCode;
   int code;
   Data data;
-  List<Error> error;
+  String error;
 
   factory MemberShipModel.fromJson(Map<String, dynamic> json) => MemberShipModel(
     mainCode: json["mainCode"] == null ? null : json["mainCode"],
     code: json["code"] == null ? null : json["code"],
     data: json["data"] == null ? null : Data.fromJson(json["data"]),
-    error: json["error"] == null ? null : List<Error>.from(json["error"].map((x) => Error.fromJson(x))),
+    error: json["error"] == null ? null : json["error"],
   );
 
   Map<String, dynamic> toJson() => {
     "mainCode": mainCode == null ? null : mainCode,
     "code": code == null ? null : code,
     "data": data == null ? null : data.toJson(),
-    "error": error,
+    "error": error == null ? null : error,
   };
 }
 

@@ -25,6 +25,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   SharedPreferences _prefs;
   var logo ;
+  int userType = 1;
   var logInType ;
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
@@ -32,6 +33,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       logo = _prefs.getString("logo");
       logInType = _prefs.getString("login");
     });
+    print(">>>>>>>>>>>>>>>>>> $logInType");
   }
 
 
@@ -44,10 +46,12 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       LoadingDialog(_scafold,context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
       await ApiProvider(_scafold, context)
-          .forgetPassword(phone: phone, type: logInType == "متجر" ? 2 : 1 )
+          .forgetPassword(phone: phone, type: userType )
           .then((value) async {
         if (value.code == 200) {
           print('Name >>> ' + value.data.value);
+
+//          userType == 2 ? _prefs.setString('login', "متجر") : _prefs.setString('login', "عميل") ;
 
           Navigator.pop(context);
           LoadingDialog(_scafold,context).showNotification(value.data.value);
@@ -56,12 +60,12 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SendingCode(phone:phone,typeOfCode:"forgetPassword")));
+                    builder: (context) => SendingCode(phone:phone,logInType: userType,typeOfCode:"forgetPassword")));
 
           });
 
         } else {
-          print('error >>> ' + value.error[0].value);
+          print('error >><> ' + value.error[0].value);
           Navigator.pop(context);
           LoadingDialog(_scafold,context).showNotification(value.error[0].value);
         }
@@ -210,7 +214,72 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                               });
                             },
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 10),
+
+
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                height: 20,
+                                width: 20,
+                                child: Radio(
+                                  value: 1,
+                                  groupValue: userType,
+                                  activeColor: Colors.amber,
+                                  onChanged: (int value) {
+                                    setState(() {
+                                      userType = value;
+                                    });
+                                    print("$userType");
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "عميل",
+                                style: MyColors.styleNormal1,
+                              )
+                            ],
+                          ),
+
+
+
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                height: 20,
+                                width: 20,
+                                child: Radio(
+                                  value: 2,
+                                  groupValue: userType,
+                                  activeColor: Colors.amber,
+                                  onChanged: (int value) {
+                                    setState(() {
+                                      userType = value;
+                                    });
+                                    print("$userType");
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                               "متجر",
+                                style: MyColors.styleNormal1,
+                              )
+                            ],
+                          ),
+
+
+
+
+
+
+
+                          SizedBox(height: 20),
 
                           SpecialButton(
                             onTap: () {

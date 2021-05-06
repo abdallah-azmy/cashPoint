@@ -131,21 +131,21 @@ class _OrderCardState extends State<OrderCard> {
                   ),
                   Text("${widget.name}",style: MyColors.styleBold3,),
                   Text("${widget.time}",style: MyColors.styleNormalSmal2,),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-//                      Text("نقاط ${widget.points}"),
-                    SizedBox(width: 5,),
-                      Row(
-                        children: [
-                          Text("SR",style: MyColors.styleBoldOrange,),
-                          SizedBox(width: 3,),
-                          Text("${widget.price}",style: MyColors.styleBoldOrange,),
-
-                        ],
-                      ),
-
-                    ],
-                  ),
+//                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                    children: [
+////                      Text("نقاط ${widget.points}"),
+//                    SizedBox(width: 5,),
+//                      Row(
+//                        children: [
+//                          Text("SR",style: MyColors.styleBoldOrange,),
+//                          SizedBox(width: 3,),
+//                          Text("${widget.price}",style: MyColors.styleBoldOrange,),
+//
+//                        ],
+//                      ),
+//
+//                    ],
+//                  ),
                   Divider()
                 ],),
               ),

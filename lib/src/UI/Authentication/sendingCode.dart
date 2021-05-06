@@ -20,7 +20,8 @@ class SendingCode extends StatefulWidget {
   final phone;
   final countryId;
   final typeOfCode;
-  SendingCode({this.phone, this.typeOfCode,this.countryId});
+  final logInType;
+  SendingCode({this.phone, this.typeOfCode,this.countryId,this.logInType});
   @override
   _SendingCodeState createState() => _SendingCodeState();
 }
@@ -61,7 +62,7 @@ class _SendingCodeState extends State<SendingCode> {
       LoadingDialog(_scafold, context).showLoadingDilaog();
 
       await ApiProvider(_scafold, context)
-          .phoneVerificationForgetPassword(phone: widget.phone, code: verificationCode,type: logInType == "متجر" ? 2 : 1)
+          .phoneVerificationForgetPassword(phone: widget.phone, code: verificationCode,type:widget.logInType)
           .then((value) async {
         if (value.code == 200) {
           print('correct');
@@ -69,7 +70,7 @@ class _SendingCodeState extends State<SendingCode> {
           LoadingDialog(_scafold,context).showNotification(value.data.value);
           Future.delayed(Duration(seconds: 1,milliseconds: 250),(){
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => ChangePassword(phone:widget.phone ,)));
+                context, MaterialPageRoute(builder: (context) => ChangePassword(phone:widget.phone ,logInType: widget.logInType,)));
 
           });
         } else {

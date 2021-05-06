@@ -42,6 +42,7 @@ class _MyOrdersState extends State<MyOrders> {
     });
 //    print("api_token >>>>> $apiToken");
     apiToken == null ? print("no token") : getData();
+    print("$apiToken");
   }
 
   getData() async {
@@ -68,13 +69,13 @@ class _MyOrdersState extends State<MyOrders> {
     });
   }
 
-  addRate(_rating, _reasonId, id) async {
+  addRate(_rating, _message, id) async {
     LoadingDialog(_key, context).showLoadingDilaog();
     await ApiProvider(_key, context)
         .rateOrder(
             apiToken: apiToken,
             rate: _rating.toInt(),
-            description: _reasonId,
+            description: _message,
             transaction_id: id)
         .then((value) async {
       if (value.code == 200) {
@@ -133,51 +134,7 @@ class _MyOrdersState extends State<MyOrders> {
         : apiToken == null
             ?
     LoginPage()
-//    Scaffold(
-////                appBar: AppBar(
-////                  automaticallyImplyLeading: false,
-////                  backgroundColor: MyColors.darkRed,
-////                  centerTitle: true,
-////                  elevation: 0,
-////                  leading: SizedBox(
-////                    width: 20,
-////                  ),
-////                ),
-//                body: Container(
-//                  height: MediaQuery.of(context).size.height,
-//                  width: MediaQuery.of(context).size.width,
-//                  child: Center(
-//                    child: Column(
-//                      mainAxisAlignment: MainAxisAlignment.center,
-//                      children: <Widget>[
-//                        Text(
-//                          "يجب تسجيل الدخول اولا",
-//                          style: MyColors.styleBold2,
-//                        ),
-//                        SizedBox(
-//                          height: 15,
-//                        ),
-//                        Padding(
-//                          padding: const EdgeInsets.symmetric(horizontal: 70),
-//                          child: SpecialButton(
-//                            text: localization.text("login"),
-//                            color: MyColors.darkRed,
-//                            height: 35.0,
-//                            width: 150.0,
-//                            onTap: () {
-//                              Navigator.pushAndRemoveUntil(
-//                                  context,
-//                                  MaterialPageRoute(
-//                                      builder: (_) => LoginPage()),
-//                                  (route) => false);
-//                            },
-//                          ),
-//                        )
-//                      ],
-//                    ),
-//                  ),
-//                ),
-//              )
+
 
             : Directionality(
                 textDirection: localization.currentLanguage.toString() == "en"
@@ -195,6 +152,7 @@ class _MyOrdersState extends State<MyOrders> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 15),
                           child: ListView(
+//                            physics:NeverScrollableScrollPhysics()  ,
                             children: [
                               Row(
                                 mainAxisAlignment:
@@ -219,7 +177,9 @@ class _MyOrdersState extends State<MyOrders> {
                               loading == null
                                   ? Container()
                                   : orders.length == 0
-                                      ? ListView(
+                                      ? Column(
+                                mainAxisSize: MainAxisSize.min,
+//                                physics: NeverScrollableScrollPhysics(),
                                         children: <Widget>[
                                           Container(
                                             height: MediaQuery.of(context)
@@ -234,6 +194,7 @@ class _MyOrdersState extends State<MyOrders> {
                                       )
                                       : ListView.builder(
                                         shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, i) {
                                           return logInType == "متجر"
                                               ? InkWell(
@@ -396,6 +357,11 @@ class _RateDialogState extends State<RateDialog> {
 
                   SpecialTextField(
                     hint: localization.text("note"),
+                    onChange: (value){
+                      setState(() {
+                        _message = value ;
+                      });
+                    },
                     height: 70.0,
                     minLines: 3,
                     maxLines: 3,

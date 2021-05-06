@@ -65,6 +65,9 @@ class _MyProfileForStoreState extends State<MyProfileForStore> {
           details = value.data[0];
         });
         print(">>>>>>>>>>> ${value.data[0].isPaid}");
+
+        details.isPaid == 1 ? LoadingDialog(_scafold, context).showHighNotification("تم تأكيد الدفع") : print("aaa");
+
 //        Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
@@ -170,469 +173,465 @@ var _image ;
               return getData();
             },
             child: SafeArea(
-              child: Stack(
+              child: ListView(
                 children: <Widget>[
-//                Image.asset(
-//                  "assets/cashpoint/Nbackground.png",
-//                  fit: BoxFit.fill,
-//                  width: MediaQuery.of(context).size.width,
-//                  height: MediaQuery.of(context).size.height,
-//                ),
-                  ListView(
-                    children: <Widget>[
 //
-                      Container(
-                        decoration: BoxDecoration(color: MyColors.darkRed),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 9, right: 10, left: 10),
-                                    child: Text(
-                                      localization.text("profile"),
-                                      style: MyColors.styleBold2white,
-                                    )),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      CachedNetworkImage(
-                                        height: 90,
-                                        width: 90,
-                                        fit: BoxFit.fill,
-                                        imageUrl:
+                  Container(
+                    decoration: BoxDecoration(color: MyColors.darkRed),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 9, right: 10, left: 10),
+                                child: Text(
+                                  localization.text("profile"),
+                                  style: MyColors.styleBold2white,
+                                )),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 12,
+                                  ),
+                                  CachedNetworkImage(
+                                    height: 90,
+                                    width: 90,
+                                    fit: BoxFit.fill,
+                                    imageUrl:
 
 //                                        details == null
 //                                            ? " "
 //                                            : details.logo == null
 //                                                ? " "
 //                                                : "${details.logo}",
-                                          "$imgFromCach",
-                                        imageBuilder: (context, imageProvider) =>
-                                            ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10000.0),
-                                          child: Container(
-                                            color: Colors.white,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(3.0),
-                                              child: ClipRRect(
+                                      "$imgFromCach",
+                                    imageBuilder: (context, imageProvider) =>
+                                        ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(10000.0),
+                                      child: Container(
+                                        color: Colors.white,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(3.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    10000.0),
+                                            child: Container(
+                                              height: 80,
+                                              width: 80,
+                                              decoration: BoxDecoration(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        10000.0),
-                                                child: Container(
-                                                  height: 80,
-                                                  width: 80,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(5),
-                                                    image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: BoxFit.cover),
-                                                  ),
-                                                ),
+                                                    BorderRadius.circular(5),
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        placeholder: (context, url) =>
-                                            new Container(
-                                          height: 80,
-                                          width: 80,
-//                                      color: MyColors.grey,
-                                          child: Center(
-                                              child: CircularProgressIndicator()),
-                                        ),
-                                        placeholderFadeInDuration:
-                                            Duration(milliseconds: 500),
-                                        errorWidget: (context, url, error) =>  Container(
-                                          height: 80,
-                                          width: 80,
-//                                      color: MyColors.grey,
-                                          child: Center(
-                                              child:
-                                              Icon(Icons.error,color: Colors.white,size: 30,)),
-                                        ),
                                       ),
-                                      SizedBox(
-                                        height: 3,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "مرحبا",
-                                            style: MyColors.styleBold4white,
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
+                                    ),
+                                    placeholder: (context, url) =>
+                                        new Container(
+                                      height: 80,
+                                      width: 80,
+//                                      color: MyColors.grey,
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    ),
+                                    placeholderFadeInDuration:
+                                        Duration(milliseconds: 500),
+                                    errorWidget: (context, url, error) =>  Container(
+                                      height: 80,
+                                      width: 80,
+//                                      color: MyColors.grey,
+                                      child: Center(
+                                          child:
+                                          Icon(Icons.error,color: Colors.white,size: 30,)),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 9, right: 10, left: 10),
+                                child: Text(
+                                  localization.text("profile"),
+                                  style: TextStyle(
+                                      color: Colors.transparent,
+                                      fontSize: 18,
+                                      // fontFamily: "Tajawal",
+                                      fontWeight: FontWeight.bold),
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 3,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "مرحبا",
+                              style: MyColors.styleBold4white,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Flexible(
+                              child: Text(
 //                                            details == null
 //                                                ? " "
 //                                                : details.name == null
 //                                                    ? " "
 //                                                    : "${details.name}",
-                                            name == null ? " " : "$name",
-                                            style: MyColors.styleBold4white,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 9, right: 10, left: 10),
-                                    child: Text(
-                                      localization.text("profile"),
-                                      style: TextStyle(
-                                          color: Colors.transparent,
-                                          fontSize: 18,
-                                          // fontFamily: "Tajawal",
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                              ],
+                                name == null ? " " : "$name",
+                                style: MyColors.styleBold4white,
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                      Stack(
+                      ],
+                    ),
+                  ),
+                  Stack(
+                    children: [
+                      Column(
                         children: [
-                          Column(
-                            children: [
-                              Container(
-                                height: 45,
-                                child: Center(
-                                  child: Column(
-                                    children: [
+                          Container(
+                            height: 45,
+                            child: Center(
+                              child: Column(
+                                children: [
 //                                      Text(
 //                                        "eslam-yousry@gmail.com",
 //                                        style: MyColors.styleBoldOrangeSmall,
 //                                      ),
-                                      Text(
-                                        "${localization.text("Membership No")} ${details == null ? "" : details.membershipNum == null ? "" : "${details.membershipNum}"}",
-                                        style: MyColors.styleNormalWhite,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                decoration: BoxDecoration(
-                                  color: MyColors.darkRed,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(80),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 45,
-                                decoration: BoxDecoration(
-                                  color: MyColors.darkRed,
-                                  borderRadius: BorderRadius.only(
-//                        bottomLeft:  Radius.circular(80),
-                                      ),
-                                ),
-                                child: Container(
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xfff5f6f8),
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(80),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(
-                        height: 20,
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Column(
-                          children: [
-                            Material(
-                              elevation: 5,
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 7),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "اجمالي مبيعاتي",
-                                      style: MyColors.styleNormal1,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "SR",
-                                          style: MyColors.styleBoldOrange,
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(  details == null
-                                            ? " "
-                                            : details.totalSales == null
-                                            ? " "
-                                            : "${details.totalSales}",),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Material(
-                              elevation: 5,
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 7),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                        child: Text(
-                                      "اجمالي عمولات كاش بوينت",
-                                      style: MyColors.styleNormal1,
-                                    )),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "SR",
-                                          style: MyColors.styleBoldOrange,
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text( details == null
-                                            ? " "
-                                            : details.totalCommissions == null
-                                            ? " "
-                                            : "${details.totalCommissions}",),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Material(
-                              elevation: 5,
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 7),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                        child: Text(
-                                          "عمولة كاش بوينت الحالية",
-                                          style: MyColors.styleNormal1,
-                                        )),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "SR",
-                                          style: MyColors.styleBoldOrange,
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text( details == null
-                                            ? " "
-                                            : details.currentCommissions == null
-                                            ? " "
-                                            : "${details.currentCommissions}",),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-
-
-                      SizedBox(
-                        height: 60,
-                      ),
-
-
-
-
-
-
-
-
-                      details == null
-                          ? Container()
-                          :
-
-                      (details.isPaid == 0)
-
-
-                          ? Padding(
-                        padding: const EdgeInsets.only(top: 25),
-                        child: Container(
-                          color: Colors.green[900],
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10),
-                          width:
-                          MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: [
-                              Text(
-                                "انتظر تاكيد الادارة للدفع",
-                                style:
-                                MyColors.styleNormalWhite,
-                              ),
-                              Text(
-                                "${details.currentCommissions}",
-                                style:
-                                MyColors.styleNormalWhite,
-                              ),
-                              SizedBox(
-                                height: 3,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                          :
-
-
-                      details.isPaid == 3 ?
-                      Column(
-                        children: [
-                          Text(
-                            "يجب سداد العمولة المستحقة",
-                            style:
-                            MyColors.styleNormal1,
-                          ),
-                          SizedBox(height: 10,),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: SpecialButton(
-                              text: "تسديد",
-                              onTap: (){
-
-                                chooseFiltrationMethod(context);
-
-                              },
-                            ),
-                          ),
-                        ],
-                      )
-                          :  details.isPaid == 1 ?
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 25),
-                        child: Container(
-                          color: Colors.green[900],
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10),
-                          width:
-                          MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: [
-                              Text(
-                                "تم تأكيد الدفع",
-                                style:
-                                MyColors.styleNormalWhite,
-                              ),
-                              Icon(Icons.check_circle,size: 20,color: Colors.white,),
-
-                              SizedBox(
-                                height: 3,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ):   details.isPaid == 2 ?
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 25),
-                        child: Column(
-                          children: [
-                            Container(
-                              color: Colors.red[900],
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10),
-                              width:
-                              MediaQuery.of(context).size.width,
-                              child: Column(
-                                children: [
                                   Text(
-                                    "تم رفض طلب السداد",
-                                    style:
-                                    MyColors.styleNormalWhite,
-                                  ),
-//                              Icon(Icons.ch,size: 20,color: Colors.white,),
-
-                                  SizedBox(
-                                    height: 3,
+                                    "${localization.text("Membership No")} ${details == null ? "" : details.membershipNum == null ? "" : "${details.membershipNum}"}",
+                                    style: MyColors.styleNormalWhite,
                                   ),
                                 ],
                               ),
                             ),
-
-                            SizedBox(height: 10,),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: SpecialButton(
-                                text: "تسديد",
-                                onTap: (){
-
-                                  chooseFiltrationMethod(context);
-
-                                },
+                            decoration: BoxDecoration(
+                              color: MyColors.darkRed,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(80),
                               ),
                             ),
-                          ],
-                        ),
-                      ): details.isPaid == 4  ? Container()  : Container()
+                          ),
+                          Container(
+                            height: 45,
+                            decoration: BoxDecoration(
+                              color: MyColors.darkRed,
+                              borderRadius: BorderRadius.only(
+//                        bottomLeft:  Radius.circular(80),
+                                  ),
+                            ),
+                            child: Container(
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: Color(0xfff5f6f8),
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(80),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
+
+                  SizedBox(
+                    height: 20,
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Column(
+                      children: [
+                        Material(
+                          elevation: 5,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "اجمالي مبيعاتي",
+                                  style: MyColors.styleNormal1,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "SR",
+                                      style: MyColors.styleBoldOrange,
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(  details == null
+                                        ? " "
+                                        : details.totalSales == null
+                                        ? " "
+                                        : "${details.totalSales}",),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Material(
+                          elevation: 5,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                    child: Text(
+                                  "اجمالي عمولات كاش بوينت",
+                                  style: MyColors.styleNormal1,
+                                )),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "SR",
+                                      style: MyColors.styleBoldOrange,
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text( details == null
+                                        ? " "
+                                        : details.totalCommissions == null
+                                        ? " "
+                                        : "${details.totalCommissions}",),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Material(
+                          elevation: 5,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                    child: Text(
+                                      "عمولة كاش بوينت الحالية",
+                                      style: MyColors.styleNormal1,
+                                    )),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "SR",
+                                      style: MyColors.styleBoldOrange,
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text( details == null
+                                        ? " "
+                                        : details.currentCommissions == null
+                                        ? " "
+                                        : "${details.currentCommissions}",),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+
+
+                  SizedBox(
+                    height: 60,
+                  ),
+
+
+
+
+
+
+
+
+                  details == null
+                      ? Container()
+                      :
+
+                  (details.isPaid == 0)
+
+
+                      ? Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: Container(
+                      color: Colors.green[900],
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10),
+                      width:
+                      MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+                          Text(
+                            "انتظر تاكيد الادارة للدفع",
+                            style:
+                            MyColors.styleNormalWhite,
+                          ),
+                          Text(
+                            "${details.currentCommissions}",
+                            style:
+                            MyColors.styleNormalWhite,
+                          ),
+                          SizedBox(
+                            height: 3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      :
+
+
+                  details.isPaid == 3 ?
+                  Column(
+                    children: [
+                      Text(
+                        "يجب سداد العمولة المستحقة",
+                        style:
+                        MyColors.styleNormal1,
+                      ),
+                      SizedBox(height: 10,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: SpecialButton(
+                          text: "تسديد",
+                          onTap: (){
+
+                            chooseFiltrationMethod(context);
+
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                      :  details.isPaid == 1 ?
+
+                      Container()
+//                      Padding(
+//                        padding: const EdgeInsets.only(top: 25),
+//                        child: Container(
+//                          color: Colors.green[900],
+//                          padding: const EdgeInsets.symmetric(
+//                              vertical: 10),
+//                          width:
+//                          MediaQuery.of(context).size.width,
+//                          child: Column(
+//                            children: [
+//                              Text(
+//                                "تم تأكيد الدفع",
+//                                style:
+//                                MyColors.styleNormalWhite,
+//                              ),
+//                              Icon(Icons.check_circle,size: 20,color: Colors.white,),
+//
+//                              SizedBox(
+//                                height: 3,
+//                              ),
+//                            ],
+//                          ),
+//                        ),
+//                      )
+                      :   details.isPaid == 2 ?
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: Column(
+                      children: [
+                        Container(
+                          color: Colors.red[900],
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10),
+                          width:
+                          MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              Text(
+                                "تم رفض طلب السداد",
+                                style:
+                                MyColors.styleNormalWhite,
+                              ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                              SizedBox(
+                                height: 3,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 10,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: SpecialButton(
+                            text: "تسديد",
+                            onTap: (){
+
+                              chooseFiltrationMethod(context);
+
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ): details.isPaid == 4  ? Container()  : Container()
                 ],
               ),
             ),

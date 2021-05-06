@@ -40,7 +40,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
-  var category ;
+  var category = [] ;
+  var loading ;
 
   var allHomeCategories = [
 //    {
@@ -134,12 +135,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
         print("correct connection");
         setState(() {
           category = value.data;
+          loading = "done" ;
         });
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
 
+        setState(() {
+          loading = "done" ;
+        });
         LoadingDialog(_scafold, context).showNotification(value.error[0].value);
       }
     });
@@ -370,7 +375,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     height: 5,
                   ),
                   Expanded(
-                    child:category == null ? Container() :  category.length == 0 ? Center(child: Text("لا توجد متاجر"),) : ListView.builder(
+                    child:loading == null ? Container() :  category.length == 0 ? Center(child: Text("لا توجد متاجر"),) : ListView.builder(
                         shrinkWrap: true,
                         itemCount: category.length,
                         itemBuilder: (context, i) {
@@ -380,7 +385,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => CategoryItemDetails(
-                                            name: category[i].name,
                                             id: category[i].id,
                                           )));
                             },
@@ -389,7 +393,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               img: category[i].logo,
 //                            distance: category[i]["distance"],
                               distance: "4",
-                              rate: category[i].stars,
+                              rate: "${category[i].stars}",
                             ),
                           );
                         }),
@@ -485,16 +489,23 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                       getAllStoresOfCategory().then((value){
                         setState(() {
+                          print("111111111111111111111");
                           category.sort((m1, m2) {
                             var r = m1.stars == null || m2.stars == null
                                 ? m1.id.compareTo(m2.id)
                                 : m1.stars.compareTo(m2.stars);
-                            if (r != 0) return r;
-                            return m1.stars == null || m2.stars == null
-                                ? m1.id.compareTo(m2.id)
-                                : m1.stars.compareTo(m2.stars);
+//                            if (r != 0)
+                              return r;
+////                            return m1.stars == null || m2.stars == null
+////                                ? m1.id.compareTo(m2.id)
+////                                : m1.stars.compareTo(m2.stars);
                           });
-
+                          category =  category.reversed.toList() ;
+//                          print("222222222222222222222");
+//                          category.reversed.toList() ;
+//                          print("111111111111111111111");
+//                          category.sort((a, b) => a.stars.compareTo(b.stars));
+//                          category =  category.reversed.toList() ;
                         });
                       });
 

@@ -301,43 +301,7 @@ class _SettingsState extends State<Settings> {
 //                                              ),
 //                                            ),
                                           ),
-                                          SizedBox(
-                                            height: 3,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "اهلا",
-                                                style: MyColors.styleBold4white,
-                                              ),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-//                                                details == null
-//                                                    ? " "
-//                                                    : details.name == null
-//                                                        ? " "
-//                                                        : "${details.name}",
-                                                name == null ? "" : "$name",
-                                                style: MyColors.styleBold4white,
-                                              ),
-                                            ],
-                                          ),
-                                          logInType == "متجر"
-                                              ? Container()
-                                              : Text(
-                                                  details == null
-                                                      ? " "
-                                                      : details.email == null
-                                                          ? " "
-                                                          : "${details.email}",
-                                                  style: MyColors
-                                                      .styleBoldOrangeSmall,
-                                                ),
-                                          SizedBox(
-                                            height: 18,
-                                          ),
+
                                         ],
                                       ),
                                     ),
@@ -353,6 +317,47 @@ class _SettingsState extends State<Settings> {
                                               fontWeight: FontWeight.bold),
                                         )),
                                   ],
+                                ),
+
+                                SizedBox(
+                                  height: 3,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "اهلا",
+                                      style: MyColors.styleBold4white,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Flexible(
+                                      child: Text(
+//                                                details == null
+//                                                    ? " "
+//                                                    : details.name == null
+//                                                        ? " "
+//                                                        : "${details.name}",
+                                        name == null ? "" : "$name",
+                                        style: MyColors.styleBold4white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                logInType == "متجر"
+                                    ? Container()
+                                    : Text(
+                                  details == null
+                                      ? " "
+                                      : details.email == null
+                                      ? " "
+                                      : "${details.email}",
+                                  style: MyColors
+                                      .styleBoldOrangeSmall,
+                                ),
+                                SizedBox(
+                                  height: 10,
                                 ),
                               ],
                             ),

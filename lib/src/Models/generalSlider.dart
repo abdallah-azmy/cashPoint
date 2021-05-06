@@ -44,6 +44,9 @@ class Datum {
     this.link,
     this.image,
     this.createdAt,
+    this.categoryId,
+    this.status,
+    this.typeOfAdvertisement,
   });
 
   int id;
@@ -52,6 +55,9 @@ class Datum {
   String link;
   String image;
   DateTime createdAt;
+  dynamic categoryId;
+  int status;
+  int typeOfAdvertisement;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["id"] == null ? null : json["id"],
@@ -60,6 +66,9 @@ class Datum {
     link: json["link"] == null ? null : json["link"],
     image: json["image"] == null ? null : json["image"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    categoryId: json["category_id "],
+    status: json["status"] == null ? null : json["status"],
+    typeOfAdvertisement: json["type_of_advertisement"] == null ? null : json["type_of_advertisement"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -69,6 +78,11 @@ class Datum {
     "link": link == null ? null : link,
     "image": image == null ? null : image,
     "created_at": createdAt == null ? null : "${createdAt.year.toString().padLeft(4, '0')}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.day.toString().padLeft(2, '0')}",
+    "category_id ": categoryId,
+    "status": status == null ? null : status,
+    "type_of_advertisement": typeOfAdvertisement == null ? null : typeOfAdvertisement,
+
+
   };
 }
 

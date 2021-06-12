@@ -39,7 +39,7 @@ class _EditProfileState extends State<EditProfile> {
   var loading = true;
 
   var shownCountryCode;
-  var countries = [];
+//  var countries = [];
 
   var _currentPassword = "";
   var _newPassword = "";
@@ -47,7 +47,7 @@ class _EditProfileState extends State<EditProfile> {
   var _name = "";
   var _phone = "";
   var _email = "";
-  var _countryId;
+//  var _countryId;
   var _description;
 
   _getShared() async {
@@ -149,23 +149,23 @@ class _EditProfileState extends State<EditProfile> {
       }
     });
 
-    await ApiProvider(_scafold, context)
-        .getCountries(networkError: false)
-        .then((value) async {
-      if (value.code == 200) {
-        print('correct');
-//        Navigator.pop(context);
-
-        setState(() {
-          countries = value.data;
-        });
-      } else {
-        print('error >>> ' + value.error[0].value);
-//        Navigator.pop(context);
-
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
-      }
-    });
+//    await ApiProvider(_scafold, context)
+//        .getCountries(networkError: false)
+//        .then((value) async {
+//      if (value.code == 200) {
+//        print('correct');
+////        Navigator.pop(context);
+//
+//        setState(() {
+//          countries = value.data;
+//        });
+//      } else {
+//        print('error >>> ' + value.error[0].value);
+////        Navigator.pop(context);
+//
+//        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+//      }
+//    });
   }
 
   changePassword() async {
@@ -241,7 +241,7 @@ class _EditProfileState extends State<EditProfile> {
           .changePhoneNumber(
               phone: _phone,
               apiToken: apiToken,
-              country_id: _countryId,
+//              country_id: _countryId,
               type: logInType == "متجر" ? 2 : 1)
           .then((value) async {
         if (value.code == 200) {
@@ -257,7 +257,7 @@ class _EditProfileState extends State<EditProfile> {
                     builder: (context) => SendingCode(
                           phone: _phone,
                           typeOfCode: "changePhone",
-                          countryId: _countryId,
+//                          countryId: _countryId,
                         )));
           });
         } else {
@@ -495,9 +495,9 @@ class _EditProfileState extends State<EditProfile> {
                             children: [
                               EditTextField(
                                 hint: details == null
-                                    ? "الاسم"
+                                    ? localization.text("name")
                                     : details.name == null
-                                        ? "الاسم"
+                                        ? localization.text("name")
                                         : "${details.name}",
                                 onChange: (value) {
                                   setState(() {
@@ -518,9 +518,9 @@ class _EditProfileState extends State<EditProfile> {
                                   Divider(),
                                   EditTextField(
                                     hint: details == null
-                                        ? "البريد الالكتروني"
+                                        ? localization.text("email")
                                         : details.email == null
-                                        ? "البريد الالكتروني"
+                                        ? localization.text("email")
                                         : "${details.email}",
                                     keyboardType: TextInputType.emailAddress,
                                     onChange: (value) {
@@ -543,9 +543,9 @@ class _EditProfileState extends State<EditProfile> {
                                         Divider(),
                                         EditTextField(
                                           hint: details == null
-                                              ? "الوصف"
+                                              ? localization.text("_description")
                                               : details.description == null
-                                              ? "الوصف"
+                                              ? localization.text("_description")
                                               : "${details.description}",
                                           keyboardType: TextInputType.multiline,
                                           maxLines: 4,
@@ -574,7 +574,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 10,
                         ),
                         SpecialButton(
-                          text: "تعديل البيانات",
+                          text: localization.text("edit_data"),
                           height: 47.0,
                           onTap: () {
                             logInType == "متجر"
@@ -613,78 +613,7 @@ class _EditProfileState extends State<EditProfile> {
                                 ),
                               ),
 
-                              Divider(),
 
-//                          SizedBox(height: 15),
-
-                              InkWell(
-                                onTap: () {
-                                  bottomSheet(context, countries, "countries");
-                                },
-                                child: Container(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-//                                border: Border.all(color: Colors.black54),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: InkWell(
-//                                      onTap: widget.onIconTap,
-                                          child: CircleAvatar(
-                                            radius: 17.5,
-                                            backgroundColor: Colors.grey[200],
-                                            child: Container(
-                                              height: 25,
-                                              width: 25,
-                                              child: Icon(
-                                                Icons.flag,
-                                                size: 22,
-                                                color: MyColors.orange,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 4),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Text(
-                                                  shownCountryCode ??
-                                                      localization.text(
-                                                          "choose country code"),
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      // fontFamily: "Tajawal",
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: Colors.black),
-                                                ),
-                                                Icon(
-                                                  Icons.arrow_drop_down,
-                                                  size: 27,
-                                                  color: Colors.black,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -692,7 +621,7 @@ class _EditProfileState extends State<EditProfile> {
                           height: 10,
                         ),
                         SpecialButton(
-                          text: "تغيير رقم الموبايل",
+                          text: localization.text("change phone"),
                           height: 47.0,
                           onTap: () {
                             changePhone();
@@ -724,7 +653,7 @@ class _EditProfileState extends State<EditProfile> {
                               EditTextField(
                                 hint: localization.text("current_password"),
                                 password: true,
-                                prefixIcon: Icon(
+                                icon: Icon(
                                   Icons.lock_outline,
                                   color: Colors.black,
                                 ),
@@ -757,7 +686,7 @@ class _EditProfileState extends State<EditProfile> {
                                   });
                                 },
                                 password: true,
-                                prefixIcon: Icon(
+                                icon: Icon(
                                   Icons.lock_outline,
                                   color: Colors.black,
                                 ),
@@ -780,7 +709,7 @@ class _EditProfileState extends State<EditProfile> {
                               EditTextField(
                                 hint: localization.text("confirm_nem_password"),
                                 password: true,
-                                prefixIcon: Icon(
+                                icon: Icon(
                                   Icons.lock_outline,
                                   color: Colors.black,
                                 ),
@@ -847,7 +776,7 @@ class _EditProfileState extends State<EditProfile> {
                                   onTap: () {
                                     Navigator.pop(context);
                                     setState(() {
-                                      _countryId = list[index].id;
+//                                      _countryId = list[index].id;
                                       shownCountryCode =
                                           "${list[index].name}  ${list[index].code}";
                                     });

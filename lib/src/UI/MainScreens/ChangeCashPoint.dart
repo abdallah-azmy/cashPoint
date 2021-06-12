@@ -69,6 +69,9 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
         print("correct connection");
         Navigator.pop(context);
         LoadingDialog(_key, context).showNotification(value.data.value);
+        Future.delayed(Duration(seconds: 1,milliseconds: 500),(){
+          Navigator.pop(context);
+        });
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);

@@ -79,7 +79,7 @@ class Data {
   String description;
   String latitude;
   String longitude;
-  int membershipNum;
+  String membershipNum;
   int commission;
   String logo;
   String image;
@@ -111,7 +111,7 @@ class Data {
     description: json["description"] == null ? null : json["description"],
     latitude: json["latitude"] == null ? null : json["latitude"],
     longitude: json["longitude"] == null ? null : json["longitude"],
-    membershipNum: json["membership_num"] == null ? null : json["membership_num"],
+    membershipNum: json["membership_num"] == null ? null : "${json["membership_num"]}",
     commission: json["commission"] == null ? null : json["commission"],
     logo: json["logo"] == null ? null : json["logo"],
     image: json["image"] == null ? null : json["image"],

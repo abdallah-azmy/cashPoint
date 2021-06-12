@@ -87,6 +87,7 @@ class HomeScreenState extends State<HomeScreen> {
         .getGeneralData(apiToken: apiToken)
         .then((value) async {
       if (value.code == 200) {
+        print("<<<<<<<<<<<<<<<<<<<<<<1>>>>>>>>>>>>>>>>>>");
         setState(() {
           details = value.data;
           loadingWelcomeMessage = false;
@@ -370,7 +371,7 @@ class HomeScreenState extends State<HomeScreen> {
                         details == null
                             ? ""
                             : details.minText == null
-                                ? "يا هلا فيك ${name == null ? "نورتنا" : "$name"}"
+                                ?  localization.currentLanguage.toString() == "en" ? "welcome ${name == null ? "" : "$name"}" : "يا هلا فيك ${name == null ? "نورتنا" : "$name"}"
                                 : "${details.minText}",
                         textAlign: TextAlign.center,
                         style: MyColors.styleBold1,
@@ -381,8 +382,8 @@ class HomeScreenState extends State<HomeScreen> {
                         details == null
                             ? ""
                             : details.subMinText == null
-                                ? "من وين حابب تجمع نقاطك اليوم"
-                                : "${details.subMinText}",
+                                ? localization.text("Where would you like to collect your points today ?")
+                                : "${details.subMinText} ${name == null ? "" : "$name"}",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.black,
@@ -408,7 +409,7 @@ class HomeScreenState extends State<HomeScreen> {
                             ? Center(
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 50),
-                                  child: Text("لا يوجد نتائج للبحث"),
+                                  child: Text(localization.text("no search results")),
                                 ),
                               )
                             : filteredCategories.length == 0

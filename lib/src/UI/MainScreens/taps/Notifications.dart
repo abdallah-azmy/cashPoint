@@ -1,6 +1,7 @@
 import 'package:cashpoint/src/MyColors.dart';
 import 'package:cashpoint/src/Network/api_provider.dart';
 import 'package:cashpoint/src/UI/Authentication/login.dart';
+import 'package:cashpoint/src/UI/MainScreens/OrderDetails.dart';
 import 'package:cashpoint/src/UI/MainWidgets/MyDrawer.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Notification_Card.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Button.dart';
@@ -71,7 +72,7 @@ class NotificationsState extends State<Notifications> {
       if (value.code == 200) {
         print('Branches number >>>>> ' + value.data.length.toString());
         Navigator.pop(context);
-        LoadingDialog(_key, context).alertPopUp(localization.text("deleted_successfully"));
+        LoadingDialog(_key, context).alertPopUpDismissible(localization.text("deleted_successfully"));
         Future.delayed(Duration(seconds: 1,milliseconds: 100),(){
           Navigator.pop(context);
           getData();
@@ -102,51 +103,6 @@ class NotificationsState extends State<Notifications> {
         :  apiToken == null
         ?
     LoginPage()
-//    Scaffold(
-////                appBar: AppBar(
-////                  automaticallyImplyLeading: false,
-////                  backgroundColor: MyColors.darkRed,
-////                  centerTitle: true,
-////                  elevation: 0,
-////                  leading: SizedBox(
-////                    width: 20,
-////                  ),
-////                ),
-//      body: Container(
-//        height: MediaQuery.of(context).size.height,
-//        width: MediaQuery.of(context).size.width,
-//        child: Center(
-//          child: Column(
-//            mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              Text(
-//                "يجب تسجيل الدخول اولا",
-//                style: MyColors.styleBold2,
-//              ),
-//              SizedBox(
-//                height: 15,
-//              ),
-//              Padding(
-//                padding: const EdgeInsets.symmetric(horizontal: 70),
-//                child: SpecialButton(
-//                  text: localization.text("login"),
-//                  color: MyColors.darkRed,
-//                  height: 35.0,
-//                  width: 150.0,
-//                  onTap: () {
-//                    Navigator.pushAndRemoveUntil(
-//                        context,
-//                        MaterialPageRoute(
-//                            builder: (_) => LoginPage()),
-//                            (route) => false);
-//                  },
-//                ),
-//              )
-//            ],
-//          ),
-//        ),
-//      ),
-//    )
         :
     Directionality(
       textDirection: localization.currentLanguage.toString() == "en"
@@ -162,102 +118,114 @@ class NotificationsState extends State<Notifications> {
             },
             child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                child: Column(
+                    const EdgeInsets.symmetric(horizontal: 15, ),
+                child: ListView(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          localization.text("_notifications"),
-                          style: MyColors.styleBold2,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only( top: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            localization.text("_notifications"),
+                            style: MyColors.styleBold2,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 15,
                     ),
                     loading == null ? Container() :   _notifications.length == 0
-                            ? Expanded(
-                                child: ListView(
-                                  children: <Widget>[
-                                    Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .8,
-                                      child: Center(
-                                          child: Text(localization
-                                              .text("no_notifications"))),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, i) {
-                                    return InkWell(
-                                      onTap: () {
-//                        Navigator.push(
-//                          context,
-//                          MaterialPageRoute(
-//                              builder: (context) => OrderDetails(
-//                                    order: myOrders[0].status,
-//                                status: myOrders[0],
-//
-//                                  )),
-//                        );
+                            ? Container(
+                              height:
+                                  MediaQuery.of(context).size.height *
+                                      .8,
+                              child: Center(
+                                  child: Text(localization
+                                      .text("no_notifications"))),
+                            )
+                            : ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, i) {
+                                return InkWell(
+                                  onTap: () {
 
-//                                getOrderDetails(_notifications[i].orderId);
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          NotificationCard(
-                                              time: _notifications[i]
-                                                  .totalDuration,
-//                                          read: _notifications[i]["read"],
-                                              content:
-                                                  _notifications[i].description,
-                                              title: _notifications[i].title,
-                                              id: _notifications[i].id,
-                                              apiToken: apiToken,
-                                              scaffold: _key,
-                                              getData: () {
-                                                getData();
-                                              }),
-                                          Positioned(
-                                            child: InkWell(
-                                              onTap: () {
-                                                LoadingDialog(_key, context)
-                                                    .deleteAlert(null, () {
-                                                      Navigator.pop(context) ;
-                                                  deleteNotification(_notifications[i].id);
-                                                });
-                                              },
-                                              child: Container(
-                                                  decoration: new BoxDecoration(
-                                                    color: Colors.white,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Icon(Icons.cancel)),
-                                            ),
-                                            left: 0,
-                                            top: 0,
-                                          )
-                                        ],
-                                      ),
-                                    );
+                                    _notifications[i].transactionId == null ? print("no transactionId") :  Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => OrderDetails(id:_notifications[i].transactionId,)));
                                   },
-                                  itemCount: _notifications.length,
-                                ),
-                              ),
+                                  child: Stack(
+                                    children: [
+                                      NotificationCard(
+                                          time: _notifications[i]
+                                              .totalDuration,
+//                                          read: _notifications[i]["read"],
+                                          content:
+                                              _notifications[i].description,
+                                          title: _notifications[i].title,
+                                          id: _notifications[i].id,
+                                          apiToken: apiToken,
+                                          scaffold: _key,
+                                          getData: () {
+                                            getData();
+                                          }),
+                                      localization.currentLanguage.toString() == "en"
+                                          ?
+                                      Positioned(
+                                        child: InkWell(
+                                          onTap: () {
+                                            LoadingDialog(_key, context)
+                                                .deleteAlert(null, () {
+                                              Navigator.pop(context) ;
+                                              deleteNotification(_notifications[i].id);
+                                            });
+                                          },
+                                          child: Container(
+                                              decoration: new BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(Icons.cancel)),
+                                        ),
+                                        right: 0,
+                                        top: 0,
+                                      )
+                                          :  Positioned(
+                                        child: InkWell(
+                                          onTap: () {
+                                            LoadingDialog(_key, context)
+                                                .deleteAlert(null, () {
+                                                  Navigator.pop(context) ;
+                                              deleteNotification(_notifications[i].id);
+                                            });
+                                          },
+                                          child: Container(
+                                              decoration: new BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(Icons.cancel)),
+                                        ),
+                                        left: 0,
+                                        top: 0,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                              itemCount: _notifications.length,
+                            ),
                     SizedBox(
-                      height: 75,
+                      height: 100,
                     ),
+
                   ],
                 )),
           ),

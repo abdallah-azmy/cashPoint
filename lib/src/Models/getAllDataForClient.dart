@@ -64,7 +64,7 @@ class Data {
   int type;
   int active;
   String apiToken;
-  int membershipNum;
+  String membershipNum;
   String image;
   dynamic lastLoginAt;
   int countryId;
@@ -83,7 +83,7 @@ class Data {
     type: json["type"] == null ? null : json["type"],
     active: json["active"] == null ? null : json["active"],
     apiToken: json["api_token"] == null ? null : json["api_token"],
-    membershipNum: json["membership_num"] == null ? null : json["membership_num"],
+    membershipNum: json["membership_num"] == null ? null : "${json["membership_num"]}",
     image: json["image"] == null ? null : json["image"],
     lastLoginAt: json["last_login_at"],
     countryId: json["country_id"] == null ? null : json["country_id"],

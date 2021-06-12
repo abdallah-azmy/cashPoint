@@ -157,7 +157,7 @@ class _MovingSliderState extends State<MovingSlider> {
         backgroundColor: Color(0xfff5f6f8),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SpecialButton(text: "اضافة صور",onTap: (){
+          child: SpecialButton(text: localization.text("Add photos"),onTap: (){
             _getImg();
           }, ),
         ),

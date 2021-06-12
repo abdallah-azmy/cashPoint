@@ -99,7 +99,7 @@ class _MyPaymentsState extends State<MyPayments> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "مدفوعاتي",
+                          localization.text("My payments"),
                           style: MyColors.styleBold2,
                         ),
                         InkWell(
@@ -126,7 +126,7 @@ class _MyPaymentsState extends State<MyPayments> {
                           Container(
                             height: MediaQuery.of(context).size.height*.8,
                             child: Center(
-                                child: Text("لا توجد مدفوعات")),
+                                child: Text(localization.text("There are no payments"))),
                           ),
                       ],
                     ),

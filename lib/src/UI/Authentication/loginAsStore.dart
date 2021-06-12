@@ -27,7 +27,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String _phone= "" ;
   String _password= "" ;
-  String _deviceToken = "123456789";
+  String _deviceToken ;
   bool _showPassword = false;
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
@@ -40,6 +40,8 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
+    _deviceToken = await _firebaseMessaging.getToken();
+    print("device Tooooooooooken : $_deviceToken");
     setState(() {
       apiToken = _prefs.getString("api_token");
 //      logInType = _prefs.getString("login");
@@ -50,6 +52,25 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
     print("api_token >>>>> $apiToken");
   }
 
+
+
+  selectLanguage(lang,apiToken) async {
+//    LoadingDialog(_scafold, context).showLoadingDilaog();
+    await ApiProvider(_scafold, context)
+        .changeLanguage(apiToken: apiToken,language:lang )
+        .then((value) async {
+      if (value.code == 200) {
+        print('Branches number >>>>> ' + value.data.message);
+//
+//        Navigator.pop(context);
+      } else {
+        print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+//        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+      }
+    });
+  }
 
   login() async {
 
@@ -80,6 +101,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
             _prefs.setString("api_token", value.data.apiToken);
             _prefs.setString("created_at", value.data.createdAt.toString());
 
+            selectLanguage(localization.currentLanguage.toString(),value.data.apiToken);
 
             Navigator.pushAndRemoveUntil(
                 context,
@@ -124,16 +146,16 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
       child: Scaffold(
           key: _scafold,
           resizeToAvoidBottomInset: true,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.grey[100],
           body: SafeArea(
             child: Stack(
               children: <Widget>[
-                Image.asset(
-                  "assets/cashpoint/Nbackground.png",
-                  fit: BoxFit.fill,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                ),
+//                Image.asset(
+//                  "assets/cashpoint/Nbackground.png",
+//                  fit: BoxFit.fill,
+//                  width: MediaQuery.of(context).size.width,
+//                  height: MediaQuery.of(context).size.height,
+//                ),
 
                 ListView(
                   children: <Widget>[
@@ -157,7 +179,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
                                 child: Icon(
                                   Icons.arrow_forward_ios,
                                   size: 20,
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                               )),
                         ),
@@ -215,7 +237,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
                             children: <Widget>[
                               Text(
                                 localization.text("Log in as a store"),
-                                style: MyColors.styleNormal2white,
+                                style: MyColors.styleNormal2,
                               ),
                             ],
                           ),
@@ -228,7 +250,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
                               color: MyColors.orange,
                               size: 19,
                             ),
-                            hint:  logInType == "متجر" ? "رقم الهاتف" : localization.text("phone_number"),
+                            hint:localization.text("phone_number"),
                             keyboardType: TextInputType.phone,
                             iconCircleColor: Colors.grey[200],
                             onChange: (value) {

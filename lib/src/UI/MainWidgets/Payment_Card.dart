@@ -149,7 +149,7 @@ class _PaymentCardState extends State<PaymentCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "رقم : ${widget.num}",
+                          "${localization.text("number")} : ${widget.num}",
                           style: MyColors.styleNormalSmal2,
                         ),
                       ],
@@ -170,14 +170,38 @@ class _PaymentCardState extends State<PaymentCard> {
                     widget.status == 2 ?  Column(
                       children: [
                         Text(
-                          "تم رفض المدفوعة البنكية",
-                          style: MyColors.styleNormal0,
+                          localization.text("The bank payment was rejected"),
+                          style: MyColors.styleBold0red,
                         ),
                         SizedBox(
                           height: 1,
                         ),
                       ],
-                    ): Container(),
+                    ): widget.status == 1 ?
+                    Column(
+                      children: [
+                        Text(
+                          localization.text("Payment confirmed"),
+                          style: MyColors.styleBold0green,
+                        ),
+                        SizedBox(
+                          height: 1,
+                        ),
+                      ],
+                    )
+                        :  widget.status == 0 ?
+                    Column(
+                      children: [
+                        Text(
+                          localization.text("Payment not confirmed"),
+                          style: MyColors.styleBold0,
+                        ),
+                        SizedBox(
+                          height: 1,
+                        ),
+                      ],
+                    ) : Container(),
+                    //Payment not confirmed
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

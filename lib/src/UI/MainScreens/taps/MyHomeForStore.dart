@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
 import 'package:cashpoint/src/MyColors.dart';
@@ -5,11 +7,13 @@ import 'package:cashpoint/src/Network/api_provider.dart';
 import 'package:cashpoint/src/UI/MainScreens/MyFatooraWebview.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Button.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Text_Field.dart';
+import 'package:cashpoint/src/firebaseNotification/firebaseNotifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
@@ -22,7 +26,8 @@ class MyHomeForStore extends StatefulWidget {
   _MyHomeForStoreState createState() => _MyHomeForStoreState();
 }
 
-class _MyHomeForStoreState extends State<MyHomeForStore> {
+class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObserver{
+  FirebaseNotifications appPushNotifications = FirebaseNotifications();
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   SharedPreferences _prefs;
   var apiToken;
@@ -38,6 +43,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
   var _image;
   var imgFromCach;
   var name;
+  bool onlinePaymentURL = false ;
 
   var detailsOfGeneralData;
 
@@ -66,9 +72,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
           details = value.data[0];
         });
 
-        details.isPaid == 1 ? LoadingDialog(_key, context).showHighNotification("تم تأكيد الدفع") : print("aaa");
-
-
+        details.isPaid == 1 ? LoadingDialog(_key, context).showHighNotification(localization.text("payment confirmed")) : print("aaa");
 
 //        Navigator.pop(context);
       } else {
@@ -112,7 +116,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         Navigator.pop(context);
 
         if (value.error == "Sorry something went wrong, please try again") {
-          LoadingDialog(_key, context).alertPopUp("لا يوجد عميل بهذا الرقم");
+          LoadingDialog(_key, context).alertPopUp(localization.text("An error occurred client not found"));
         } else {
           LoadingDialog(_key, context).alertPopUp(value.error);
         }
@@ -136,7 +140,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         Navigator.pop(context);
 
         if (value.error == "Sorry something went wrong, please try again") {
-          LoadingDialog(_key, context).alertPopUp("حدث خطأ لم يتم العثور علي العميل");
+          LoadingDialog(_key, context).alertPopUp(localization.text("An error occurred client not found"));
         } else {
           LoadingDialog(_key, context).alertPopUp(value.error);
         }
@@ -189,6 +193,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         });
         LoadingDialog(_key, context)
             .alertPopUp(localization.text("added_successfully"));
+        _getShared();
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
@@ -219,7 +224,17 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
       if (value.code == 200) {
         print("correct connection333333333333333");
         Navigator.pop(context);
-        LoadingDialog(_key, context).alertPopUp("تمت العملية بنجاح");
+        value.data.paymentUrl != null ?
+        LoadingDialog(_key, context).alertPopUp(localization.text("Please complete the payment process"))
+            :
+        LoadingDialog(_key, context).alertPopUp(localization.text("operation accomplished successfully"));
+
+
+        if(value.data.paymentUrl != null){
+          setState(() {
+            onlinePaymentURL = true ;
+          });
+        }
 
         Future.delayed(Duration(milliseconds: 750), () {
           Navigator.pop(context);
@@ -233,8 +248,17 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                 MaterialPageRoute(
                     builder: (context) => OnlinePaymentScreen(
                           url: value.data.paymentUrl,
+                      getData: (){
+                        _getShared();
+                      },
                         )),
               );
+
+              Future.delayed(Duration(seconds: 2),(){
+                setState(() {
+                  onlinePaymentURL = false ;
+                });
+              });
             }
           });
           print(">>> here <<<< 444444444444444444444");
@@ -243,7 +267,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
         if (value.error[0].value == "my fatoora لاغٍ") {
-          LoadingDialog(_key, context).alertPopUp("يرجي المحاولة لاحقا");
+          LoadingDialog(_key, context).alertPopUp(localization.text("please try later"));
         } else {
           LoadingDialog(_key, context).alertPopUp(value.error[0].value);
         }
@@ -251,11 +275,68 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
     });
   }
 
+
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('appLifeCycleState inactive');
+        break;
+      case AppLifecycleState.resumed:
+        print('appLifeCycleState resumed');
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (this.mounted) {
+            _getShared();
+          }
+//          this._getShared();
+        });
+
+        break;
+      case AppLifecycleState.paused:
+        print('appLifeCycleState paused');
+        break;
+//      case AppLifecycleState.suspending:
+//        print('appLifeCycleState suspending');
+//        break;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    print("<<<<>>>><<<<<>>>>>>>");
+//    WidgetsBinding.instance.addObserver(this);
+    Future.delayed(Duration(milliseconds: 300), () {
+      print("------------------XXXXXX--------");
+      appPushNotifications.notificationSubject.stream.listen((data) {
+        getData();
+        print("------------------XXXXXX-------- $data");
+        print("------------------XXXXXX-------- ${data.length}");
+        if (Platform.isIOS == true) {
+          print("ios");
+          LoadingDialog(_key, context).showDoubleNotification(data['aps']['alert']['title'],data['aps']['alert']['body']);
+        } else {
+          LoadingDialog(_key, context).showDoubleNotification( data['notification']['title'],data['notification']['body']);
+        }
+      }).onError((err) {
+        print("------------------- $err");
+      });
+//      if (this.mounted) {
+//      _getShared();
+//      }
+
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     _getShared();
   }
 
@@ -291,7 +372,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                               height: 15,
                             ),
                             Text(
-                              "مرحبا بك",
+                             localization.text("hello"),
                               style: MyColors.styleNormalOrange1,
                             ),
                             SizedBox(
@@ -307,8 +388,26 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                               style: MyColors.styleBold4white,
                             ),
                             SizedBox(
-                              height: 18,
+                              height: 4,
                             ),
+
+                            details == null ? Container() :    SmoothStarRating(
+                                allowHalfRating: false,
+                                onRated: (v) {},
+                                starCount: 5,
+                                rating: details.stars,
+                                size: 17.0,
+                                isReadOnly: true,
+                                color: Colors.amber,
+                                borderColor: Colors.orange,
+                                spacing: 1.0),
+
+                            SizedBox(
+                              height: 10,
+                            ),
+
+
+
                           ],
                         ),
                       ],
@@ -452,11 +551,11 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                             Column(
                               children: [
                                 Text(
-                                  "مسح رمز ال",
+                                 localization.text("Scan a code"),
                                   style: TextStyle(height: 1),
                                 ),
                                 Text(
-                                  "اخر تسجيل دخول",
+                                  localization.text("last_sign_in"),
                                   style: TextStyle(height: 1.2),
                                 ),
                                 Text(
@@ -471,7 +570,55 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                             ),
                             details == null
                                 ? Container()
-                                : (details.isPaid == 0)
+                                :   onlinePaymentURL == true ? Container() :
+
+
+
+                            (details.isPaid == 0 && details.fatoora != null )  ?
+                            Padding(
+                              padding: const EdgeInsets.only(top: 25),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    color: Colors.red[900],
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    width:
+                                    MediaQuery.of(context).size.width,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                localization.text("The online payment process has not been completed, please contact the administration"),
+                                                style:
+                                                MyColors.styleNormalWhite,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                                        SizedBox(
+                                          height: 3,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+
+                                ],
+                              ),
+                            )
+
+                                :
+
+
+                            (details.isPaid == 0)
                                     ? Padding(
                                         padding: const EdgeInsets.only(top: 25),
                                         child: Container(
@@ -482,15 +629,33 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                               MediaQuery.of(context).size.width,
                                           child: Column(
                                             children: [
-                                              Text(
-                                                "انتظر تاكيد الادارة للدفع",
-                                                style:
-                                                    MyColors.styleNormalWhite,
+                                              Row(mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                     localization.text("Wait for the administration to confirm the commission payment process"),
+                                                      style:
+                                                          MyColors.styleNormalWhite,
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              Text(
-                                                "${details.currentCommissions}",
-                                                style:
-                                                    MyColors.styleNormalWhite,
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    localization.text("price"),
+                                                    style: MyColors
+                                                        .styleNormalWhite,
+                                                  ),
+                                                  SizedBox(width: 5,),
+                                                  Text(
+                                                    "${details.paidCommissions}",
+                                                    style: MyColors
+                                                        .styleNormalWhite,
+                                                  ),
+                                                ],
                                               ),
                                               SizedBox(
                                                 height: 3,
@@ -514,7 +679,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                               child: Column(
                                                 children: [
                                                   Text(
-                                                    "يجب سداد العمولة المستحقة",
+                                                    localization.text("The due commission must be paid"),
                                                     style: MyColors
                                                         .styleNormalWhite,
                                                   ),
@@ -535,7 +700,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                         chooseFiltrationMethod(
                                                             context);
                                                       },
-                                                      text: "دفع",
+                                                      text: localization.text("pay"),
                                                     ),
                                                   ),
                                                 ],
@@ -549,7 +714,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                            top: 25),
+                                                            top: 15),
                                                     child: Align(
                                                       alignment:
                                                           Alignment.center,
@@ -630,7 +795,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                     textAlign: TextAlign.center,
                                                   ),
                                                   SizedBox(
-                                                    height: 20,
+                                                    height: 13,
                                                   ),
 //                                                  details.isPaid == 4
 //                                                      ? Container()
@@ -679,10 +844,10 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                         const EdgeInsets.only(
                                                             right: 35,
                                                             left: 35,
-                                                            bottom: 12),
+                                                            bottom: 10),
                                                     child: SpecialTextField(
                                                       hint:
-                                                          "ادخل رقم هاتف او عضوية العميل",
+                                                         localization.text("Enter the customer's phone number or membership"),
                                                       keyboardType:
                                                           TextInputType.number,
                                                       onChange: (value) {
@@ -737,7 +902,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                           child: Column(
                                                             children: [
                                                               Text(
-                                                                "تم رفض طلب السداد",
+                                                               localization.text("The payment request was rejected"),
                                                                 style: MyColors
                                                                     .styleNormalWhite,
                                                               ),
@@ -774,7 +939,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               chooseFiltrationMethod(
                                                                   context);
                                                             },
-                                                            text: "دفع",
+                                                            text: localization.text("Pay"),
                                                           ),
                                                         ),
                                                       ],
@@ -878,7 +1043,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "رقم الموبايل",
+                                                          localization.text("phone_number"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -895,7 +1060,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "رقم العضوية",
+                                                         localization.text("Membership N"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -945,7 +1110,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "رقم الطلب",
+                                                          localization.text("order_number"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -962,7 +1127,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "المبلغ",
+                                                          localization.text("price"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -979,7 +1144,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "عدد النقاط",
+                                                         localization.text("Number of points"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -996,7 +1161,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "المبلغ المخصوم من المتجر",
+                                                         localization.text("The amount deducted from the store"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1027,7 +1192,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                               left: 5,
                                                               bottom: 12),
                                                       child: SpecialTextField(
-                                                        hint: "المبلغ",
+                                                        hint:localization.text("price"),
                                                         keyboardType:
                                                             TextInputType
                                                                 .number,
@@ -1051,10 +1216,10 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                                       _key,
                                                                       context)
                                                                   .alertPopUp(
-                                                                      "يجب ادخال المبلغ")
+                                                                      localization.text("The amount must be entered"))
                                                               : addPoints();
                                                         },
-                                                        text: "اضافة نقاط",
+                                                        text: localization.text("add points"),
                                                       ),
                                                     ),
                                                   ],
@@ -1069,7 +1234,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                                                     onTap: () {
                                                       confirmAddingPoints();
                                                     },
-                                                    text: "تأكيد اضافة النقاط",
+                                                    text: localization.text("Confirm adding points"),
                                                   ),
                                                 ),
                                         ],
@@ -1102,6 +1267,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                             )
                           ],
                         ),
+
+                  SizedBox(height: 200,)
                 ],
               ),
             ),
@@ -1161,7 +1328,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
 //                      payOffCommission(1, 1);
                       //مدي واحد
                     },
-                    text: "دفع ماي فاتورة",
+                    text: localization.text("pay by myfatoora"),
                   ),
                 ),
 
@@ -1172,33 +1339,45 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                     onTap: () {
                       Navigator.pop(context);
 
-                      getImage().then((value) async {
-                        _image == null
-                            ? print("choose the image")
-                            : payOffCommission(0, null);
-                      });
+
+                      uploadPaymentPhoto(
+                          context);
+//                      getImage().then((value) async {
+//                        _image == null
+//                            ? print("choose the image")
+//                            : LoadingDialog(widget.scaffold, context)
+//                            .logOutAlert(
+//                            localization.text(
+//                                "Attach the link image"),
+//                                () {
+//                                  Navigator.pop(context);
+//                              payOffCommission(0, null);
+//                            });
+//
+//
+//                      });
                     },
-                    text: "الدفع البنكي (صورة الوصل)",
+                    text: localization.text("Bank transfer"),
                   ),
                 ),
 
-                detailsOfGeneralData == null ? Container() :  Column(
-                  children: [
-
-                    detailsOfGeneralData.bankName == null ? Container() :
-                    Text("${detailsOfGeneralData.bankName}"),
-
-                    SizedBox(
-                      height: 3,
-                    ),
-                    detailsOfGeneralData.bankName == null ? Container() :
-                    Text("SA${detailsOfGeneralData.bankAccount}"),
-
-//                          SizedBox(
-//                            height: 60,
-//                          ),
-                  ],
-                ),
+//                detailsOfGeneralData == null ? Container() :  Column(
+//                  children: [
+//
+//                    detailsOfGeneralData.bankName == null ? Container() :
+//                    Text("${detailsOfGeneralData.bankName}"),
+//
+//                    SizedBox(
+//                      height: 3,
+//                    ),
+//                    detailsOfGeneralData.bankName == null ? Container() :
+//                    Text("SA${detailsOfGeneralData.bankAccount}"),
+//
+////                          SizedBox(
+////                            height: 60,
+////                          ),
+//                  ],
+//                ),
 
 
                 SizedBox(
@@ -1224,35 +1403,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-//                ListTile(
-//                    onTap: () {},
-//                    title: Center(
-//                      child: Text(
-//                        txt,
-//                        textAlign: TextAlign.center,
-//                        style: MyColors.styleBold1,
-//                      ),
-//                    )),
-//                SizedBox(
-//                  height: 10,
-//                ),
-//                Padding(
-//                  padding: const EdgeInsets.all(12.0),
-//                  child: SpecialTextField(
-//                    icon: Icon(
-//                      Icons.mail_outline,
-//                      color: Colors.black,
-//                      size: 19,
-//                    ),
-//                    hint: "ادخل الكود",
-//                    keyboardType: TextInputType.emailAddress,
-//                    onChange: (value) {
-//                      setState(() {
-////                        verificationCode = value;
-//                      });
-//                    },
-//                  ),
-//                ),
+
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
@@ -1261,7 +1412,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
 
                       payOffCommission(1, 0);
                     },
-                    text: "دفع بماي فاتورة",
+                    text: localization.text("pay_by_my_fatoora"),
                   ),
                 ),
 
@@ -1275,9 +1426,103 @@ class _MyHomeForStoreState extends State<MyHomeForStore> {
                             payOffCommission(1, 1);
                             //مدي واحد
                           },
-                          text: "دفع بمدي",
+                          text: localization.text("Pay by Mada"),
                         ),
                       ),
+
+
+                Platform.isIOS != true ? Container()  :
+                details.onlinePayment == 0
+                    ? Container()
+                    : Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SpecialButton(
+                    onTap: () {
+                      Navigator.pop(context);
+                      payOffCommission(1, 3);
+                      //مدي واحد
+                    },
+                    text: localization.text("pay_by_my_apple"),
+                  ),
+                ),
+
+
+
+                SizedBox(
+                  height: 10,
+                ),
+              ]),
+            ),
+          );
+        });
+  }
+
+
+
+
+  uploadPaymentPhoto(BuildContext context) {
+    return showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(20), topLeft: Radius.circular(20))),
+        builder: (BuildContext bc) {
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+
+
+
+                detailsOfGeneralData == null ? Container() :  Column(
+                  children: [
+
+                    detailsOfGeneralData.bankName == null ? Container() :
+                    Text("${detailsOfGeneralData.bankName}"),
+
+                    SizedBox(
+                      height: 3,
+                    ),
+                    detailsOfGeneralData.bankName == null ? Container() :
+                    Text("SA${detailsOfGeneralData.bankAccount}"),
+
+                          SizedBox(
+                            height: 15,
+                          ),
+                  ],
+                ),
+
+
+
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SpecialButton(
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      getImage().then((value) async {
+                        _image == null
+                            ? print("choose the image")
+                            : LoadingDialog(widget.scaffold, context)
+                            .payByBank(
+                            localization.text(
+                                "Attach the link image"),
+                                () {
+                              Navigator.pop(context);
+                              payOffCommission(0, null);
+                            });
+
+
+                      });
+                    },
+                    text: localization.text("Attach the conversion image"),
+                  ),
+                ),
+
+
                 SizedBox(
                   height: 10,
                 ),

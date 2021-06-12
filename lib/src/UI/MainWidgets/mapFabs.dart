@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class MapFabs extends StatelessWidget {
@@ -28,7 +27,7 @@ class MapFabs extends StatelessWidget {
             FloatingActionButton(
               onPressed: onToggleMapTypePressed,
               materialTapTargetSize: MaterialTapTargetSize.padded,
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: Colors.black,
               mini: true,
               child: const Icon(Icons.layers),
               heroTag: "layers",
@@ -40,7 +39,7 @@ class MapFabs extends StatelessWidget {
               mini: true,
               child: const Icon(Icons.my_location),
               heroTag: "myLocation",
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: Colors.black,
 
             ),
         ],

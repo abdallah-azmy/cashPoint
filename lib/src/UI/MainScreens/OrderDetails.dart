@@ -13,24 +13,66 @@ import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetails extends StatefulWidget {
   final scaffold;
-  final order;
-  OrderDetails({this.scaffold, this.order});
+//  final order;
+  final id;
+  OrderDetails({this.scaffold,
+//    this.order,
+   @required this.id});
   @override
   _OrderDetailsState createState() => _OrderDetailsState();
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
-
+  SharedPreferences _prefs;
+  var apiToken;
+  var details;
 
   callPhone(num) {
     String phoneNumber = "tel:" + num;
     launch(phoneNumber);
   }
+
+  _getShared() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      apiToken = _prefs.getString("api_token");
+    });
+    getData(widget.id);
+  }
+
+
+  getData(id) async {
+    LoadingDialog(_key, context).showLoadingDilaog();
+    await ApiProvider(_key, context)
+        .showOrder(apiToken: apiToken,transaction_id:id)
+        .then((value) async {
+      if (value.code == 200) {
+        setState(() {
+          details = value.data;
+        });
+        Navigator.pop(context);
+      } else {
+        print('error >>> ' + value.error[0].value);
+        Navigator.pop(context);
+        LoadingDialog(_key, context).showNotification(value.error[0].value);
+      }
+    });
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getShared();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,308 +83,414 @@ class _OrderDetailsState extends State<OrderDetails> {
       child: Scaffold(
         key: _key,
         backgroundColor: Color(0xfff5f6f8),
-        body: SafeArea(
-          child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "التفاصيل",
-                        style: MyColors.styleBold2,
-                      ),
-                      InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              height: 30,
-                              width: 30,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                              ))),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Expanded(
-                      child: ListView(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+        body: RefreshIndicator(
+          onRefresh: () {
+            return getData(widget.id);
+          },
+          child: SafeArea(
+            child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: details == null ? Container() : Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                         localization.text("details"),
+                          style: MyColors.styleBold2,
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "رقم الطلب",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                                height: 30,
+                                width: 30,
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.black,
+                                ))),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Expanded(
+                        child: ListView(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("order_number"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.order.orderNumber == null
-                            ? ""
-                            : "${widget.order.orderNumber}",
-                        style: MyColors.styleNormal1,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+                        SizedBox(
+                          height: 5,
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "اسم العميل",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.order.userName == null
-                            ? ""
-                            : "${widget.order.userName}",
-                        style: MyColors.styleNormal1,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "اسم المتجر",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.order.storeName == null
-                            ? ""
-                            : "${widget.order.storeName}",
-                        style: MyColors.styleNormal1,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "هاتف العميل",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      InkWell(
-                        onTap: (){
-                          callPhone("${widget.order.userPhone}");
-                        },
-                        child: Text(
-                          widget.order.userPhone == null
+                        Text(
+                          details.orderNumber == null
                               ? ""
-                              : "${widget.order.userPhone}",
-                          style: MyColors.styleNormal0blue,
+                              : "${details.orderNumber}",
+                          style: MyColors.styleNormal1,
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+                        SizedBox(
+                          height: 10,
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "هاتف المتجر",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("customer_name"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      InkWell(
-                        onTap: (){
-                          callPhone("${widget.order.storePhone}");
-                        },
-                        child: Text(
-                          widget.order.storePhone == null
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          details.userName == null
                               ? ""
-                              : "${widget.order.storePhone}",
-                          style: MyColors.styleNormal0blue,
+                              : "${details.userName}",
+                          style: MyColors.styleNormal1,
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+                        SizedBox(
+                          height: 10,
                         ),
-                        child: Row(
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("store name"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          details.storeName == null
+                              ? ""
+                              : "${details.storeName}",
+                          style: MyColors.styleNormal1,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
 
-                          children: [
-                            Text(
-                              "المبلغ",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
+
+                        details == null ? Container() : details.cashierName == null ? Container() :   Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("Cashier name"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.order.cash == null ? "" : "${widget.order.cash}",
-                        style: MyColors.styleNormal1,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      widget.order.point == null
-                          ? Container()
-                          : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "النقاط",
-                                        style: MyColors.styleBold1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  widget.order.point == null
-                                      ? ""
-                                      : "${widget.order.point}",
-                                  style: MyColors.styleNormal1,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
-                      widget.order.commission == null
-                          ? Container()
-                          : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "العمولة",
-                                        style: MyColors.styleBold1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  widget.order.commission == null
-                                      ? ""
-                                      : "${widget.order.commission}",
-                                  style: MyColors.styleNormal1,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+                        details == null ? Container() : details.cashierName == null ? Container() :    SizedBox(
+                          height: 5,
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              "التاريخ",
-                              style: MyColors.styleBold1,
-                            ),
-                          ],
+                        details == null ? Container() : details.cashierName == null ? Container() :      Text(
+                          details == null
+                              ? ""
+                              : "${details.cashierName}",
+                          style: MyColors.styleNormal1,
                         ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.order.createdAt == null
-                            ? ""
-                            : "${widget.order.createdAt}",
-                        style: MyColors.styleNormal1,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  )),
-                ],
-              )),
+                        details == null ? Container() : details.cashierName == null ? Container() :    SizedBox(
+                          height: 10,
+                        ),
+
+
+
+
+
+
+
+
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("customer_phone"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        InkWell(
+                          onTap: (){
+                            callPhone("${details.userPhone}");
+                          },
+                          child: Text(
+                            details.userPhone == null
+                                ? ""
+                                : "${details.userPhone}",
+                            style: MyColors.styleNormal0blue,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("store_phone"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        InkWell(
+                          onTap: (){
+                            callPhone("${details.storePhone}");
+                          },
+                          child: Text(
+                            details.storePhone == null
+                                ? ""
+                                : "${details.storePhone}",
+                            style: MyColors.styleNormal0blue,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+
+
+
+
+
+
+
+
+
+
+
+
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+
+                            children: [
+                              Text(
+                               localization.text("price"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          details.cash == null ? "" : "${details.cash}",
+                          style: MyColors.styleNormal1,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        details.point == null
+                            ? Container()
+                            : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 7),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                         localization.text("points"),
+                                          style: MyColors.styleBold1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    details.point == null
+                                        ? ""
+                                        : "${details.point}",
+                                    style: MyColors.styleNormal1,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                        details.commission == null
+                            ? Container()
+                            : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 7),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.white,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          localization.text("Commission"),
+                                          style: MyColors.styleBold1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    details.commission == null
+                                        ? ""
+                                        : "${details.commission}",
+                                    style: MyColors.styleNormal1,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                               localization.text("date"),
+                                style: MyColors.styleBold1,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          details.createdAt == null
+                              ? ""
+                              : "${details.createdAt}",
+                          style: MyColors.styleNormal1,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+
+
+
+
+
+                        details.rate == null ? Container() :  Container(
+                          padding: EdgeInsets.symmetric(horizontal: 7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                localization.text("_rate"),
+                                style: MyColors.styleBold1,
+                              ),
+
+
+                              SizedBox(width:10,),
+
+
+                              details.rate == null ? Container() :     Directionality(
+                                textDirection: localization.currentLanguage.toString() == "en"
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                                child: SmoothStarRating(
+                                    allowHalfRating: false,
+                                    onRated: (v) {},
+                                    starCount: 5,
+                                    rating: double.parse('${details.rate.rate}'),
+                                    size: 15.0,
+                                    isReadOnly: true,
+                                    color: Colors.amber,
+                                    borderColor: Colors.yellow,
+                                    spacing: 1.0),
+                              )
+                            ],
+                          ),
+                        ),
+                        details.rate == null ? Container() :   SizedBox(
+                          height: 5,
+                        ),
+                        details.rate == null ? Container() :    Text(
+                          details.rate == null
+                              ? ""
+                              : "${details.rate.description}",
+                          style: MyColors.styleNormal1,
+                        ),
+                        details.rate == null ? Container() :   SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    )),
+                  ],
+                )),
+          ),
         ),
       ),
     );

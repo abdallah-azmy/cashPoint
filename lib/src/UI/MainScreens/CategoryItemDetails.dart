@@ -1,22 +1,31 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cashpoint/src/helper/map_helper.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:map_launcher/map_launcher.dart' as mapLaunch;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
 import 'package:cashpoint/src/MyColors.dart';
 import 'package:cashpoint/src/Network/api_provider.dart';
 import 'package:cashpoint/src/UI/MainWidgets/CustomProductImage.dart';
+import 'package:cashpoint/src/UI/MainWidgets/mapPositionFromLatLon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:flutter/painting.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CategoryItemDetails extends StatefulWidget {
   final scaffold;
   final id;
+  final categoryName;
   CategoryItemDetails({
     this.scaffold,
     this.id,
+    this.categoryName,
   });
   @override
   _CategoryItemDetailsState createState() => _CategoryItemDetailsState();
@@ -28,33 +37,8 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
   var slider = [];
+  var countryController;
 
-//  double rating = 4.0;
-
-//  var categoryItemDetails = [
-//    {
-//      "comment": "من افضل المطاعم التي تعاملت معها في كل شيء شكرا جزيلا لكم",
-//      "userName": "احمد توفيق",
-//      "time": "10:30 AM",
-//      "img":
-//          "https://www.deputy.com/uploads/2018/08/Screen-Shot-2018-08-08-at-12.19.36-PM.png",
-//    },
-//    {
-//      "comment": "من افضل المطاعم التي تعاملت معها",
-//      "userName": "احمد توفيق",
-//      "time": "10:30 AM",
-//      "img":
-//          "https://99designs-blog.imgix.net/blog/wp-content/uploads/2019/10/attachment_103367090-e1571110045215.jpg?auto=format&q=60&fit=max&w=930",
-//    },
-//    {
-//      "comment":
-//          "من افضل المطاعم التي تعاملت معها من افضل المطاعم التي تعاملت معها من افضل المطاعم التي تعاملت معها من افضل المطاعم التي تعاملت معها من افضل المطاعم التي تعاملت معها",
-//      "userName": "احمد توفيق",
-//      "time": "10:30 AM",
-//      "img": "https://penji.co/wp-content/uploads/2020/10/Dave-BURGITOS.jpg",
-//    },
-//
-//  ];
 
   SharedPreferences _prefs;
   var apiToken;
@@ -69,6 +53,37 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
     print("api_token >>>>> $apiToken");
   }
 
+
+  Future<double> getDistance(lat, long) async {
+    double _distanceInMeters = Geolocator.distanceBetween(
+      Provider.of<MapHelper>(context, listen: false).position.latitude,
+      Provider.of<MapHelper>(context, listen: false).position.longitude,
+      lat,
+      long,
+    );
+
+    print("111111 $_distanceInMeters");
+    return _distanceInMeters;
+  }
+
+  callPhone(num) {
+    String phoneNumber = "tel:" + num;
+    launch(phoneNumber);
+  }
+
+  getNameOfLocation(lat, long) async {
+    final coordinates = new Coordinates(double.parse(lat), double.parse(long));
+    var addresses =
+    await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = addresses.first;
+    print(
+        ' ${first.locality}, ${first.adminArea},${first.subLocality}, ${first.subAdminArea},${first.addressLine}, ${first.featureName},${first.thoroughfare}, ${first.subThoroughfare}');
+
+    setState(() {
+      countryController = first.addressLine;
+    });
+  }
+
   getData() async {
     LoadingDialog(_scafold, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
@@ -79,9 +94,11 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
         print("correct connection");
         setState(() {
           details = value.data;
+
           print("${double.parse('${details.stars}')}");
           slider = value.data.sliders;
         });
+        getNameOfLocation(details.latitude,details.longitude);
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
@@ -92,10 +109,33 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
     });
   }
 
+  _launchMap(lat,long) async {
+    if (await mapLaunch.MapLauncher.isMapAvailable(mapLaunch.MapType.google)) {
+      await mapLaunch.MapLauncher.launchMap(
+        mapType: mapLaunch.MapType.google,
+        coords:mapLaunch.Coords(lat, long),
+        title: "name",
+        description: "disc",
+      );
+    } else {
+      if (await mapLaunch.MapLauncher.isMapAvailable(mapLaunch.MapType.apple)) {
+        await mapLaunch.MapLauncher.launchMap(
+          mapType: mapLaunch.MapType.apple,
+          coords: mapLaunch.Coords(lat, long),
+          title: "name",
+          description: "description",
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    Provider.of<MapHelper>(context, listen: false).position == null
+        ?  Provider.of<MapHelper>(context, listen: false)
+        .getLocation() : print("there is position") ;
     this._getShared();
   }
 
@@ -189,43 +229,7 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
                                     Container( height: 200.0,
                                         width: MediaQuery.of(context).size.width -
                                             30,child: CustomProductImage(image: slider[index].image ,))
-//                                    CachedNetworkImage(
-//                                      height: 200.0,
-//                                      width: MediaQuery.of(context).size.width -
-//                                          30,
-//                                      fit: BoxFit.fill,
-//                                      imageUrl: slider[index].image == null
-//                                          ? " "
-//                                          : "${slider[index].image}",
-//                                      imageBuilder: (context, imageProvider) =>
-//                                          Container(
-//                                        decoration: BoxDecoration(
-//                                          borderRadius:
-//                                              BorderRadius.circular(5),
-//                                          image: DecorationImage(
-//                                              image: imageProvider,
-//                                              fit: BoxFit.cover),
-//                                        ),
-//                                      ),
-//                                      placeholder: (context, url) =>
-//                                          new Container(
-//                                        height: 30,
-//                                        width: 35,
-////                                      color: MyColors.grey,
-//                                        child: Center(
-//                                            child: CircularProgressIndicator()),
-//                                      ),
-//                                      placeholderFadeInDuration:
-//                                          Duration(milliseconds: 500),
-//                                      errorWidget: (context, url, error) =>
-//                                          new Container(
-//                                        height: 200.0,
-//                                        width:
-//                                            MediaQuery.of(context).size.width -
-//                                                30,
-//                                        color: MyColors.grey,
-//                                      ),
-//                                    ),
+
                                   );
                                 },
                               );
@@ -250,10 +254,33 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              localization.text("About the store"),
-                              style: MyColors.styleBold1,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                Row(
+                                  children: [
+
+
+                                    Text("${widget.categoryName}",style: MyColors.styleBold2,),
+
+                                    SizedBox(width: 5,),
+                                    SizedBox(height: 20,child: VerticalDivider(thickness: 3,)),
+                                    SizedBox(width: 5,),
+                                    details == null
+                                        ? Container() : InkWell(onTap: (){
+                                      callPhone("${details.phone}");
+                                    },child: Icon(Icons.phone,size: 24,color: Colors.blue[900],)),
+
+                                  ],
+                                ),
+
+                                SizedBox(height: 10,),
+
+
+                              ],
                             ),
                             details == null
                                 ? Container()
@@ -269,8 +296,84 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
                                     spacing: 2.0)
                           ],
                         ),
+
+
+//                        details == null ? Container() : details.latitude == null ? Container() :  PositionFromLatLon(lat: double.parse(details.latitude),long: double.parse(details.longitude),scaffoldKey: _scafold,),
+
+
+                        details == null ? Container() :   Row(mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(localization.text("to go to the store"),style: MyColors.styleBold0,),
+                            SizedBox(width: 5,),
+                            InkWell(onTap: (){
+                            _launchMap(double.parse("${details.latitude}"),double.parse("${details.longitude}"));
+                      },child: Icon(Icons.location_on,size: 25,)),
+                          ],
+                        ),
+
+
+                        Row(
+//                            mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Flexible(child: Text(localization.text("The distance to the facility"),style: MyColors.styleBold0,)),
+                            SizedBox(width: 5,),
+                            Row(
+                              children: [
+                                Text(
+                                  "KM",
+                                  style: MyColors.styleBold1Orange,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+
+                                details == null ? Container() :    Provider.of<MapHelper>(context, listen: false).position == null ? Container():      FutureBuilder<double>(
+                                  future: getDistance(
+                                      double.parse(
+                                          '${details.latitude}'),
+                                      double.parse(
+                                          '${details.longitude}')),
+                                  initialData: 0.0,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return
+//                        Text("${snapshot.data}");
+                                        Text(
+                                          "${snapshot.data.toStringAsFixed(2)}",
+                                          style: MyColors.styleBold0,
+                                        );
+                                    } else {
+                                      return Container(
+                                        height: 30,
+                                        width: 30,
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+
                         SizedBox(
-                          height: 10,
+                          height: 18,
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              localization.text("About the store"),
+                              style: MyColors.styleBold1,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
                         ),
                         Text(details == null
                             ? ""

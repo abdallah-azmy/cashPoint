@@ -18,10 +18,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SendingCode extends StatefulWidget {
   final phone;
-  final countryId;
+//  final countryId;
   final typeOfCode;
   final logInType;
-  SendingCode({this.phone, this.typeOfCode,this.countryId,this.logInType});
+  SendingCode({this.phone, this.typeOfCode,
+//    this.countryId,
+    this.logInType});
   @override
   _SendingCodeState createState() => _SendingCodeState();
 }
@@ -91,7 +93,9 @@ class _SendingCodeState extends State<SendingCode> {
       LoadingDialog(_scafold, context).showLoadingDilaog();
 
       await ApiProvider(_scafold, context)
-          .phoneVerificationMobileRegister(phone: widget.phone, code: verificationCode,country_id: widget.countryId)
+          .phoneVerificationMobileRegister(phone: widget.phone, code: verificationCode
+//          ,country_id: widget.countryId
+      )
           .then((value) async {
         if (value.code == 200) {
           print('correct');
@@ -99,7 +103,9 @@ class _SendingCodeState extends State<SendingCode> {
           LoadingDialog(_scafold,context).showNotification(value.data.value);
           Future.delayed(Duration(seconds: 1,milliseconds: 250),(){
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => SignUp(phone:widget.phone,countryId: widget.countryId,)));
+                context, MaterialPageRoute(builder: (context) => SignUp(phone:widget.phone
+//              ,countryId: widget.countryId,
+              )));
 
           });
         } else {
@@ -122,7 +128,9 @@ class _SendingCodeState extends State<SendingCode> {
       LoadingDialog(_scafold, context).showLoadingDilaog();
 
       await ApiProvider(_scafold, context)
-          .sendCodeForChangingPhone(phone: widget.phone, code: verificationCode,country_id: widget.countryId,apiToken: apiToken,type: logInType == "متجر" ? 2 : 1 )
+          .sendCodeForChangingPhone(phone: widget.phone, code: verificationCode,
+//          country_id: widget.countryId,
+          apiToken: apiToken,type: logInType == "متجر" ? 2 : 1 )
           .then((value) async {
         if (value.code == 200) {
           print('correct');
@@ -150,7 +158,9 @@ class _SendingCodeState extends State<SendingCode> {
       LoadingDialog(_scafold, context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
       await ApiProvider(_scafold, context)
-          .resendCodeForPhoneRegister(phone: widget.phone,country_id: widget.countryId )
+          .resendCodeForPhoneRegister(phone: widget.phone,
+//          country_id: widget.countryId
+      )
           .then((value) async {
         if (value.code == 200) {
           print('Name >>> ' + value.data);
@@ -367,7 +377,7 @@ class _SendingCodeState extends State<SendingCode> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "${localization.text("you will receive the message within")} $_start",
+                          "${localization.text("you will receive the message within")} $_start ${localization.text("second")}",
                           style: MyColors.styleBold1grey,
                         ),
                       ],
@@ -564,7 +574,7 @@ class _SendingCodeState extends State<SendingCode> {
                     SizedBox(
                       height: 6,
                     ),
-                    widget.typeOfCode == "mobileRegister" ?     Row(
+                    widget.typeOfCode == "mobileRegister" ?  _start != 0 ? Container() :    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(

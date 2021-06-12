@@ -111,9 +111,12 @@ class _NotificationCardState extends State<NotificationCard> {
                         Column(
                           children: [
                             SizedBox(height: 4,),
-                            Text(
-                              "${widget.time}",
-                              style: MyColors.styleBoldSmall,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(
+                                "${widget.time}",
+                                style: MyColors.styleBoldSmall,
+                              ),
                             ),
                             SizedBox(height: 2,),
                           ],
@@ -126,6 +129,7 @@ class _NotificationCardState extends State<NotificationCard> {
                     Text(
                       "${widget.content}" ,
                       style: MyColors.styleNormalSmall,
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),

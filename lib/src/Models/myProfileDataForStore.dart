@@ -52,13 +52,15 @@ class Datum {
     this.maxCommission,
     this.isPaid,
     this.onlinePayment,
+    this.stars,
+    this.fatoora,
   });
 
   int id;
   String name;
   String phone;
   String logo;
-  int membershipNum;
+  String membershipNum;
   String totalSales;
   String totalCommissions;
   String currentCommissions;
@@ -68,22 +70,26 @@ class Datum {
   String maxCommission;
   int isPaid;
   int onlinePayment;
+  double stars;
+  dynamic fatoora;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     id: json["id"] == null ? null : json["id"],
     name: json["name"] == null ? null : json["name"],
     phone: json["phone"] == null ? null : json["phone"],
     logo: json["logo"] == null ? null : json["logo"],
-    membershipNum: json["membership_num"] == null ? null : json["membership_num"],
-    totalSales: json["total_sales"] == null ? null : json["total_sales"],
-    totalCommissions: json["total_commissions"] == null ? null : json["total_commissions"],
-    currentCommissions: json["current_commissions"] == null ? null : json["current_commissions"],
-    paidCommissions: json["paid_commissions"] == null ? null : json["paid_commissions"],
+    membershipNum: json["membership_num"] == null ? null : "${json["membership_num"]}",
+    totalSales: json["total_sales"] == null ? null : "${json["total_sales"]}",
+    totalCommissions: json["total_commissions"] == null ? null : "${json["total_commissions"]}",
+    currentCommissions: json["current_commissions"] == null ? null : "${json["current_commissions"]}",
+    paidCommissions: json["paid_commissions"] == null ? null : "${json["paid_commissions"]}",
     coupon: json["coupon"] == null ? null : json["coupon"],
     lastLoginAt: json["last_login_at"] == null ? null : json["last_login_at"],
-    maxCommission: json["max_commission"] == null ? null : json["max_commission"],
+    maxCommission: json["max_commission"] == null ? null : "${json["max_commission"]}",
     isPaid: json["is_paid"] == null ? null : json["is_paid"],
     onlinePayment: json["online_payment"] == null ? null : json["online_payment"],
+    stars: json["stars"] == null ? null : json["stars"].toDouble(),
+    fatoora: json["fatoora"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -102,6 +108,8 @@ class Datum {
     "max_commission": maxCommission == null ? null : maxCommission,
     "is_paid": isPaid == null ? null : isPaid,
     "online_payment": onlinePayment == null ? null : onlinePayment,
+    "stars": stars == null ? null : stars,
+    "fatoora": fatoora,
   };
 }
 

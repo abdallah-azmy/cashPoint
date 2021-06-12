@@ -30,8 +30,8 @@ class LoadingDialog {
             backgroundColor: Colors.transparent,
             content:
             SpinKitChasingDots(
-              color: Colors.black,
-              size: 30.0,
+              color: MyColors.darkRed,
+              size: 45.0,
             )
 //              BarProgressIndicator(
 //                numberOfBars: 4,
@@ -52,6 +52,33 @@ class LoadingDialog {
         });
   }
 
+
+
+  showDoubleNotification(title,msg) {
+    scafold.currentState.showSnackBar(
+      SnackBar(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: MyColors.styleBold2white,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 5,),
+            Text(
+              msg,
+              style: MyColors.styleBold1white,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 90,)
+          ],
+        ),
+        backgroundColor: Colors.black,
+        duration: Duration(seconds: 4),
+      ),
+    );
+  }
 
   showLoadingDilaogUploadingVideo() {
     showDialog(
@@ -144,6 +171,66 @@ class LoadingDialog {
 
 
 
+  payByBank(String text, function) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(0),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            backgroundColor: Colors.transparent,
+            content: Container(
+                height: 150,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text(
+                        text ?? "هل تريد تسجيل الخروج",
+                        style: MyColors.styleBold2,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          SpecialButton(
+                            onTap: function,
+                            text: localization.text("send"),
+                            width: 85.0,
+                            color: Colors.green,
+                            textColor: Colors.white,
+                          ),
+
+                          SpecialButton(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            text: localization.text("cancel"),
+                            width: 85.0,
+                            color: Colors.red,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )),
+          );
+        });
+  }
+
+
 
   logOutAlert(String text, function) {
     showDialog(
@@ -180,7 +267,7 @@ class LoadingDialog {
                         children: <Widget>[
                           SpecialButton(
                             onTap: function,
-                            text: "تأكيد",
+                            text: localization.text("confirm"),
                             width: 85.0,
                             color: Colors.red,
                             textColor: Colors.white,
@@ -190,7 +277,7 @@ class LoadingDialog {
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            text: "الغاء",
+                            text: localization.text("cancel"),
                             width: 85.0,
                             color: Colors.green,
                             textColor: Colors.white,
@@ -357,7 +444,28 @@ class LoadingDialog {
     );
   }
 
-
+  alertPopUpDismissible(String text) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(0),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            backgroundColor: Colors.black,
+            content:   Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 3),
+              child: Text(
+                text ?? localization.text("_delete"),
+                style: MyColors.styleBold2white,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        });
+  }
 
   alertPopUp(String text) {
     showDialog(
@@ -381,6 +489,42 @@ class LoadingDialog {
           );
         });
   }
+
+
+
+
+
+  alertPopUpNotification(msg,title) {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(0),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            backgroundColor: Colors.black,
+            content:   Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: MyColors.styleBold2white,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 5,),
+                Text(
+                  msg,
+                  style: MyColors.styleBold1white,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
 
   showBlackNotification(msg) {
    scafold.currentState.showSnackBar(

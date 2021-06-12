@@ -115,6 +115,7 @@ class NetworkUtil {
       }
     } else {
       if (networkError == null) {
+
         LoadingDialog(_scafold,context).showAlert("no internet");
       }
     }

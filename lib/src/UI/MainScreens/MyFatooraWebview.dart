@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cashpoint/src/UI/MainScreens/SuccessPay.dart';
+import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 //import 'package:tmam/UI/General/Main/Settings/Internal/Payment/SuccessPay.dart';
@@ -8,8 +9,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class OnlinePaymentScreen extends StatefulWidget {
   final String url;
+  final  getData;
 
-  const OnlinePaymentScreen({Key key, this.url}) : super(key: key);
+  const OnlinePaymentScreen({Key key, this.url,this.getData}) : super(key: key);
 
   @override
   _OnlinePaymentScreenState createState() => _OnlinePaymentScreenState();
@@ -25,6 +27,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   void dispose() {
     // timer.cancel();
     super.dispose();
+    widget.getData() ;
   }
 
   @override
@@ -70,10 +73,10 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Lottie.network(
-                        'https://assets8.lottiefiles.com/packages/lf20_foxtV6.json',
+                        "https://assets10.lottiefiles.com/packages/lf20_x62chJ.json",
                         height: MediaQuery.of(context).size.height / 1.4,
                       ),
-                      Text("جاري معالجة البيانات.."),
+                      Text(localization.text("The data is being processed..")),
                     ],
                   ),
                 ],

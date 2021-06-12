@@ -47,7 +47,7 @@ class _SpecialButtonState extends State<SpecialButton> {
                 ),
               ) : Container(),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 7),
                 child: Text(
                   widget.text,
                   textAlign: TextAlign.center,

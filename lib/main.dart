@@ -40,7 +40,9 @@ class _AppState extends State<App> {
         title: 'كاش بوينت',
         key: key ,
 
-        home: SplashScreen(),
+        home: SplashScreen(
+          navigator: key,
+        ),
 
       ),
     )

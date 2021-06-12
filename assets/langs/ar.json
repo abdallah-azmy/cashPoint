@@ -6,8 +6,23 @@
   "Register a new customer account": "تسجيل حساب عميل جديد",
   "cashpoint application": "تطبيق كاش بوينت",
 
-  "welcome_user": "اهلا بك",
+  "welcome_user": "مرحبا",
+  "The due commission must be paid": "يجب سداد العمولة المستحقة",
   "phone_number": "رقم الجوال",
+  "Commission": "العمولة",
+  "cashier": "الكاشير",
+  "Location must be specified": "يجب تحديد المكان",
+  "There are no points to refund": "لا يوجد نقاط للاسترجاع",
+  "paid commission": "العمولة المدفوعة",
+  "Wait for administration confirmation of payment": "انتظر تأكيد الادارة للدفع",
+
+  "Total cashpoint commissions": "اجمالي عمولات كاش بوينت",
+  "Current cashpoint commission": "عمولة كاش بوينت الحالية",
+  "My total sales": "اجمالي مبيعاتي",
+  "no sales": "لا يوجد مبيعات",
+
+
+
   "password": "كلمة المرور",
   "short_code": "يجب ادخال الكود",
   "country_code": "كلمة المرور",
@@ -26,6 +41,9 @@
   "resend message": "اعد ارسال الرسالة",
   "_send": "ارسل",
   "add rate": "اضف تقييمك",
+  "add pic": "اضافة صورة",
+  "edit cashier": "تعديل الكاشير",
+  "log in as cashier": "دخول كاشير",
 
   "restaurant_name_in_english": "اسم المطعم بالانجليزية",
   "no_internet": "لا يوجد اتصال بالانترنت !",
@@ -84,28 +102,39 @@
 "profile": "حسابي",
 "ads":"الإعلانات",
 "questions":"كم سعر",
+"CashPoint":"كاش بوينت",
 "Membership type":"نوع العضوية",
 "Membership No":"رقم العضوية :",
+"Membership N":"رقم العضوية",
 "questions_2":"الأسئلة",
 "discussion_price":"قابل للنقاش",
 "non_discussion_price":" غير قابل للنقاش",
 "new_product":"جديد",
 "old":"مستعمل",
 "note":"ملحوظة",
+"to the store":"الي المنشأة",
 "ad_details":"تفاصيل الاعلان",
 "details":"التفاصيل",
+"to a link":"الي لينك",
+"When you click on the ad, it leads you":"عند الضغط علي الاعلان يقودك",
+"Advertise with us":"اعلن لدينا",
 "questions_details":"تفاصيل السؤال",
 "add_new_meal":"اضافة وجبة جديدة",
 "shares":"الردود",
 "add_answer":"إضافة إجابة",
 "price":"المبلغ",
+"please try later":"يرجي المحاولة لاحقا",
 "its_price":"السعر",
 "add_comment":"اضافة تعليق",
 "comments":"التعليقات",
 "chooses":"خيارات",
+"The amount must be entered":"يجب ادخال المبلغ",
+
 "add reminder":"اضافة تذكير",
+"Confirm adding points":"تأكيد اضافة النقاط",
 "edit reminder":"تعديل التذكير",
 "content":"المحتوي",
+"add points":"اضافة نقاط",
 "my reminders":"تذكيراتي",
 "replay":"رد",
 "send": "إرسال",
@@ -121,6 +150,7 @@
 "My payments":"مدفوعاتي",
 "block":"حظر",
 "total":"الاجمالي",
+"There are no payments":"لا توجد مدفوعات",
 "how_price":"كم سعر ؟",
 "Evaluation":"تقييم خدمتنا",
 "edit location":"تعديل العنوان",
@@ -172,9 +202,15 @@
 "continue_sign_up":"متابعة انشاء الحساب الجديد",
 
 "whatsapp":"واتساب",
+"point":"نقطة",
+"Total points since registration":"اجمالي النقاط منذ التسجيل :",
+"Waiting for management confirmation to convert points to cash":"في انتظار تأكيد الادارة لتحويل النقاط الي كاش",
+"Bank account":"الحساب البنكي :",
 "call us":"تواصل معنا",
 "call":"اتصال",
+"Wait for the administration to confirm the commission payment process":"انتظر تأكيد الادارة لعملية دفع العمولة",
 "call us phone":"اتصل بنا",
+"The data is being processed..":"جاري معالجة البيانات..",
 "message":"ارسال رسالة داخل التطبيق",
 
 "activation_message":"ارسال رسالة التفعيل",
@@ -203,6 +239,7 @@
   "termsAndConditions":"الشروط و الاحكام",
   "search_for_meal":"ابحث عن وجبة",
   "search":"ابحث",
+  "no search results":"لا يوجد نتائج للبحث",
   "apply_location":"برجاء تحديد المكان",
   "Classification_name":"اسم التصنيف",
   "name":"الاسم",
@@ -308,6 +345,7 @@
   "city_name":"اسم المدينة",
   "city_name_in_english":"اسم المدينة بالانجليزي",
   "operations":"العمليات",
+  "Pay by Mada":"ادفع بمدي",
   "meal_name":"اسم الوجبة",
   "write_name_of_new_meal":"اكتب اسم الوجبة الجديدة",
   "name_of_the_meal_in_english":"اسم الوجبة بالانجليزي",
@@ -328,7 +366,7 @@
 "ad_deleted":" تم حذف هذا الاعلان ",
 
 "logOut":"تسجيل خروج",
-"Log in as a store":"الدخول كمتجر",
+"Log in as a store":"دخول منشأة",
 "conversation":"المحادثة",
 "write_your_message_here":"اكتب رسالتك هنا",
 
@@ -376,6 +414,8 @@
   "reset_password": "استعادة كلمة المرور",
   "confirm_password": "تاكيد كلمة المرور",
   "Pay off commissions": "تسديد العمولات",
+  "Pay": "تسديد",
+  "The payment request was rejected": "تم رفض طلب السداد",
   "confirm_secret_number": "تاكيد الرقم السري",
   "get_position": "حدد موقعي",
   "Enter the customer membership number": "ادخل رقم عضوية العميل",
@@ -383,6 +423,7 @@
   "edit": "تعديل",
   "first_offer": "الباقة الأولي",
   "second_offer": "الباقة الثانية",
+  "second": "ثانية",
   "third_offer": "الباقة الثالثة",
   "forth_offer": "الباقة الرابعة",
   "the_offer": "الباقة",
@@ -391,6 +432,9 @@
   "offer's_name": "اسم الباقة",
   "offer's_description": "وصف الباقة",
   "description": "الوصف",
+  "or": "او",
+  "client": "عميل",
+
   "description_of_the_meal": "وصف الوجبة",
   "write_the_description_of_the_meal": "اكتب وصف الوجبة",
   "write_the_price_of_the_meal": "اكتب سعر الوجبة",
@@ -402,6 +446,8 @@
   "write_the_number_of_calories": "اكتب عدد السعرات الحرارية",
   "number_of_calories": "عدد سعرات الوجبة",
   "calories": "السعرات الحرارية",
+  "Number of points": "عدد النقاط",
+  "The amount deducted from the store": "المبلغ المخصوم من المنشأة",
 
   "The price includes tax": "السعر شامل الضريبة",
   "The price doesn't includes tax": "السعر غير شامل الضريبة",
@@ -427,8 +473,11 @@
   "add category": "يجب اختيار تصنيف (اقسام المنيو)",
   "add category_": "يجب اضافة تصنيف اولا (اقسام المنيو)",
   "pay by bank": "الدفع عن طريق البنك",
+  "pay": "دفع",
+  "Enter the customer's phone number or membership": "ادخل رقم جوال او عضوية العميل",
 
   "bank name": "اسم البنك :",
+  "add cashier": "اضافة كاشير",
   "accountNumber": "رقم الحساب :",
   "_accountNumber": "رقم الحساب",
   "chooseBank": "اختر البنك",
@@ -441,15 +490,27 @@
   "No payment has been made": "لم يتم الدفع",
   "unlimited_offer_description": "وصف الباقة غير المحدودة",
   "taxes": "قيمة الضريبة",
-  "slider": "الاسليدر",
+  "rate the application": "قيم التطبيق",
+  "slider": "السلايدر",
   "tabular": "مجدول",
   "Current points": "النقاط الحالية",
+  "points": "النقاط",
+  "Payment not confirmed": "لم يتم تأكيد الدفع",
+  "Payment confirmed": "تم تأكيد الدفع",
+  "change cash back": "تحويل كاش باك",
   "I didn't receive the code": "لم يصلني الرمز",
   "Scout amount": "مبلغ الكشفية",
   "Redeeming points": "تحويل النقاط",
   "moving slider": "السلايدر المتحرك",
   "open google map":"فتح في الخريطة",
   "add_slider": "اضافة اسليدر",
+  "Please complete the payment process": "يرجي اكمال عملية الدفع",
+  "Attach the conversion image": "ارفق صورة التحويل",
+  "Bank transfer": "دفع تحويل بنكي",
+  "Transfer request denied": "تم رفض طلب التحويل",
+  "Confirm transfer request": "طلب التحويل تأكد",
+  "The online payment process has not been completed, please contact the administration": "لم تكتمل عملية الدفع اونلاين , يرجي التواصل مع الادارة",
+  "Request to transfer points to active cash": "طلب تحويل النقاط لكاش  نشط",
 
 
 
@@ -457,10 +518,14 @@
   "online_Payment": "هل تريد الاشتراك في خاصية الدفع الالكتروني ؟",
   "choose_online_Payment_method": "اختر طريقة الدفع الالكتروني",
   "payment_method": "طريقة الدفع",
-  "pay_by_my_fatoora": "ادفع بماي فاتورة",
+  "pay_by_my_fatoora": "ادفع بالفيزا",
+  "pay_by_my_apple": "ادفع ب ابل باي",
+  "There is no current transfer request": "لا يوجد طلب تحويل حالي",
 
   "skip": "تخطي",
+  "Bank payment (copy of the receipt)": "الدفع البنكي (صورة الوصل)",
   "upload_bill_photo": "ارفع صورة الفاتورة",
+  "Attach the link image": "ارفاق صورة الوصل",
 
 
 
@@ -491,21 +556,24 @@
 
   "orders": "الطلبات",
   "_my orders": "طلباتي",
-  "nearest": "الأقرب",
+  "nearest": "الأقرب اليك",
   "My sales": "مبيعاتي",
   "List of purchases": "قائمة المشتريات",
   "higher rate": "الأعلي تقييم",
   "My purchases": "مشترياتي",
-  "About the store": "نبذة عن المتجر",
+
+  "About the store": "نبذة عن المنشأة",
   "order_number": "رقم الطلب",
   "_order_number": "رقم الطلب :",
   "customer_name": "اسم العميل",
 
   "customer": "عميل",
-  "store": "متجر",
+  "store name": "اسم المنشأة",
+  "store": "منشأة",
 
 
-  "customer_phone": "هاتف العميل",
+  "customer_phone": "جوال العميل",
+  "store_phone": "جوال المنشأة",
 
   "my_meals": "وجباتي",
   "new_orders": "الطلبات الجديدة",
@@ -517,7 +585,10 @@
   "add_new_branch": "اضف فرع جديد",
   "email": "البريد الإكتروني",
   "date": "التاريخ",
+  "Add photos": "اضافة صور",
   "cancel order": "الغاء الطلب",
+  "Membership history": "تاريخ العضوية",
+  "Add an advertisement": "اضافة اعلان",
   "Write your notes on the request": "اكتب ملاحظاتك علي الطلب ان وجدت",
 
 
@@ -533,6 +604,18 @@
 
 
   "accept_terms": "موافق على الشروط والاحكام",
+  "refund request": "استرجاع الطلب",
+  "refund request reason": "سبب استرجاع الطلب",
+  "refund request reason required": "مطلوب سبب استرجاع الطلب",
+
+
+  "Advertising": "اعلان",
+  "Waiting for admin activation": "في انتظار تفعيل الادارة",
+  "Inactive ad": "اعلان غير مفعل",
+  "activated ad": "اعلان مفعل",
+
+
+
   "should_accept": "يجب الموافقة على الشروط والاحكام",
   "have_account": "لديك حساب",
   "in_fav": "هذه المنشور في المُضلة بالفعل",
@@ -554,6 +637,7 @@
   "no_offer_in_area": "لا توجد نتائج في نطاق بحثك",
   "hello": "مرحبا بك",
   "favourite": "المُفضلة",
+  "Scan a code": "امسح الرمز",
   "edit_profile": "تعديل الملف الشخصي",
   "add_city": "اضافة مدينة جديدة",
   "add_branch": "اضافة فرع جديد",
@@ -569,8 +653,10 @@
   "_service location": "مكان الخدمة",
   "chosen rating sentences": "جمل التقييم المختارة",
   "rate": "تقييم",
+  "_rate": "التقييم",
   "bill": "الفاتورة",
   "no photos": "لا توجد صور",
+  "There is an active request that has not yet been confirmed": "يوجد طلب نشط لم يؤكد بعد",
 
   "delivery_price": "سعر التوصيل :",
   "order_price": "سعر الطلب",
@@ -591,6 +677,7 @@
   "delete": "تأكيد الحذف",
   "cancel": "الغاء",
   "_delete": "احذف",
+  "Where would you like to collect your points today ?": "من وين حابب تجمع نقاطك اليوم ؟",
 
   "menu_sections":"اقسام المنيو",
   "choose_city": "إختر المدينة",
@@ -601,10 +688,11 @@
   "chat_seller": "مراسلة البائع",
 
 
-  "phone_changed": "تم تغيير رقم الهاتف بنجاح",
-  "change phone": "تغيير رقم الجوال",
+  "phone_changed": "تم تغيير رقم الجوال بنجاح",
+  "change phone": "تغيير رقم الموبايل",
   "change_password": "تغيير كلمة المرور",
   "my location": "عنواني",
+  "payment confirmed": "تم تأكيد الدفع",
   "edit_account": "تعديل الحساب",
   "name_changed": "تم تعدي اسم المستخدم بنجاح",
   "password_changed": "تم تعديل كلمة المرور بنجاح",
@@ -626,12 +714,14 @@
   "Design and implementation of Tqnee Information Technology": "تصميم وتنفيذ تقني لتقنية المعلومات",
   "confirm_nem_password": "تاكيد كلمة المرور الجديدة",
   "edit_password": "تعديل كلمة المرور",
+  "phone": "الجوال",
 
 
 
   "languageAnCountry": " اللغة و الدولة",
   "centers": "الرئيسية",
   "language": "language اللغة",
+  "_language": "اللغة",
   "attendance": "حضور",
   "departure": "انصراف",
   "my orders": "الطلبات",
@@ -652,6 +742,9 @@
   "deleted_successfully": "تم المسح بنجاح",
   "no services in your area": "لا يوجد خدمات بمنطقتك",
   "send rate": "ارسل التقييم",
+
+  "An error occurred client not found": "لم يتم العثور علي العميل",
+  "operation accomplished successfully": "تمت العملية بنجاح",
   "choose sentence": "برجاء تحديد جمل الشكوي",
   "new_password_confirmation": "تأكيد كلمة المرور الجديدة",
   "transform_orders": "تحويل الطلبات",
@@ -670,17 +763,26 @@
   "details of the order": "مطلوب تفاصيل الطلب",
   "edit_data_done": "تم تعديل البيانات بنجاح",
   "exit": "هل تود الخروج من التطبيق",
-  "phone_error": "يجب ان يتكون رقم الهاتف 10 ارقام",
-  "logged": "تم فتح حسابك من هاتف آخر",
+  "phone_error": "يجب ان يتكون رقم الجوال 10 ارقام",
+  "logged": "تم فتح حسابك من جوال آخر",
 
   "number": "رقم",
+  "to go to the store": "للذهاب الي المتجر",
+  "_number": "رقم : ",
+  "Refund request": "طلب استرجاع",
+  "Retrieved": "تم استرجاعه",
+  "Cashier name": "اسم الكاشير",
+  "The distance to the facility": "المسافة للمنشأة",
+  "The bank payment was rejected": "مرفوض من الادارة",
+  "Retrieval denied": "تم رفض الاسترجاع",
+  "The request is pending": "الطلب معلق",
 
 
   "phone_used": "رقم الجوال مستخدم من قبل",
-  "phone_with_country":"الهاتف مصحوبا برقم الدولة",
+  "phone_with_country":"الجوال مصحوبا برقم الدولة",
   "no_whatsUp": "ليس لديك تطبيق واتساب",
   "answer": "إجابة",
-  "restaurant_phone": "هاتف المطعم",
+  "restaurant_phone": "جوال المطعم",
   "yes": "نعم",
 
 

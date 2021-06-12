@@ -2,14 +2,20 @@ import 'dart:typed_data';
 
 import 'package:cashpoint/src/Models/LogIn.dart';
 import 'package:cashpoint/src/Models/RegesterForMobile.dart';
+import 'package:cashpoint/src/Models/addCashierModel.dart';
 import 'package:cashpoint/src/Models/addPoints.dart';
 import 'package:cashpoint/src/Models/advertiseWithUs.dart';
 import 'package:cashpoint/src/Models/advertisments.dart';
 import 'package:cashpoint/src/Models/allOrders.dart';
 import 'package:cashpoint/src/Models/banks.dart';
+import 'package:cashpoint/src/Models/cashierModel.dart';
 import 'package:cashpoint/src/Models/categories.dart';
+import 'package:cashpoint/src/Models/change-language.dart';
+import 'package:cashpoint/src/Models/changePasswordCashierModel.dart';
+import 'package:cashpoint/src/Models/checkPaidCashier.dart';
 import 'package:cashpoint/src/Models/contactUs.dart';
 import 'package:cashpoint/src/Models/countriesModel.dart';
+import 'package:cashpoint/src/Models/deleteCashierModel.dart';
 import 'package:cashpoint/src/Models/deleteNotification.dart';
 import 'package:cashpoint/src/Models/forgetPassword.dart';
 import 'package:cashpoint/src/Models/generalSlider.dart';
@@ -24,8 +30,10 @@ import 'package:cashpoint/src/Models/myProfileDataForStore.dart';
 import 'package:cashpoint/src/Models/payOffCommisionModel.dart';
 import 'package:cashpoint/src/Models/rateOrder.dart';
 import 'package:cashpoint/src/Models/readMembershipNum.dart';
+import 'package:cashpoint/src/Models/readNotifictionCashier.dart';
 import 'package:cashpoint/src/Models/replacePoints.dart';
 import 'package:cashpoint/src/Models/resetPassword.dart';
+import 'package:cashpoint/src/Models/showOrderModel.dart';
 import 'package:cashpoint/src/Models/signUp.dart';
 import 'package:cashpoint/src/Models/storeDetails.dart';
 import 'package:cashpoint/src/Models/storeSlider.dart';
@@ -74,6 +82,56 @@ class ApiProvider {
       headers: headers,
     );
     return ForgetPasswordModel.fromJson(response.data);
+  }
+
+  Future<ForgetPasswordModel> forgetPasswordForCashier({var phone}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+    };
+    FormData formData = FormData.fromMap({
+      "phone": phone,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-forget-password",
+      body: formData,
+      headers: headers,
+    );
+    return ForgetPasswordModel.fromJson(response.data);
+  }
+
+
+  Future<DeleteCashierModel> deleteCashier({var cashier_id,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "cashier_id": cashier_id,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "delete-cashier",
+      body: formData,
+      headers: headers,
+    );
+    return DeleteCashierModel.fromJson(response.data);
+  }
+
+
+  Future<DeleteCashierModel> confirmForgetPassworfCashier({var phone,var code}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+//      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "phone": phone,
+      "code": code,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-confirm-reset-code",
+      body: formData,
+      headers: headers,
+    );
+    return DeleteCashierModel.fromJson(response.data);
   }
 
   Future<ForgetPasswordModel> phoneVerificationForgetPassword(
@@ -154,6 +212,7 @@ class ApiProvider {
       "terms_conditions": terms_conditions,
       "device_token": device_token,
       "email": email,
+      "language": localization.currentLanguage.toString(),
       "image": image == null ? null : await MultipartFile.fromFile(image.path),
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
@@ -181,6 +240,25 @@ class ApiProvider {
       headers: headers,
     );
     return ResetPasswordModel.fromJson(response.data);
+  }
+
+
+  Future<ChangePasswordCashierModel> resetPasswordForCashier(
+      {var phone, var password, var password_confirmation}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+    };
+    FormData formData = FormData.fromMap({
+      "phone": phone,
+      "password": password,
+      "password_confirmation": password_confirmation,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-reset-password",
+      body: formData,
+      headers: headers,
+    );
+    return ChangePasswordCashierModel.fromJson(response.data);
   }
 
 
@@ -253,7 +331,7 @@ class ApiProvider {
     };
     FormData formData = FormData.fromMap({
       "phone": phone,
-      "country_id": country_id,
+//      "country_id": country_id,
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
       "client-register-mobile",
@@ -277,6 +355,27 @@ class ApiProvider {
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
       "client-edit-profile",
+      body: formData,
+      headers: headers,
+    );
+    return AllDataModelForStore.fromJson(response.data);
+  }
+
+  Future<AllDataModelForStore> editCashierProfile(
+      {var name,var description, var image,var apiToken,var latitude,var longitude}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "name": name,
+      "description": description,
+      "latitude": latitude,
+      "longitude": longitude,
+      "image": image == null ? null : await MultipartFile.fromFile(image.path),
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-edit-profile",
       body: formData,
       headers: headers,
     );
@@ -338,6 +437,23 @@ class ApiProvider {
     return DeleteNotificationModel.fromJson(response.data);
   }
 
+  Future<DeleteNotificationModel> deleteNotificationCashier(
+      {var notification_id,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "notification_id": notification_id,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-delete_Notification",
+      body: formData,
+      headers: headers,
+    );
+    return DeleteNotificationModel.fromJson(response.data);
+  }
+
   Future<ContactUsModel> contactUs(
       {var message,var apiToken}) async {
     Map<String, String> headers = {
@@ -365,7 +481,16 @@ class ApiProvider {
         .get("get-all-data", headers: headers);
     return AllDataModelForStore.fromJson(response.data);
   }
+  Future<AllDataModelForStore> getAllDataForCashier({String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
 
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("cashier-get-all-data", headers: headers);
+    return AllDataModelForStore.fromJson(response.data);
+  }
 
   Future<AllDataModelForClient> getAllDataForClient({String apiToken, bool networkError}) async {
     Map<String, String> headers = {
@@ -411,6 +536,51 @@ class ApiProvider {
     return AllOrdersModel.fromJson(response.data);
   }
 
+//  Future<ShowOrderModel> showOrder({String apiToken, bool networkError}) async {
+//    Map<String, String> headers = {
+////      "X-localization": localization.currentLanguage.toString(),
+//      "Authorization": "Bearer " + apiToken,
+//    };
+//
+//    Response response = await NetworkUtil(_scafold, networkError, context)
+//        .get("order", headers: headers);
+//    return ShowOrderModel.fromJson(response.data);
+//  }
+
+  Future<ShowOrderModel> showOrder(
+      {var transaction_id,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "transaction_id": transaction_id,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "order",
+      body: formData,
+      headers: headers,
+    );
+    return ShowOrderModel.fromJson(response.data);
+  }
+
+
+
+
+
+
+
+  Future<AllOrdersModel> getAllOrdersCashier({String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("cashier-all-order", headers: headers);
+    return AllOrdersModel.fromJson(response.data);
+  }
+
 
   Future<LastLoginModel> logOutService({String apiToken, bool networkError}) async {
     Map<String, String> headers = {
@@ -422,6 +592,75 @@ class ApiProvider {
         .get("last-login", headers: headers);
     return LastLoginModel.fromJson(response.data);
   }
+
+  Future<LastLoginModel> logOutServiceCashier({String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("cashier-last-login", headers: headers);
+    return LastLoginModel.fromJson(response.data);
+  }
+
+
+//  Future<LastLoginModel> logOutCashier({String apiToken, bool networkError}) async {
+//    Map<String, String> headers = {
+////      "X-localization": localization.currentLanguage.toString(),
+//      "Authorization": "Bearer " + apiToken,
+//    };
+//
+//    Response response = await NetworkUtil(_scafold, networkError, context)
+//        .get("cashier-logout", headers: headers);
+//    return LastLoginModel.fromJson(response.data);
+//  }
+  Future<LastLoginModel> logOutCashier(
+      {var device_token,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "device_token": device_token,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-logout",
+      body: formData,
+      headers: headers,
+    );
+    return LastLoginModel.fromJson(response.data);
+  }
+
+//  Future<LastLoginModel> logOut({String apiToken, bool networkError}) async {
+//    Map<String, String> headers = {
+////      "X-localization": localization.currentLanguage.toString(),
+//      "Authorization": "Bearer " + apiToken,
+//    };
+//
+//    Response response = await NetworkUtil(_scafold, networkError, context)
+//        .get("logout", headers: headers);
+//    return LastLoginModel.fromJson(response.data);
+//  }
+
+  Future<LastLoginModel> logOut(
+      {var device_token,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "device_token": device_token,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "logout",
+      body: formData,
+      headers: headers,
+    );
+    return LastLoginModel.fromJson(response.data);
+  }
+
+
 
   Future<CountriesModel> getCountries(
       {String apiToken, bool networkError}) async {
@@ -469,10 +708,59 @@ class ApiProvider {
     return NotificationsModel.fromJson(response.data);
   }
 
+  Future<NotificationsModel> getNotificationsCashier(
+      {String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("cashier-list-notifications", headers: headers);
+    return NotificationsModel.fromJson(response.data);
+  }
+  Future<ChangeLanguageModel> changeLanguage({
+    var apiToken,
+    var language,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "language": language,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "change-language",
+      body: formData,
+      headers: headers,
+    );
+    return ChangeLanguageModel.fromJson(response.data);
+  }
+
+
+  Future<ChangeLanguageModel> changeLanguageCashier({
+    var apiToken,
+    var language,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "language": language,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-change-language",
+      body: formData,
+      headers: headers,
+    );
+    return ChangeLanguageModel.fromJson(response.data);
+  }
+
   Future<GeneralDataModel> getGeneralData(
       {String apiToken, bool networkError}) async {
     Map<String, String> headers = {
-//      "X-localization": localization.currentLanguage.toString(),
+      "X-localization": localization.currentLanguage.toString(),
 //      "Authorization": "Bearer " + apiToken,
     };
     Response response = await NetworkUtil(_scafold, networkError, context)
@@ -528,6 +816,25 @@ class ApiProvider {
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
       "delete-slider",
+      body: formData,
+      headers: headers,
+    );
+    return ForgetPasswordModel.fromJson(response.data);
+  }
+
+
+
+  Future<ForgetPasswordModel> deleteAdvertisement(
+      {var advertisement_id,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "advertisement_id": advertisement_id,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "delete-advertisement",
       body: formData,
       headers: headers,
     );
@@ -604,6 +911,25 @@ class ApiProvider {
     );
     return MemberShipModel.fromJson(response.data);
   }
+
+
+  Future<MemberShipModel> readMemberShipNumCashier(
+      {var membership_num ,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "membership_num": membership_num,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-read-membership-num",
+      body: formData,
+      headers: headers,
+    );
+    return MemberShipModel.fromJson(response.data);
+  }
+
   Future<MemberShipModel> readMemberShipQR(
       {var qrcode ,var apiToken}) async {
     Map<String, String> headers = {
@@ -621,6 +947,22 @@ class ApiProvider {
     return MemberShipModel.fromJson(response.data);
   }
 
+  Future<MemberShipModel> readMemberShipQRCashier(
+      {var qrcode ,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "qrcode": qrcode,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-read-qrcode",
+      body: formData,
+      headers: headers,
+    );
+    return MemberShipModel.fromJson(response.data);
+  }
 
   Future<AddPointsModel> addPoints(
       {var cash,var user_id,var apiToken}) async {
@@ -634,6 +976,24 @@ class ApiProvider {
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
       "add-points",
+      body: formData,
+      headers: headers,
+    );
+    return AddPointsModel.fromJson(response.data);
+  }
+
+  Future<AddPointsModel> addPointsCashier(
+      {var cash,var user_id,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "cash": cash,
+      "user_id": user_id,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-add-points",
       body: formData,
       headers: headers,
     );
@@ -656,6 +1016,23 @@ class ApiProvider {
     return AddPointsModel.fromJson(response.data);
   }
 
+
+  Future<AddPointsModel> confirmAddingPointsCashier(
+      {var transaction_id,var apiToken}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "transaction_id": transaction_id,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-confirm-transaction",
+      body: formData,
+      headers: headers,
+    );
+    return AddPointsModel.fromJson(response.data);
+  }
 
 
   Future<PayOffCommissionModel> payOffCommission({
@@ -681,6 +1058,17 @@ class ApiProvider {
     return PayOffCommissionModel.fromJson(response.data);
   }
 
+
+  Future<CashierModel> getCashiers(
+      {String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("all-cashier", headers: headers);
+    return CashierModel.fromJson(response.data);
+  }
 
   Future<MyPaymentsModel> getMyPayments(
       {String apiToken, bool networkError}) async {
@@ -708,12 +1096,35 @@ class ApiProvider {
   Future<BanksModel> getBanks(
       {String apiToken, bool networkError}) async {
     Map<String, String> headers = {
-//      "X-localization": localization.currentLanguage.toString(),
+      "X-localization": localization.currentLanguage.toString(),
 //      "Authorization": "Bearer " + apiToken,
     };
     Response response = await NetworkUtil(_scafold, networkError, context)
         .get("banks", headers: headers);
     return BanksModel.fromJson(response.data);
+  }
+
+
+  Future<ReadNotificationCashier> readNotificationCashier(
+      {String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("cashier-is-read", headers: headers);
+    return ReadNotificationCashier.fromJson(response.data);
+  }
+
+  Future<CheckPaidCashier> checkPaidCashier(
+      {String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("check-value-of-store-commission", headers: headers);
+    return CheckPaidCashier.fromJson(response.data);
   }
 
   Future<AdvertiseWithUsModel> advertiseWithUs({
@@ -739,8 +1150,100 @@ class ApiProvider {
     return AdvertiseWithUsModel.fromJson(response.data);
   }
 
+  Future<AddCashierModel> addCashier({
+    var apiToken,
+    var phone,
+    var image,
+    var password,
+    var password_confirmation,
+    var name,
+    var language,
+    var description,
+    var latitude,
+    var longitude,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "phone": phone,
+      "password": password,
+      "password_confirmation": password_confirmation,
+      "name": name,
+      "language": language,
+      "description": description,
+      "latitude": latitude,
+      "longitude": longitude,
+      "image": image == null ? null : await MultipartFile.fromFile(image.path),
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "add-cashier",
+      body: formData,
+      headers: headers,
+    );
+    return AddCashierModel.fromJson(response.data);
+  }
 
 
+  Future<AddCashierModel> editCashier({
+    var apiToken,
+    var cashier_id,
+    var phone,
+    var image,
+    var password,
+    var password_confirmation,
+    var name,
+    var language,
+    var description,
+    var latitude,
+    var longitude,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "phone": phone,
+      "cashier_id": cashier_id,
+      "password": password,
+      "password_confirmation": password_confirmation,
+      "name": name,
+      "language": language,
+      "description": description,
+      "latitude": latitude,
+      "longitude": longitude,
+      "image": image == null ? null : await MultipartFile.fromFile(image.path),
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "edit-cashier",
+      body: formData,
+      headers: headers,
+    );
+    return AddCashierModel.fromJson(response.data);
+  }
+
+
+  Future<AddCashierModel> cashierLogin({
+    var phone,
+    var password,
+    var device_token,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+    };
+    FormData formData = FormData.fromMap({
+      "phone": phone,
+      "password": password,
+      "device_token": device_token,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-login",
+      body: formData,
+      headers: headers,
+    );
+    return AddCashierModel.fromJson(response.data);
+  }
 
   Future<ReplacePointsModel> replacePoints({
     var apiToken,
@@ -793,6 +1296,7 @@ class ApiProvider {
   Future<AdvertiseWithUsModel> refundRequest({
     var apiToken,
     var transaction_id,
+    var refund_request_reason,
   }) async {
     Map<String, String> headers = {
 //      "X-localization": localization.currentLanguage.toString(),
@@ -800,9 +1304,30 @@ class ApiProvider {
     };
     FormData formData = FormData.fromMap({
       "transaction_id":transaction_id,
+      "refund_request_reason":refund_request_reason,
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
       "refund-request",
+      body: formData,
+      headers: headers,
+    );
+    return AdvertiseWithUsModel.fromJson(response.data);
+  }
+  Future<AdvertiseWithUsModel> refundRequestCashier({
+    var apiToken,
+    var transaction_id,
+    var refund_request_reason,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "transaction_id":transaction_id,
+      "refund_request_reason":refund_request_reason,
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "cashier-refund-request",
       body: formData,
       headers: headers,
     );

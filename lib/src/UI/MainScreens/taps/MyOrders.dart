@@ -82,7 +82,8 @@ class _MyOrdersState extends State<MyOrders> {
 //        print('Name  >>>>> ' + value.data[0].rateRestaurantReason);
 
         Navigator.pop(context);
-        LoadingDialog(_key, context).alertPopUp("تم اضافة التقييم بنجاح");
+        LoadingDialog(_key, context)
+            .alertPopUpDismissible("تم اضافة التقييم بنجاح");
 
         Future.delayed(Duration(milliseconds: 750), () {
           Navigator.pop(context);
@@ -97,10 +98,13 @@ class _MyOrdersState extends State<MyOrders> {
     });
   }
 
-  refund(id) async {
+  refund(id, reason) async {
     LoadingDialog(_key, context).showLoadingDilaog();
     await ApiProvider(_key, context)
-        .refundRequest(apiToken: apiToken, transaction_id: id)
+        .refundRequest(
+            apiToken: apiToken,
+            transaction_id: id,
+            refund_request_reason: reason)
         .then((value) async {
       if (value.code == 200) {
         Navigator.pop(context);
@@ -113,7 +117,10 @@ class _MyOrdersState extends State<MyOrders> {
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
-        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+        value.error[0].key == "refund_request_reason"
+            ? LoadingDialog(_key, context)
+                .alertPopUp(localization.text("refund request reason required"))
+            : LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -132,10 +139,7 @@ class _MyOrdersState extends State<MyOrders> {
     return loadingToken == true
         ? Container()
         : apiToken == null
-            ?
-    LoginPage()
-
-
+            ? LoginPage()
             : Directionality(
                 textDirection: localization.currentLanguage.toString() == "en"
                     ? TextDirection.ltr
@@ -150,26 +154,30 @@ class _MyOrdersState extends State<MyOrders> {
                       },
                       child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 15),
+                            horizontal: 15,
+                          ),
                           child: ListView(
 //                            physics:NeverScrollableScrollPhysics()  ,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    logInType == "متجر"
-                                        ? "مبيعاتي"
-                                        : localization
-                                            .text("List of purchases"),
-                                    style: MyColors.styleBold2,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                ],
+                              Padding(
+                                padding: const EdgeInsets.only(top: 15),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      logInType == "متجر"
+                                          ? localization.text("My sales")
+                                          : localization
+                                              .text("List of purchases"),
+                                      style: MyColors.styleBold2,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                  ],
+                                ),
                               ),
                               SizedBox(
                                 height: 15,
@@ -178,107 +186,135 @@ class _MyOrdersState extends State<MyOrders> {
                                   ? Container()
                                   : orders.length == 0
                                       ? Column(
-                                mainAxisSize: MainAxisSize.min,
+                                          mainAxisSize: MainAxisSize.min,
 //                                physics: NeverScrollableScrollPhysics(),
-                                        children: <Widget>[
-                                          Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .8,
-                                            child: Center(
-                                                child: Text(localization
-                                                    .text("no orders"))),
-                                          ),
-                                        ],
-                                      )
+                                          children: <Widget>[
+                                            Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .8,
+                                              child: Center(
+                                                  child: Text(localization
+                                                      .text("no orders"))),
+                                            ),
+                                          ],
+                                        )
                                       : ListView.builder(
-                                        shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, i) {
-                                          return logInType == "متجر"
-                                              ? InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    OrderDetails(
-                                                                      order:
-                                                                          orders[i],
-                                                                    )));
-                                                  },
-                                                  child: OrderCardForStore(
-                                                      refundFunction: () {
-                                                        refund(
-                                                            orders[i].id);
-                                                      },
-                                                      num: orders[i]
-                                                          .orderNumber,
-                                                      price: orders[i].cash,
-                                                      time: orders[i]
-                                                          .createdAt,
-                                                      refund: orders[i]
-                                                          .refundRequest,
-                                                      apiToken: apiToken,
-                                                      scaffold: _key,
-                                                      getData: () {
-                                                        getData();
-                                                      }),
-                                                )
-                                              : InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    OrderDetails(
-                                                                      order:
-                                                                          orders[i],
-                                                                    )));
-                                                  },
-                                                  child: OrderCard(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, i) {
+                                            return logInType == "متجر"
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      OrderDetails(
+//                                                                      order:
+//                                                                          orders[i],
+                                                                        id: orders[i]
+                                                                            .id,
+                                                                      )));
+                                                    },
+                                                    child: OrderCardForStore(
+                                                        refundFunction: () {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return RefundDialog(
+                                                                  id: orders[i]
+                                                                      .id,
+                                                                  functionRefund:
+                                                                      refund,
+                                                                );
+                                                              });
+
+//                                                        LoadingDialog(widget.scaffold, context)
+//                                                            .logOutAlert(
+//                                                            localization.text(
+//                                                                "refund request"),
+//                                                                () {
+//                                                                  Navigator.pop(context);
+//                                                                  refund(
+//                                                                      orders[i].id);
+//                                                            });
+                                                        },
+                                                        num: orders[i]
+                                                            .orderNumber,
+                                                        price: orders[i].cash,
+                                                        time:
+                                                            orders[i].createdAt,
+                                                        refund: orders[i]
+                                                            .refundRequest,
+                                                        rate: orders[i].rate,
+                                                        complete: orders[i]
+                                                            .ratedOrNot,
+                                                        pointIsAvailable:orders[i]
+                                                            .pointIsAvailable,
+                                                        apiToken: apiToken,
+                                                        scaffold: _key,
+                                                        getData: () {
+                                                          getData();
+                                                        }),
+                                                  )
+                                                : InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      OrderDetails(
+//                                                                      order:
+//                                                                          orders[i],
+                                                                        id: orders[i]
+                                                                            .id,
+                                                                      )));
+                                                    },
+                                                    child: OrderCard(
 //                                              img: orders[i]["img"],
-                                                      rateFunction: () {
-                                                        showDialog(
-                                                            context:
-                                                                context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return RateDialog(
-                                                                id: orders[
-                                                                        i]
-                                                                    .id,
-                                                                function:
-                                                                    addRate,
-                                                              );
-                                                            });
-                                                      },
-                                                      name: orders[i]
-                                                          .storeName,
-                                                      num: orders[i]
-                                                          .orderNumber,
-                                                      price: orders[i].cash,
-                                                      time: orders[i]
-                                                          .createdAt,
-                                                      points:
-                                                          orders[i].point,
-                                                      complete: orders[i]
-                                                          .ratedOrNot,
-                                                      apiToken: apiToken,
-                                                      scaffold: _key,
-                                                      getData: () {
-                                                        getData();
-                                                      }),
-                                                );
-                                        },
-                                        itemCount: orders.length,
-                                      ),
+                                                        rateFunction: () {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return RateDialog(
+                                                                  id: orders[i]
+                                                                      .id,
+                                                                  function:
+                                                                      addRate,
+                                                                );
+                                                              });
+                                                        },
+                                                        name:
+                                                            orders[i].storeName,
+                                                        num: orders[i]
+                                                            .orderNumber,
+                                                        price: orders[i].cash,
+                                                        time:
+                                                            orders[i].createdAt,
+                                                        points: orders[i].point,
+                                                        complete: orders[i]
+                                                            .ratedOrNot,
+                                                        rate: orders[i].rate,
+                                                        apiToken: apiToken,
+                                                        scaffold: _key,
+                                                        getData: () {
+                                                          getData();
+                                                        }),
+                                                  );
+                                          },
+                                          itemCount: orders.length,
+                                        ),
                               SizedBox(
-                                height: 75,
+                                height: 90,
                               ),
                             ],
                           )),
@@ -357,9 +393,9 @@ class _RateDialogState extends State<RateDialog> {
 
                   SpecialTextField(
                     hint: localization.text("note"),
-                    onChange: (value){
+                    onChange: (value) {
                       setState(() {
-                        _message = value ;
+                        _message = value;
                       });
                     },
                     height: 70.0,
@@ -422,6 +458,142 @@ class _RateDialogState extends State<RateDialog> {
                         onTap: () {
                           Navigator.pop(context);
                           widget.function(_rating, _message, widget.id);
+                        },
+                        width: 85.0,
+                        text: localization.text("confirm"),
+                        color: Colors.green,
+                        textColor: Colors.white,
+                      ),
+                      SpecialButton(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        text: localization.text("cancel"),
+                        color: Colors.red,
+                        width: 85.0,
+                        textColor: Colors.white,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )),
+      ),
+    );
+  }
+}
+
+class RefundDialog extends StatefulWidget {
+  RefundDialog({this.id, this.functionRefund});
+  final id;
+  final dynamic Function(dynamic, dynamic) functionRefund;
+
+  @override
+  _RefundDialogState createState() => _RefundDialogState();
+}
+
+class _RefundDialogState extends State<RefundDialog> {
+  var _reason;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: localization.currentLanguage.toString() == "en"
+          ? TextDirection.ltr
+          : TextDirection.rtl,
+      child: AlertDialog(
+        contentPadding: EdgeInsets.all(0),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        backgroundColor: Colors.transparent,
+        content: Container(
+//                height: 150,
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text(
+                    localization.text("refund request"),
+                    style: MyColors.styleBold2,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  SizedBox(
+                    height: 18,
+                  ),
+
+                  SpecialTextField(
+                    hint: localization.text("refund request reason"),
+                    onChange: (value) {
+                      setState(() {
+                        _reason = value;
+                      });
+                    },
+                    height: 70.0,
+                    minLines: 3,
+                    maxLines: 3,
+                  ),
+
+//                      ListView.builder(
+//                        shrinkWrap: true,
+//                        physics: NeverScrollableScrollPhysics(),
+//                        reverse: true,
+//                        itemCount: reasons.length,
+//                        itemBuilder: (context, i) {
+//                          return Text("${reasons[i].reason}");
+//                        },
+//                      ),
+
+//                  ListView.builder(
+//                    shrinkWrap: true,
+//                    physics: NeverScrollableScrollPhysics(),
+//                    reverse: true,
+//                    itemCount: widget.reasons.length,
+//                    itemBuilder: (context, i) {
+//                      return Row(
+//                        mainAxisAlignment: MainAxisAlignment.start,
+//                        children: [
+//                          Container(
+//                            height: 25,
+//                            width: 25,
+//                            child: Radio(
+//                              value: i + 1,
+//                              groupValue: selectedRateSentence,
+//                              activeColor: Color(0xfffead00),
+//                              onChanged: (int value) {
+//                                setState(() {
+//                                  selectedRateSentence = value;
+//                                  _sentenceId = widget.reasons[i].id;
+//                                });
+//
+//                                print(
+//                                    "##############333 $selectedRateSentence ::::: $_sentenceId");
+//                              },
+//                            ),
+//                          ),
+//                          SizedBox(
+//                            width: 3,
+//                          ),
+//                          Text("${widget.reasons[i].reason}"),
+//                        ],
+//                      );
+//                    },
+//                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      SpecialButton(
+                        onTap: () {
+                          Navigator.pop(context);
+                          widget.functionRefund(widget.id, _reason);
                         },
                         width: 85.0,
                         text: localization.text("confirm"),

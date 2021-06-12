@@ -102,6 +102,19 @@ class MyColors{
       // fontFamily: "Tajawal", 
       fontWeight: FontWeight.normal
   );
+
+  static const  styleBold0red=TextStyle(
+      color: Colors.red,
+      fontSize: 15,
+      // fontFamily: "Tajawal",
+      fontWeight: FontWeight.bold
+  );
+  static const  styleBold0green=TextStyle(
+      color: Colors.green,
+      fontSize: 15,
+      // fontFamily: "Tajawal",
+      fontWeight: FontWeight.bold
+  );
   static const styleNormal0blue=TextStyle(
       color: Colors.blue,
       fontSize: 15,
@@ -188,6 +201,12 @@ class MyColors{
       // fontFamily: "Tajawal", 
       fontWeight: FontWeight.bold
   );
+  static const styleBold1Orange=TextStyle(
+      color: Color(0xfff6903b),
+      fontSize: 16,
+      // fontFamily: "Tajawal",
+      fontWeight: FontWeight.bold
+  );
   static const styleBold1white=TextStyle(
       color: Colors.white,
       fontSize: 16,
@@ -202,6 +221,12 @@ class MyColors{
   );
   static const styleBigBoldWhite=TextStyle(
       color: Colors.white,
+      fontSize: 36,
+      // fontFamily: "Tajawal",
+      fontWeight: FontWeight.bold
+  );
+  static const styleBigBold=TextStyle(
+      color: Colors.black,
       fontSize: 36,
       // fontFamily: "Tajawal",
       fontWeight: FontWeight.bold
@@ -239,7 +264,19 @@ class MyColors{
   static const styleNormalWhite=TextStyle(
       color: Colors.white,
       fontSize: 16,
-      // fontFamily: "Tajawal", 
+      // fontFamily: "Tajawal",
+      fontWeight: FontWeight.normal
+  );
+  static const styleNormal=TextStyle(
+      color: Colors.black,
+      fontSize: 16,
+      // fontFamily: "Tajawal",
+      fontWeight: FontWeight.normal
+  );
+  static const stylePhone=TextStyle(
+      color: Colors.blue,
+      fontSize: 17,
+      // fontFamily: "Tajawal",
       fontWeight: FontWeight.normal
   );
   static const styleNormalWhite1=TextStyle(

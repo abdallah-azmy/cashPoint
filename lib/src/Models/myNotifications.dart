@@ -42,6 +42,7 @@ class Datum {
     this.userId,
     this.storeId,
     this.title,
+    this.transactionId,
     this.description,
     this.createdAt,
     this.totalDuration,
@@ -50,6 +51,7 @@ class Datum {
   int id;
   int userId;
   dynamic storeId;
+  int transactionId;
   String title;
   String description;
   DateTime createdAt;
@@ -60,6 +62,7 @@ class Datum {
     userId: json["user_id"] == null ? null : json["user_id"],
     storeId: json["store_id"],
     title: json["title"] == null ? null : json["title"],
+    transactionId: json["transaction_id"] == null ? null : json["transaction_id"],
     description: json["description"] == null ? null : json["description"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     totalDuration: json["totalDuration"] == null ? null : json["totalDuration"],
@@ -70,6 +73,7 @@ class Datum {
     "user_id": userId == null ? null : userId,
     "store_id": storeId,
     "title": title == null ? null : title,
+    "transaction_id": transactionId == null ? null : transactionId,
     "description": description == null ? null : description,
     "created_at": createdAt == null ? null : "${createdAt.year.toString().padLeft(4, '0')}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.day.toString().padLeft(2, '0')}",
     "totalDuration": totalDuration == null ? null : totalDuration,

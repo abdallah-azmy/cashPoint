@@ -70,7 +70,7 @@ class Data {
     userId: json["user_id"] == null ? null : json["user_id"],
     userName: json["user_name"] == null ? null : json["user_name"],
     userPhone: json["user_phone"] == null ? null : json["user_phone"],
-    total: json["total"] == null ? null : json["total"],
+    total: json["total"] == null ? null : "${json["total"]}",
     image: json["image"] == null ? null : json["image"],
     invoice: json["invoice"],
     status: json["status"] == null ? null : json["status"],

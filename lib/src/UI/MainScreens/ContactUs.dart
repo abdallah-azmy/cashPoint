@@ -148,7 +148,7 @@ class _ContactUsState extends State<ContactUs> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                         height: 15,
@@ -158,7 +158,7 @@ class _ContactUsState extends State<ContactUs> {
                           : details.twitter == null
                               ? Container()
                               : Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "twitter",
@@ -192,7 +192,7 @@ class _ContactUsState extends State<ContactUs> {
                           : details.instagram == null
                           ? Container()
                           : Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "instagram",
@@ -226,7 +226,7 @@ class _ContactUsState extends State<ContactUs> {
                           : details.facebook == null
                           ? Container()
                           : Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "facebook",
@@ -260,7 +260,7 @@ class _ContactUsState extends State<ContactUs> {
                           : details.phone == null
                           ? Container()
                           : Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             "phone",

@@ -83,12 +83,12 @@ class Datum {
   String description;
   String latitude;
   String longitude;
-  int membershipNum;
+  String membershipNum;
   int commission;
   String logo;
   String image;
   String file;
-  dynamic arranging;
+  int arranging;
   String lastLoginAt;
   String tradeRegister;
   dynamic bankAccount;
@@ -115,12 +115,12 @@ class Datum {
     description: json["description"] == null ? null : json["description"],
     latitude: json["latitude"] == null ? null : json["latitude"],
     longitude: json["longitude"] == null ? null : json["longitude"],
-    membershipNum: json["membership_num"] == null ? null : json["membership_num"],
+    membershipNum: json["membership_num"] == null ? null : "${json["membership_num"]}",
     commission: json["commission"] == null ? null : json["commission"],
     logo: json["logo"] == null ? null : json["logo"],
     image: json["image"] == null ? null : json["image"],
     file: json["file"] == null ? null : json["file"],
-    arranging: json["arranging"],
+    arranging: json["arranging"] == null ? null : json["arranging"],
     lastLoginAt: json["last_login_at"] == null ? null :json["last_login_at"],
     tradeRegister: json["trade_register"] == null ? null : json["trade_register"],
     bankAccount: json["bank_account"],
@@ -153,7 +153,7 @@ class Datum {
     "logo": logo == null ? null : logo,
     "image": image == null ? null : image,
     "file": file == null ? null : file,
-    "arranging": arranging,
+    "arranging": arranging == null ? null : arranging,
     "last_login_at": lastLoginAt == null ? null : lastLoginAt,
     "trade_register": tradeRegister == null ? null : tradeRegister,
     "bank_account": bankAccount,

@@ -1,3 +1,7 @@
+import 'package:cashpoint/src/UI/MainScreens/Cashier/MyHomeForCashier.dart';
+import 'package:cashpoint/src/UI/MainScreens/Cashier/MyProfileCashier.dart';
+import 'package:cashpoint/src/UI/MainScreens/Cashier/NotificationsCashier.dart';
+import 'package:cashpoint/src/UI/MainScreens/Cashier/SettingsCashier.dart';
 import 'package:cashpoint/src/UI/MainScreens/taps/MyHomeForStore.dart';
 import 'package:cashpoint/src/UI/MainScreens/taps/MyProfile.dart';
 import 'package:cashpoint/src/UI/MainScreens/taps/Notifications.dart';
@@ -14,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../MyColors.dart';
 import '../../firebaseNotification/appLocalization.dart';
+import 'Cashier/MyOrdersCashier.dart';
 import 'taps/HomeScreen.dart';
 //import 'taps/Notifications.dart';
 
@@ -51,16 +56,30 @@ class _MainScreenState extends State<MainScreen> {
     Notifications(
       scaffold: _key,
       key: globalKey,
-//                token: apiToken,
     ),
-
     MyProfile(
       scaffold: _key,
     ),
-//    logInType == "متجر" ? MyHomeForStore(
-//      scaffold: _key,
-//    ) :
     HomeScreen(
+      scaffold: _key,
+    ),
+    MyOrders(
+      scaffold: _key,
+    ),
+    Settings(
+      scaffold: _key,
+    ),
+  ];
+
+  List<Widget> widgetsForStore = [
+    Notifications(
+      scaffold: _key,
+      key: globalKey,
+    ),
+    MyProfile(
+      scaffold: _key,
+    ),
+    MyHomeForStore(
       scaffold: _key,
     ),
     MyOrders(
@@ -72,29 +91,23 @@ class _MainScreenState extends State<MainScreen> {
     ),
   ];
 
-  List<Widget> widgetsForStore = [
-    Notifications(
+
+
+  List<Widget> widgetsForCashier = [
+    NotificationsCashier(
       scaffold: _key,
       key: globalKey,
-//                token: apiToken,
     ),
-
-    MyProfile(
+    MyProfileCashier(
       scaffold: _key,
     ),
-//    logInType == "متجر" ?
-    MyHomeForStore(
+    MyHomeForCashier(
       scaffold: _key,
     ),
-//    :
-//    HomeScreen(
-//      scaffold: _key,
-//    ),
-    MyOrders(
+    MyOrdersCashier(
       scaffold: _key,
     ),
-
-    Settings(
+    SettingsCashier(
       scaffold: _key,
     ),
   ];
@@ -118,7 +131,7 @@ class _MainScreenState extends State<MainScreen> {
             logInType == "loading" ? Container() :    logInType == null ? widgets[widget.neededScreen ?? _bottomNavIndex]:
                 logInType == "متجر"
                 ? widgetsForStore[widget.neededScreen ?? _bottomNavIndex]
-                : widgets[widget.neededScreen ?? _bottomNavIndex],
+                : logInType == "عميل" ? widgets[widget.neededScreen ?? _bottomNavIndex] : widgetsForCashier[widget.neededScreen ?? _bottomNavIndex],
             Align(
               alignment: Alignment.bottomCenter,
               child: CurvedBottomNavigation(
@@ -206,7 +219,7 @@ class _MainScreenState extends State<MainScreen> {
                       SizedBox(
                         height: 2,
                       ),
-                      logInType == "loading" ? Container() :   logInType == "متجر"
+                      logInType == "loading" ? Container() :   (logInType == "متجر" || logInType == "كاشير")
                           ? Text(
                               localization.text("My sales"),
                               textAlign: TextAlign.center,
@@ -245,142 +258,6 @@ class _MainScreenState extends State<MainScreen> {
           ],
         )
 
-//      logInType == "متجر" ? widgetsForStore[widget.neededScreen ?? _bottomNavIndex] : widgets[ widget.neededScreen ?? _bottomNavIndex],
-//        bottomNavigationBar:
-
-//      body:
-//      loading == true ? Center(child: CircularProgressIndicator(),) :
-//      Stack(
-//        children: [
-//          IndexedStack(
-//            index: navPos,
-//            children: [
-//              Notifications(
-//                scaffold: _key,
-//                key: globalKey,
-////                token: apiToken,
-//              ),
-//
-//              MyProfile(
-//                  scaffold: _key,
-//                ),
-//              logInType == "متجر" ? MyHomeForStore(
-//                scaffold: _key,
-//              ) :  HomeScreen(
-//                  scaffold: _key,
-//                ),
-//              MyOrders(
-//                  scaffold: _key,
-//                ),
-//
-//              Settings(
-//                scaffold: _key,
-//              ),
-//            ],
-//          ),
-//          Align(
-//            alignment: Alignment.bottomCenter,
-//            child: CurvedBottomNavigation(
-//              selected: navPos,
-//              bgColor: Colors.white,navHeight: 70.0,
-//              fabBgColor: Colors.grey[300],
-//              fabMargin: 11.0,
-//
-//              onItemClick: (i) {
-//                setState(() {
-//                  navPos = i;
-//                });
-//              },
-//              items: [
-//                InkWell(
-//                  onTap: (){
-////                    Future.delayed(Duration(milliseconds: 250),(){
-////                      NotificationsState().delayedFun() ;
-////                    });
-////                    NotificationsState().getShared() ;
-//                    print("yaaaa");
-//                  },
-//                  child: Container(child: Column(
-//                    mainAxisAlignment: MainAxisAlignment.center,
-//                    children: [
-////                    Icon(Icons.notifications_none, color: Colors.black),
-//                      Image.asset(
-//                        "assets/cashpoint/bill2.png",
-//                        fit: BoxFit.fill,
-//                        height: 21,
-//                        width: 21,
-//                      ),
-//                      SizedBox(height: 2,),
-//                      Text(localization.text("_notifications"),textAlign: TextAlign.center,style: MyColors.styleNormalSmal3,),
-//                    ],
-//                  )),
-//                ),
-//                Container(child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  crossAxisAlignment: CrossAxisAlignment.center,
-//                  children: [
-//                    Image.asset(
-//                      "assets/cashpoint/profile2.png",
-//                      height: 21,
-//                      width: 21,
-//                      fit: BoxFit.fill,
-//                    ),
-//                    SizedBox(height: 2,),
-//                    Text(localization.text("profile"),textAlign: TextAlign.center,style: MyColors.styleNormalSmal3,),
-//                  ],
-//                )),
-//
-//                Container(child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: [
-//                    Image.asset(
-//                      "assets/cashpoint/home2.png",
-//                      fit: BoxFit.fill,
-//                      height: 26,
-//                      width: 26,
-//                      color: Colors.black26,
-//                    ),
-////                    Text(localization.text("_my orders"),style: MyColors.styleNormalSmal2,),
-//                  ],
-//                )),
-//
-//                Container(child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: [
-//                    Image.asset(
-//                      "assets/cashpoint/cart2.png",
-//                      fit: BoxFit.fill,
-//                      height: 21,
-//                      width: 21,
-//                    ),
-//                    SizedBox(height: 2,),
-//                    logInType == "متجر" ? Text(localization.text("My sales"),textAlign: TextAlign.center,style: MyColors.styleNormalSmal3,) : Text(localization.text("My purchases"),textAlign: TextAlign.center,style: MyColors.styleNormalSmal3,),
-//                  ],
-//                )),
-//
-//
-//                Container(child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: [
-//                    Image.asset(
-//                      "assets/cashpoint/settings2.png",
-//                      fit: BoxFit.fill,
-//                      height: 21,
-//                      width: 21,
-//                    ),
-//                    SizedBox(height: 2,),
-//                    Text(localization.text("settings"),
-//                      textAlign: TextAlign.center,style: MyColors.styleNormalSmal3,),
-//                  ],
-//                )),
-//
-//
-//
-//              ],
-//            ),
-//          ),
-//        ],
-//      ),
         );
   }
 }

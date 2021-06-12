@@ -238,7 +238,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                 width: 5,
                               ),
                               Text(
-                                "عميل",
+                                localization.text("customer"),
                                 style: MyColors.styleNormal1,
                               )
                             ],
@@ -267,7 +267,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                 width: 5,
                               ),
                               Text(
-                               "متجر",
+                              localization.text("store"),
                                 style: MyColors.styleNormal1,
                               )
                             ],

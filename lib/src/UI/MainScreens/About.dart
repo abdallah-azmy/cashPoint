@@ -88,7 +88,7 @@ class _AboutUsTheAppState extends State<AboutUsTheApp> {
                         padding: const EdgeInsets.only(
                             top: 9, right: 15, left: 15, bottom: 3),
                         child: Text(
-                          "عن التطبيق",
+                          localization.text("about"),
                           style: MyColors.styleBold2,
                         )),
                     Padding(
@@ -133,7 +133,7 @@ class _AboutUsTheAppState extends State<AboutUsTheApp> {
                                       child: Row(
                                         children: [
                                           Text(
-                                            "الوصف",
+                                           localization.text("description"),
                                             style: MyColors.styleBold2white,
                                           ),
                                         ],

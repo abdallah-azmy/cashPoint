@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "731121983715",
+    "project_id": "cashpoint-78996",
+    "storage_bucket": "cashpoint-78996.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731121983715:android:e8a83aac7d4ad6d5dae5d6",
+        "android_client_info": {
+          "package_name": "com.tqnee.cashpoint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731121983715-2bs8mkv5k9l5rslocfpphb0uhtl5hnpc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDok4qeOZlo8kADrV8arkLsHTWtH7I1n7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731121983715-2bs8mkv5k9l5rslocfpphb0uhtl5hnpc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

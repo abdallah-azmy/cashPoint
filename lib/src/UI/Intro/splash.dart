@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
 import 'package:cashpoint/src/MyColors.dart';
 import 'package:cashpoint/src/UI/Intro/loginType.dart';
+import 'package:cashpoint/src/UI/MainScreens/MainScreenCashier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/Network/api_provider.dart';
@@ -15,7 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SplashScreen extends StatefulWidget {
-
+  final GlobalKey<NavigatorState> navigator;
+  SplashScreen({Key key, this.navigator}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return SplashScreenState();
@@ -29,6 +31,8 @@ class SplashScreenState extends State<SplashScreen> {
   bool firstOpen;
   var settings ;
   var logo ;
+  var logInType ;
+
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
@@ -36,6 +40,7 @@ class SplashScreenState extends State<SplashScreen> {
       loggedIn = _prefs.getBool("loggedIn");
       firstOpen = _prefs.getBool("firstOpen");
       logo = _prefs.getString("logo");
+      logInType = _prefs.getString("login");
     });
 
     print("cheeeeeeeeeeeck $firstOpen");
@@ -47,23 +52,6 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
 
-//  getData() async {
-//    LoadingDialog(_key, context).showLoadingDilaog();
-//    await ApiProvider(_key, context)
-//        .getGeneralData()
-//        .then((value) async {
-//      if (value.code == 200) {
-//        setState(() {
-//          details = value.data;
-//        });
-//        Navigator.pop(context);
-//      } else {
-//        print('error >>> ' + value.error[0].value);
-//        Navigator.pop(context);
-//        LoadingDialog(_key, context).showNotification(value.error[0].value);
-//      }
-//    });
-//  }
   getSettings() async {
 //    LoadingDialog(key, context).showLoadingDilaog();
     await ApiProvider(key, context)
@@ -98,8 +86,19 @@ class SplashScreenState extends State<SplashScreen> {
 //      }else
 //        if (loggedIn == true) {
 
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainScreen()));
+     if (firstOpen == null){
+       _prefs.setBool("firstOpen",true);
+       Navigator.of(context).pushReplacement(
+         MaterialPageRoute(builder: (context) => EditLanguage(fromSplash: "true",))) ;}else{
+
+       logInType == "كاشير" ?
+       Navigator.of(context).pushReplacement(
+           MaterialPageRoute(builder: (context) => MainScreenCashier()))
+           :
+       Navigator.of(context).pushReplacement(
+           MaterialPageRoute(builder: (context) => MainScreen()));
+
+     }
 
 //      } else {
 //        Navigator.of(context).pushReplacement(
@@ -110,7 +109,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-//    FirebaseNotifications().setUpFirebase(widget.navigator);
+    FirebaseNotifications().setUpFirebase(widget.navigator);
     _getShared();
 
     super.initState();
@@ -125,23 +124,7 @@ class SplashScreenState extends State<SplashScreen> {
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: <Widget>[
-          Image.asset(
-            "assets/cashpoint/Nbackground.png",
-            fit: BoxFit.fill,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
-//          Align(
-//            alignment: Alignment.center,
-//            child: Container(
-//              width: MediaQuery.of(context).size.width - 60,
-//              height: MediaQuery.of(context).size.width - 60,
-//              decoration: BoxDecoration(
-//                  image: DecorationImage(
-//
-//                      image: AssetImage("assets/cashpoint/Nlogotrans.png"))),
-//            ),
-//          ),
+
 
 
 

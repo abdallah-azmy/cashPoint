@@ -13,6 +13,9 @@ class OrderCardForStore extends StatefulWidget {
   final num;
   final points;
   final refund;
+  final rate;
+  final complete;
+  final pointIsAvailable;
   final isRefunded;
   final name;
   final img;
@@ -29,7 +32,10 @@ class OrderCardForStore extends StatefulWidget {
   const OrderCardForStore(
       {Key key,
       this.apiToken,
+      this.pointIsAvailable,
       this.isRefunded,
+      this.complete,
+      this.rate,
       this.refundFunction,
       this.price,
       this.refund,
@@ -67,56 +73,6 @@ class _OrderCardForStoreState extends State<OrderCardForStore> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-//              Material(
-//                elevation: 5,
-//                borderRadius:BorderRadius.circular(8) ,
-//                child: CachedNetworkImage(
-//                  height: 90,
-//                  width: 90,
-//                  fit: BoxFit.fill,
-//                  imageUrl: widget.img == null
-//                      ? " "
-//                      : "${widget.img}",
-//                  imageBuilder: (context, imageProvider) =>
-//                      Container(
-//
-//                        decoration: BoxDecoration(
-//                          color: Colors.white,
-//                          borderRadius:
-//                          BorderRadius.circular(8),
-//                        ),
-//                        child: Padding(
-//                          padding: const EdgeInsets.all(4.0),
-//                          child: Container(
-//                            height: 85,
-//                            width: 85,
-//                            decoration: BoxDecoration(
-//                              borderRadius:
-//                              BorderRadius.circular(8),
-//                              image: DecorationImage(
-//                                  image: imageProvider,
-//                                  fit: BoxFit.cover),
-//                            ),
-//                          ),
-//                        ),
-//                      ),
-//                  placeholder: (context, url) => new Container(
-//                    height: 85,
-//                    width: 85,
-////                                      color: MyColors.grey,
-//                    child: Center(
-//                        child: CircularProgressIndicator()),
-//                  ),
-//                  placeholderFadeInDuration:
-//                  Duration(milliseconds: 500),
-//                  errorWidget: (context, url, error) =>
-//                  new Container(
-//                    height: 85,
-//                    width: 85,
-//                    color: MyColors.grey,
-//                  ),
-//                ),
-//              ),
               SizedBox(
                 width: 13,
               ),
@@ -129,28 +85,32 @@ class _OrderCardForStoreState extends State<OrderCardForStore> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "رقم : ${widget.num}",
+                          "${localization.text("number")} : ${widget.num}",
                           style: MyColors.styleNormalSmal2,
                         ),
+                        widget.pointIsAvailable == 1 ?Text(
+                          localization.text("There are no points to refund"),
+                          style: MyColors.styleBold0,
+                        )  :
                         widget.isRefunded == true
                             ? Container()
                             : widget.refund == 3
                                 ? SpecialButton(
                                     onTap: widget.refundFunction,
-                                    text: "طلب استرجاع",
-                                    textSize: 15,
+                                    text: localization.text("Refund request"),
+                                    textSize: 14,
                                     height: 35.0,
                                   )
                                 : widget.refund == 0
                                     ? Text(
-                                        "الطلب معلق",
+                                        localization.text("The request is pending"),
                                         style: MyColors.styleBold0,
                                       )
                                     : widget.refund == 1
                                         ? Row(
                                             children: [
                                               Text(
-                                                "تم استرجاعه",
+                                               localization.text("Retrieved"),
                                                 style: MyColors.styleBold0,
                                               ),
                                               SizedBox(
@@ -167,7 +127,7 @@ class _OrderCardForStoreState extends State<OrderCardForStore> {
                             ? Row(
                           children: [
                             Text(
-                              "تم رفض الاسترجاع",
+                              localization.text("Retrieval denied"),
                               style: MyColors.styleBoldSmall,
                             ),
                             SizedBox(

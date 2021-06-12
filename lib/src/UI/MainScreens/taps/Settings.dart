@@ -10,13 +10,16 @@ import 'package:cashpoint/src/UI/MainScreens/Advertisment.dart';
 import 'package:cashpoint/src/UI/MainScreens/ContactUs.dart';
 
 import 'package:cashpoint/src/UI/MainScreens/EditProfile.dart';
+import 'package:cashpoint/src/UI/MainScreens/MyCashiers.dart';
 import 'package:cashpoint/src/UI/MainScreens/MyPayments.dart';
 import 'package:cashpoint/src/UI/MainScreens/About.dart';
 import 'package:cashpoint/src/UI/MainScreens/Slider.dart';
 import 'package:cashpoint/src/UI/MainScreens/Suggestions.dart';
+import 'package:cashpoint/src/UI/MainScreens/language.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Settings_Row.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Button.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Text_Field.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +36,15 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
+
 
   var profileImage =
       "https://homepages.cae.wisc.edu/~ece533/images/peppers.png";
 
   SharedPreferences _prefs;
+  String _deviceToken ;
   var apiToken;
   var details;
   var name;
@@ -48,6 +54,7 @@ class _SettingsState extends State<Settings> {
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
+    _deviceToken = await _firebaseMessaging.getToken();
     setState(() {
       apiToken = _prefs.getString("api_token");
       name = _prefs.getString("name");
@@ -112,11 +119,29 @@ class _SettingsState extends State<Settings> {
         .then((value) async {
       if (value.code == 200) {
         print("correct logOut");
+//        Navigator.pop(context);
+//
+//        Navigator.of(context).pushAndRemoveUntil(
+//            MaterialPageRoute(builder: (context) => SplashScreen()),
+//            (Route<dynamic> route) => false);
+      } else {
+        print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+      }
+    });
+
+    await ApiProvider(_scafold, context)
+        .logOut(apiToken: apiToken,device_token: _deviceToken)
+        .then((value) async {
+      if (value.code == 200) {
+        print("correct logOut");
         Navigator.pop(context);
 
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => SplashScreen()),
-            (Route<dynamic> route) => false);
+                (Route<dynamic> route) => false);
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
@@ -140,51 +165,7 @@ class _SettingsState extends State<Settings> {
         : apiToken == null
             ?
     LoginPage()
-//    Scaffold(
-////                appBar: AppBar(
-////                  automaticallyImplyLeading: false,
-////                  backgroundColor: MyColors.darkRed,
-////                  centerTitle: true,
-////                  elevation: 0,
-////                  leading: SizedBox(
-////                    width: 20,
-////                  ),
-////                ),
-//                body: Container(
-//                  height: MediaQuery.of(context).size.height,
-//                  width: MediaQuery.of(context).size.width,
-//                  child: Center(
-//                    child: Column(
-//                      mainAxisAlignment: MainAxisAlignment.center,
-//                      children: <Widget>[
-//                        Text(
-//                          "يجب تسجيل الدخول اولا",
-//                          style: MyColors.styleBold2,
-//                        ),
-//                        SizedBox(
-//                          height: 15,
-//                        ),
-//                        Padding(
-//                          padding: const EdgeInsets.symmetric(horizontal: 70),
-//                          child: SpecialButton(
-//                            text: localization.text("login"),
-//                            color: MyColors.darkRed,
-//                            height: 35.0,
-//                            width: 150.0,
-//                            onTap: () {
-//                              Navigator.pushAndRemoveUntil(
-//                                  context,
-//                                  MaterialPageRoute(
-//                                      builder: (_) => LoginPage()),
-//                                  (route) => false);
-//                            },
-//                          ),
-//                        )
-//                      ],
-//                    ),
-//                  ),
-//                ),
-//              )
+
             : Directionality(
                 textDirection: localization.currentLanguage.toString() == "en"
                     ? TextDirection.ltr
@@ -326,7 +307,7 @@ class _SettingsState extends State<Settings> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "اهلا",
+                                      localization.text("welcome_user"),
                                       style: MyColors.styleBold4white,
                                     ),
                                     SizedBox(
@@ -442,7 +423,7 @@ class _SettingsState extends State<Settings> {
                                               builder: (context) =>
                                                   MovingSlider()));
                                     },
-                                    text: "السلايدر",
+                                    text: localization.text("slider"),
                                     icon: Icon(
                                       Icons.image,
                                       color: Colors.black54,
@@ -451,6 +432,26 @@ class _SettingsState extends State<Settings> {
                                   )
                                 else
                                   Container(),
+
+                                logInType == "متجر"
+                                    ? SettingsRow(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                MyCashiers()));
+                                  },
+                                  text: localization.text("cashier"),
+                                  icon: Icon(
+                                    Icons.supervised_user_circle,
+                                    color: Colors.black54,
+                                    size: 25,
+                                  ),
+                                )
+                                    : Container(),
+
+
                                 if (logInType == "متجر")
                                   SettingsRow(
                                     onTap: () {
@@ -460,7 +461,7 @@ class _SettingsState extends State<Settings> {
                                               builder: (context) =>
                                                   Advertisements()));
                                     },
-                                    text: "اعلن لدينا",
+                                    text: localization.text("Advertise with us"),
                                     icon: Icon(
                                       Icons.add_photo_alternate,
                                       color: Colors.black54,
@@ -488,7 +489,7 @@ class _SettingsState extends State<Settings> {
                                 ),
                                 SettingsRow(
                                     onTap: () {},
-                                    text: "قيم التطبيق",
+                                    text: localization.text("rate the application"),
                                     icon: Icon(
                                       Icons.rate_review,
                                       color: Colors.black54,
@@ -527,6 +528,22 @@ class _SettingsState extends State<Settings> {
                                     width: 22,
                                   ),
                                 ),
+
+
+                                SettingsRow(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditLanguage()));
+                                  },
+                                  text: localization.text("choose_lang"),
+                                  icon: Icon(
+                                    Icons.language,
+                                    color: Colors.black54,
+                                    size: 23,
+                                  )
+                                ),
                                 InkWell(
                                     onTap: () {
                                       LoadingDialog(widget.scaffold, context)
@@ -554,74 +571,16 @@ class _SettingsState extends State<Settings> {
                                           style: MyColors.styleNormal15Grey,
                                         )
                                       ],
-                                    ))
+                                    )),
+                                SizedBox(height: 120,)
                               ],
                             ),
-                          )
+                          ),
+
                         ],
                       ),
                     )),
               );
   }
-//
-//  enterVerificationCode(BuildContext context, var email, String txt) {
-//    return showModalBottomSheet<dynamic>(
-//        isScrollControlled: true,
-//        backgroundColor: Colors.white,
-//        context: context,
-//        shape: RoundedRectangleBorder(
-//            borderRadius: BorderRadius.only(
-//                topRight: Radius.circular(20), topLeft: Radius.circular(20))),
-//        builder: (BuildContext bc) {
-//          return Padding(
-//            padding: MediaQuery.of(context).viewInsets,
-//            child: Padding(
-//              padding: const EdgeInsets.only(top: 20.0),
-//              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-//                ListTile(
-//                    onTap: () {},
-//                    title: Center(
-//                      child: Text(
-//                        txt,
-//                        textAlign: TextAlign.center,
-//                        style: MyColors.styleBold1,
-//                      ),
-//                    )),
-//                SizedBox(
-//                  height: 10,
-//                ),
-//                Padding(
-//                  padding: const EdgeInsets.all(12.0),
-//                  child: SpecialTextField(
-//                    icon: Icon(
-//                      Icons.mail_outline,
-//                      color: Colors.black,
-//                      size: 19,
-//                    ),
-//                    hint: "ادخل الكود",
-//                    keyboardType: TextInputType.emailAddress,
-//                    onChange: (value) {
-//                      setState(() {
-//                        verificationCode = value;
-//                      });
-//                    },
-//                  ),
-//                ),
-//                SizedBox(
-//                  height: 10,
-//                ),
-//                Padding(
-//                  padding: const EdgeInsets.all(12.0),
-//                  child: SpecialButton(
-//                    onTap: () {
-////                      sendCode();
-//                    },
-//                    text: "ارسل",
-//                  ),
-//                ),
-//              ]),
-//            ),
-//          );
-//        });
-//  }
+
 }

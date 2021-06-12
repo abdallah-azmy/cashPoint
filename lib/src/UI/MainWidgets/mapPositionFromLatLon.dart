@@ -1,7 +1,7 @@
 //import 'package:map_launcher/map_launcher.dart' as mapLaunch;
-//import 'package:ntaqat/src/MyColors.dart';
-//import 'package:ntaqat/src/firebaseNotification/appLocalization.dart';
-//import 'package:ntaqat/src/helper/map_helper.dart';
+//import 'package:cashpoint/src/MyColors.dart';
+//import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
+//import 'package:cashpoint/src/helper/map_helper.dart';
 //import 'package:flutter/foundation.dart';
 //import 'package:flutter/gestures.dart';
 //import 'package:flutter/material.dart';
@@ -235,7 +235,7 @@
 //        _shopMarker = Marker(
 //          markerId: MarkerId('target'),
 //          position: LatLng(currentLocation.latitude, currentLocation.longitude),
-//          infoWindow: InfoWindow(title: "العنوان"),
+//          infoWindow: InfoWindow(title: localization.text("location")),
 //        );
 //
 //        _mapController.animateCamera(CameraUpdate.newCameraPosition(

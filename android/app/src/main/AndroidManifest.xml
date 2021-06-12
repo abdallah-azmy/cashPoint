@@ -9,6 +9,10 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="cashpoint"
         android:icon="@mipmap/launcher_icon">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBqvVa7BTv1dtyLlwlb0PHY1PdOXtYi-Gg" />
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

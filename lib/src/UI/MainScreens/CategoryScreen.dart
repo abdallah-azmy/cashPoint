@@ -15,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:flutter/rendering.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,28 +41,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
-  var category = [] ;
-  var loading ;
+  var category = [];
+  var pinnedCategory = [];
+  var loading;
+  var loadingPinned;
 
   var allHomeCategories = [
-//    {
-//      "search": "عرض الكل",
-//    },
-//    {
-//      "search": "مطاعم",
-//    },
-//    {
-//      "search": "مقاهي",
-//    },
-//    {
-//      "search": "عصائر",
-//    },
-//    {
-//      "search": "حلويات",
-//    },
-//    {
-//      "search": "خدمات اخري",
-//    },
   ];
 
   var _loading = true;
@@ -75,29 +60,80 @@ class _CategoryScreenState extends State<CategoryScreen> {
     setState(() {
       apiToken = _prefs.getString("api_token");
     });
-//    getAllStoresOfCategory();
-    Provider.of<MapHelper>(context, listen: false)
-        .getLocation()
-        .then((value) async {
+    getAllPinnedStoresOfCategory().then((value) {
+
+
       Provider.of<MapHelper>(context, listen: false)
-          .position ==
-          null
-          ? LoadingDialog(_scafold, context)
-          .showNotification("يجب تحديد المكان")
-          : getDataByLat(
-          Provider.of<MapHelper>(context, listen: false)
-              .position
-              .latitude
-              .toString(),
-          Provider.of<MapHelper>(context, listen: false)
-              .position
-              .longitude
-              .toString());
+          .getLocation()
+          .then((value) async {
+        Provider.of<MapHelper>(context, listen: false).position == null
+            ? LoadingDialog(_scafold, context)
+            .showNotification(localization.text("Location must be specified"))
+            : getDataByLat(
+            Provider.of<MapHelper>(context, listen: false)
+                .position
+                .latitude
+                .toString(),
+            Provider.of<MapHelper>(context, listen: false)
+                .position
+                .longitude
+                .toString());
+      });
     });
+
+
     print("api_token >>>>> $apiToken");
   }
 
+
+
+
+  getAllPinnedStoresOfCategory() async {
+    setState(() {
+      pinnedCategory = [];
+      loadingPinned = null ;
+    });
+    LoadingDialog(_scafold, context).showLoadingDilaog();
+    print("api_token >>>>> $apiToken");
+    await ApiProvider(_scafold, context)
+        .getAllStoresOfCategory(
+//      apiToken: apiToken,
+      category_id: widget.id,
+    )
+        .then((value) async {
+      if (value.code == 200) {
+        print("correct connection");
+        setState(() {
+//          pinnedCategory = value.data.map((m)=> m.arranging != null ).toList();
+          pinnedCategory =  value.data
+              .where((x) => x.arranging != null)
+              .toList();
+          pinnedCategory.sort((m1, m2) {
+            var r = m1.arranging.compareTo(m2.arranging);
+            return r;
+          });
+//          pinnedCategory = pinnedCategory.reversed.toList();
+          loadingPinned = "done" ;
+        });
+
+        Navigator.pop(context);
+      } else {
+        print('error >>> ' + value.error[0].value);
+        setState(() {
+          loadingPinned = "done" ;
+        });
+        Navigator.pop(context);
+
+        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+      }
+    });
+  }
+
   getAllStoresOfCategory() async {
+    setState(() {
+      category = [];
+      loading = null ;
+    });
     LoadingDialog(_scafold, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
     await ApiProvider(_scafold, context)
@@ -110,10 +146,22 @@ class _CategoryScreenState extends State<CategoryScreen> {
         print("correct connection");
         setState(() {
           category = value.data;
+//          category = value.data;
+
+          for (var i = 0; i < pinnedCategory.length ; i++) {
+            category.removeWhere((item) => item.id == pinnedCategory[i].id);
+          }
+
+//          pinnedCategory = value.data.map((m)=> m!= null ).toList();
+          loading = "done" ;
         });
+//        print("${pinnedCategory.length}");
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
+        setState(() {
+          loading = "done" ;
+        });
         Navigator.pop(context);
 
         LoadingDialog(_scafold, context).showNotification(value.error[0].value);
@@ -122,6 +170,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   getDataByLat(lat, long) async {
+    setState(() {
+      category = [];
+      loading = null ;
+    });
     LoadingDialog(_scafold, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
     await ApiProvider(_scafold, context)
@@ -135,7 +187,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
         print("correct connection");
         setState(() {
           category = value.data;
-          loading = "done" ;
+          for (var i = 0; i < pinnedCategory.length ; i++) {
+            category.removeWhere((item) => item.id == pinnedCategory[i].id);
+          }
+          loading = "done";
         });
         Navigator.pop(context);
       } else {
@@ -143,7 +198,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         Navigator.pop(context);
 
         setState(() {
-          loading = "done" ;
+          loading = "done";
         });
         LoadingDialog(_scafold, context).showNotification(value.error[0].value);
       }
@@ -180,11 +235,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
           resizeToAvoidBottomInset: true,
           backgroundColor: Color(0xffF5F6F8),
           body: RefreshIndicator(
-            onRefresh: (){
+            onRefresh: () {
               return _getShared();
             },
             child: SafeArea(
-              child: Column(
+              child: ListView(
                 children: <Widget>[
                   Stack(
                     children: [
@@ -291,44 +346,35 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                           child: Center(
                                             child: InkWell(
                                               onTap: () {
+                                                Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            CategoryScreen(
+                                                                id: widget
+                                                                    .homeCategories[
+                                                                        i]
+                                                                    .id,
+                                                                categoryName: widget
+                                                                    .homeCategories[
+                                                                        i]
+                                                                    .name,
+                                                                img: widget
+                                                                    .homeCategories[
+                                                                        i]
+                                                                    .image,
+                                                                homeCategories:
+                                                                    widget
+                                                                        .homeCategories)));
 
-                                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => CategoryScreen(
-                                                    id: widget.homeCategories[
-                                                    i]
-                                                        .id,
-                                                    categoryName:
-                                                    widget.homeCategories[
-                                                    i]
-                                                        .name,
-                                                    img: widget.homeCategories[
-                                                    i]
-                                                        .image,
-                                                    homeCategories:widget.homeCategories
-                                                )));
-
-//                                                Navigator.push(
-//                                                    context,
-//                                                    MaterialPageRoute(
-//                                                        builder: (context) =>
-//                                                            CategoryScreen(
-//                                                                id: widget.homeCategories[
-//                                                                i]
-//                                                                    .id,
-//                                                                categoryName:
-//                                                                widget.homeCategories[
-//                                                                i]
-//                                                                    .name,
-//                                                                img: widget.homeCategories[
-//                                                                i]
-//                                                                    .image,
-//                                                                homeCategories:widget.homeCategories
-//                                                            )));
                                               },
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal: 8, vertical: 2),
+                                                      horizontal: 8,
+                                                      vertical: 2),
                                                   decoration: BoxDecoration(
-                                                      color: Colors.white,
+                                                      color:widget.categoryName == widget.homeCategories[i].name ? MyColors.orange : Colors.white,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               7)),
@@ -344,60 +390,90 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           ))
                     ],
                   ),
-//                Container(
-//                  height: 45,
-//                  decoration: BoxDecoration(
-//                    color: MyColors.darkRed,
-//                    borderRadius: BorderRadius.only(
-//                      bottomLeft: Radius.circular(80),
-//                    ),
-//                  ),
-//                ),
-//                Container(
-//                  height: 45,
-//                  decoration: BoxDecoration(
-//                    color: MyColors.darkRed,
-//                    borderRadius: BorderRadius.only(
-////                        bottomLeft:  Radius.circular(80),
-//                        ),
-//                  ),
-//                  child: Container(
-//                    height: 45,
-//                    decoration: BoxDecoration(
-//                      color: Color(0xfff5f6f8),
-//                      borderRadius: BorderRadius.only(
-//                        topRight: Radius.circular(80),
-//                      ),
-//                    ),
-//                  ),
-//                ),
+
                   SizedBox(
                     height: 5,
                   ),
-                  Expanded(
-                    child:loading == null ? Container() :  category.length == 0 ? Center(child: Text("لا توجد متاجر"),) : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: category.length,
-                        itemBuilder: (context, i) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => CategoryItemDetails(
-                                            id: category[i].id,
-                                          )));
-                            },
-                            child: CategoryCard(
-                              name: category[i].name,
-                              img: category[i].logo,
-//                            distance: category[i]["distance"],
-                              distance: "4",
-                              rate: "${category[i].stars}",
-                            ),
-                          );
-                        }),
-                  ),
+//                  loading == null
+//                      ? Container()
+//                      : pinnedCategory.length == 0
+//                          ? Center(
+//                              child: Text("لا توجد متاجر"),
+//                            )
+//                          :
+                  Column(
+                            children: [
+                              loadingPinned == null
+                                  ? Container()
+                                  : pinnedCategory.length == 0
+                                  ? Center(
+                                child: Text("لا توجد متاجر"),
+                              )
+                                  :   ListView.builder(
+                                  shrinkWrap: true,
+                                  physics:  NeverScrollableScrollPhysics(),
+                                  itemCount: pinnedCategory.length,
+                                  itemBuilder: (context, i) {
+
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CategoryItemDetails(
+                                                      id: pinnedCategory[i].id,
+                                                      categoryName: widget.categoryName,
+                                                    )));
+                                      },
+                                      child: CategoryCard(
+                                        name: pinnedCategory[i].name,
+                                        pinned: true,
+                                        category: pinnedCategory[i],
+                                        img: pinnedCategory[i].logo,
+                                        rate: pinnedCategory[i].stars,
+                                      ),
+                                    );
+                                  }),
+
+
+                              Divider(thickness: 3,),
+
+
+
+                              loading == null
+                                  ? Container()
+                                  : category.length == 0
+                                  ? Center(
+                                child: Text("لا توجد متاجر"),
+                              )
+                                  :  ListView.builder(
+                                  shrinkWrap: true,
+                      physics:  NeverScrollableScrollPhysics(),
+                                  itemCount: category.length,
+                                  itemBuilder: (context, i) {
+
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CategoryItemDetails(
+                                                      id: category[i].id,
+                                                      categoryName: widget.categoryName,
+                                                    )));
+                                      },
+                                      child: CategoryCard(
+                                        name: category[i].name,
+                                        category: category[i],
+                                        img: category[i].logo,
+                                        rate: category[i].stars,
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          ),
                   SizedBox(
                     height: 10,
                   )
@@ -451,43 +527,42 @@ class _CategoryScreenState extends State<CategoryScreen> {
 //                    },
 //                  ),
 //                ),
-//                Padding(
-//                  padding: const EdgeInsets.all(10.0),
-//                  child: SpecialButton(
-//                    onTap: () {
-//                      Navigator.pop(context);
-//
-//                      Provider.of<MapHelper>(context, listen: false)
-//                          .getLocation()
-//                          .then((value) async {
-//                        Provider.of<MapHelper>(context, listen: false)
-//                                    .position ==
-//                                null
-//                            ? LoadingDialog(_scafold, context)
-//                                .showNotification("يجب تحديد المكان")
-//                            : getDataByLat(
-//                                Provider.of<MapHelper>(context, listen: false)
-//                                    .position
-//                                    .latitude
-//                                    .toString(),
-//                                Provider.of<MapHelper>(context, listen: false)
-//                                    .position
-//                                    .longitude
-//                                    .toString());
-//                      });
-//                    },
-//                    text: localization.text("nearest"),
-//                  ),
-//                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SpecialButton(
+                    onTap: () {
+                      Navigator.pop(context);
+
+//                      _getShared();
+
+                      Provider.of<MapHelper>(context, listen: false)
+                          .getLocation()
+                          .then((value) async {
+                        Provider.of<MapHelper>(context, listen: false).position == null
+                            ? LoadingDialog(_scafold, context)
+                            .showNotification(localization.text("Location must be specified"))
+                            : getDataByLat(
+                            Provider.of<MapHelper>(context, listen: false)
+                                .position
+                                .latitude
+                                .toString(),
+                            Provider.of<MapHelper>(context, listen: false)
+                                .position
+                                .longitude
+                                .toString());
+                      });
+                    },
+                    text: localization.text("nearest"),
+                  ),
+                ),
 
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
                     onTap: () {
-
                       Navigator.pop(context);
 
-                      getAllStoresOfCategory().then((value){
+                      getAllStoresOfCategory().then((value) {
                         setState(() {
                           print("111111111111111111111");
                           category.sort((m1, m2) {
@@ -495,12 +570,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 ? m1.id.compareTo(m2.id)
                                 : m1.stars.compareTo(m2.stars);
 //                            if (r != 0)
-                              return r;
+                            return r;
 ////                            return m1.stars == null || m2.stars == null
 ////                                ? m1.id.compareTo(m2.id)
 ////                                : m1.stars.compareTo(m2.stars);
                           });
-                          category =  category.reversed.toList() ;
+                          category = category.reversed.toList();
+
 //                          print("222222222222222222222");
 //                          category.reversed.toList() ;
 //                          print("111111111111111111111");
@@ -508,7 +584,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
 //                          category =  category.reversed.toList() ;
                         });
                       });
-
                     },
                     text: localization.text("higher rate"),
                   ),

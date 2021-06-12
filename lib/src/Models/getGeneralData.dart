@@ -87,7 +87,7 @@ class Data {
     logo: json["logo"] == null ? null : json["logo"],
     minLimitReplacement: json["min_limit_replacement"] == null ? null : json["min_limit_replacement"],
     clientCash: json["client_cash"] == null ? null : json["client_cash"],
-    maxCommission: json["max_commission"] == null ? null : json["max_commission"],
+    maxCommission: json["max_commission"] == null ? null : "${json["max_commission"]}",
     scopeOfSearch: json["scope_of_search"] == null ? null : json["scope_of_search"],
     twitter: json["twitter"],
     instagram: json["instagram"],

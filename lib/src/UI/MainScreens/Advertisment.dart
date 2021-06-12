@@ -21,7 +21,9 @@ import 'package:cashpoint/src/LoadingDialog.dart';
 
 class Advertisements extends StatefulWidget {
   final scaffold;
-  Advertisements({this.scaffold, });
+  Advertisements({
+    this.scaffold,
+  });
   @override
   _AdvertisementsState createState() => _AdvertisementsState();
 }
@@ -30,12 +32,12 @@ class _AdvertisementsState extends State<Advertisements> {
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   List<ImageOfOrder> imagesList = [];
   var images = [];
-  var loading ;
+  var loading;
   var reasons;
 
   SharedPreferences _prefs;
   var apiToken;
-  var _image ;
+  var _image;
   Future getImage() async {
     var pic = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -46,12 +48,10 @@ class _AdvertisementsState extends State<Advertisements> {
     _image == null ? print("null") : chooseAddMethod(context);
   }
 
-
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       apiToken = _prefs.getString("api_token");
-
     });
     getData();
     print("api_token >>>>> $apiToken");
@@ -81,20 +81,18 @@ class _AdvertisementsState extends State<Advertisements> {
     });
   }
 
-
-  addImages(userId,link) async {
+  addImages(userId, link) async {
     LoadingDialog(_key, context).showLoadingDilaog();
     await ApiProvider(_key, context)
-        .advertiseWithUs(apiToken: apiToken,image: _image,user_id: userId,link: link )
+        .advertiseWithUs(
+            apiToken: apiToken, image: _image, user_id: userId, link: link)
         .then((value) async {
       if (value.code == 200) {
 //        print('Branches number >>>>> ' + value.data.length.toString());
         Navigator.pop(context);
         LoadingDialog(_key, context).showNotification(value.data.message);
 
-          getData();
-
-
+        getData();
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
@@ -103,18 +101,16 @@ class _AdvertisementsState extends State<Advertisements> {
     });
   }
 
-
   deleteImage(imageId) async {
     LoadingDialog(_key, context).showLoadingDilaog();
     await ApiProvider(_key, context)
-        .deleteImageOfStoreSlider(apiToken: apiToken,image_id: imageId)
+        .deleteAdvertisement(apiToken: apiToken,advertisement_id: imageId)
         .then((value) async {
       if (value.code == 200) {
         print('Branches number >>>>> ' + value.data.value);
         Navigator.pop(context);
         LoadingDialog(_key, context).showNotification(value.data.value);
-          getData();
-
+        getData();
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
@@ -122,7 +118,6 @@ class _AdvertisementsState extends State<Advertisements> {
       }
     });
   }
-
 
   @override
   void initState() {
@@ -144,11 +139,13 @@ class _AdvertisementsState extends State<Advertisements> {
         backgroundColor: Color(0xfff5f6f8),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SpecialButton(text: "اضافة اعلان",onTap: (){
-            getImage();
-          }, ),
+          child: SpecialButton(
+            text: localization.text("Add an advertisement"),
+            onTap: () {
+              getImage();
+            },
+          ),
         ),
-
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: () {
@@ -156,8 +153,6 @@ class _AdvertisementsState extends State<Advertisements> {
             },
             child: Column(
               children: [
-
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,12 +161,12 @@ class _AdvertisementsState extends State<Advertisements> {
                         padding: const EdgeInsets.only(
                             top: 9, right: 15, left: 15, bottom: 3),
                         child: Text(
-                         "اعلن لدينا",
+                          localization.text("Advertise with us"),
                           style: MyColors.styleBold2,
                         )),
                     Padding(
                         padding:
-                        const EdgeInsets.only(top: 7, right: 8, left: 8),
+                            const EdgeInsets.only(top: 7, right: 8, left: 8),
                         child: InkWell(
                             onTap: () {
                               Navigator.pop(context);
@@ -189,64 +184,123 @@ class _AdvertisementsState extends State<Advertisements> {
                 loading == null
                     ? Container()
                     : images.length == 0
-                    ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
-                        child: ListView(
-                  children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.height*.8,
-                          child: Center(
-                              child: Text(localization.text("no photos"))),
-                        ),
-                  ],
-                ),
-                      ),
-                    )
-                    : Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-                        child: ListView.builder(shrinkWrap: true,
-                  itemBuilder: (context, i) {
-                        return InkWell(
-                          onTap: () {
-
-
-                            imagesList.clear();
-                            imagesList.add(ImageOfOrder(image: images[i].image));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PhotoGallaryString(
-                                      images: imagesList,
-                                    )));
-
-                          },
-                          child: SliderCard(
-
-                            img: images[i].image,
-                              apiToken: apiToken,
-                              scaffold: _key,
-                              onTap: () {
-
-                              LoadingDialog(_key, context).deleteAlert(null ,
-                                  (){
-                                    Navigator.pop(context);
-                                    deleteImage(images[i].id);
-                                  }
-                              );
-
-
-                              },
-                              getData: () {
-                                getData();
-                              }),
-                        );
-                  },
-                  itemCount: images.length,
-                ),
-                      ),
-                    ),
+                        ? Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 9),
+                              child: ListView(
+                                children: <Widget>[
+                                  Container(
+                                    height:
+                                        MediaQuery.of(context).size.height * .8,
+                                    child: Center(
+                                        child: Text(
+                                            localization.text("no photos"))),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 3),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemBuilder: (context, i) {
+                                  return InkWell(
+                                    onTap: () {
+                                      imagesList.clear();
+                                      imagesList.add(
+                                          ImageOfOrder(image: images[i].image));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PhotoGallaryString(
+                                                    images: imagesList,
+                                                  )));
+                                    },
+                                    child: Column(
+                                      children: [
+                                        SliderCard(
+                                            img: images[i].image,
+                                            apiToken: apiToken,
+                                            scaffold: _key,
+                                            onTap: () {
+                                              LoadingDialog(_key, context)
+                                                  .deleteAlert(null, () {
+                                                Navigator.pop(context);
+                                                deleteImage(images[i].id);
+                                              });
+                                            },
+                                            getData: () {
+                                              getData();
+                                            }),
+                                        images[i].status == 2
+                                            ? Text(
+                                                "${localization.text("Advertising")}",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            : images[i].status == 1
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        "${localization.text("activated ad")}",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.green,
+                                                        size: 20,
+                                                      )
+                                                    ],
+                                                  )
+                                                : images[i].status == 0
+                                                    ? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "${localization.text("Waiting for admin activation")}",
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Icon(
+                                                            Icons.cancel,
+                                                            color: Colors.red,
+                                                            size: 20,
+                                                          )
+                                                        ],
+                                                      )
+                                                    : Container(),
+                                        Divider()
+                                      ],
+                                    ),
+                                  );
+                                },
+                                itemCount: images.length,
+                              ),
+                            ),
+                          ),
 //                    SizedBox(height: 5,),
               ],
             ),
@@ -255,7 +309,6 @@ class _AdvertisementsState extends State<Advertisements> {
       ),
     );
   }
-
 
   chooseAddMethod(BuildContext context) {
     return showModalBottomSheet<dynamic>(
@@ -275,7 +328,8 @@ class _AdvertisementsState extends State<Advertisements> {
                     onTap: () {},
                     title: Center(
                       child: Text(
-                        "عند الضغط علي الاعلان يقودك",
+                        localization
+                            .text("When you click on the ad, it leads you"),
                         textAlign: TextAlign.center,
                         style: MyColors.styleBold1,
                       ),
@@ -306,11 +360,9 @@ class _AdvertisementsState extends State<Advertisements> {
                     onTap: () {
                       Navigator.pop(context);
 
-
-                      addImages(images[0].userId,null);
-
+                      addImages(images[0].userId, null);
                     },
-                    text: "الي المتجر",
+                    text: localization.text("to the store"),
                   ),
                 ),
 
@@ -322,7 +374,7 @@ class _AdvertisementsState extends State<Advertisements> {
 
                       linkAddMethod(context);
                     },
-                    text: "الي لينك",
+                    text: localization.text("to a link"),
                   ),
                 ),
                 SizedBox(
@@ -334,10 +386,8 @@ class _AdvertisementsState extends State<Advertisements> {
         });
   }
 
-
-
   linkAddMethod(BuildContext context) {
-    var link ;
+    var link;
     return showModalBottomSheet<dynamic>(
         isScrollControlled: true,
         backgroundColor: Colors.white,
@@ -381,16 +431,15 @@ class _AdvertisementsState extends State<Advertisements> {
 //                  ),
 //                ),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SpecialTextField(
-                    hint: "اكتب اللينك هنا",
-                    onChange: (value){
-                      setState(() {
-                        link = value ;
-                      });
-                    },
-                  )
-                ),
+                    padding: const EdgeInsets.all(10.0),
+                    child: SpecialTextField(
+                      hint: "اكتب اللينك هنا",
+                      onChange: (value) {
+                        setState(() {
+                          link = value;
+                        });
+                      },
+                    )),
 
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -398,8 +447,7 @@ class _AdvertisementsState extends State<Advertisements> {
                     onTap: () {
                       Navigator.pop(context);
 
-
-                      addImages(null,link);
+                      addImages(null, link);
                     },
                     text: "ارسل",
                   ),
@@ -413,4 +461,3 @@ class _AdvertisementsState extends State<Advertisements> {
         });
   }
 }
-

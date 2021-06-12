@@ -20,35 +20,35 @@ class MobileForRegister extends StatefulWidget {
 
 class _MobileForRegisterState extends State<MobileForRegister> {
   String phone;
-  var _countryId;
+//  var _countryId;
   var shownCountryCode;
   var countries=[];
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
 
-  getCountries() async {
-      LoadingDialog(_scafold, context).showLoadingDilaog();
-      await ApiProvider(_scafold, context)
-          .getCountries()
-          .then((value) async {
-        if (value.code == 200) {
-          print('correct');
-          Navigator.pop(context);
-
-          setState(() {
-            countries = value.data ;
-          });
-
-        } else {
-          print('error >>> ' + value.error[0].value);
-          Navigator.pop(context);
-
-          LoadingDialog(_scafold, context)
-              .showNotification(value.error[0].value);
-        }
-      });
-
-  }
+//  getCountries() async {
+//      LoadingDialog(_scafold, context).showLoadingDilaog();
+//      await ApiProvider(_scafold, context)
+//          .getCountries()
+//          .then((value) async {
+//        if (value.code == 200) {
+//          print('correct');
+//          Navigator.pop(context);
+//
+//          setState(() {
+//            countries = value.data ;
+//          });
+//
+//        } else {
+//          print('error >>> ' + value.error[0].value);
+//          Navigator.pop(context);
+//
+//          LoadingDialog(_scafold, context)
+//              .showNotification(value.error[0].value);
+//        }
+//      });
+//
+//  }
 
   registerForMobile() async {
     if (phone == null || phone.length < 10) {
@@ -60,7 +60,7 @@ class _MobileForRegisterState extends State<MobileForRegister> {
       await ApiProvider(_scafold, context)
           .registerForMobile(
         phone: phone,
-        country_id: _countryId
+//        country_id: _countryId
       )
           .then((value) async {
         if (value.code == 200) {
@@ -74,7 +74,9 @@ class _MobileForRegisterState extends State<MobileForRegister> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      SendingCode(phone: phone, typeOfCode: "mobileRegister",countryId: _countryId,)));
+                      SendingCode(phone: phone, typeOfCode: "mobileRegister",
+//                        countryId: _countryId,
+                      )));
         } else {
           print('error >>> ' + value.error[0].value);
           Navigator.pop(context);
@@ -94,7 +96,7 @@ class _MobileForRegisterState extends State<MobileForRegister> {
     setState(() {
       logo = _prefs.getString("logo");
     });
-    getCountries();
+//    getCountries();
   }
 
 
@@ -256,70 +258,70 @@ class _MobileForRegisterState extends State<MobileForRegister> {
                           ),
                           SizedBox(height: 15),
 
-                          InkWell(
-                            onTap: () {
-                              bottomSheet(context, countries, "countries");
-                            },
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black54),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(5.5),
-                                    child: InkWell(
-//                                      onTap: widget.onIconTap,
-                                      child: CircleAvatar(
-                                        radius: 17.5,
-                                        backgroundColor: Colors.grey[200],
-                                        child: Container(
-                                          height: 25,
-                                          width: 25,
-                                          child: Icon(
-                                            Icons.flag,
-                                            size: 22,
-                                            color: MyColors.orange,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                        shownCountryCode ??  localization.text("choose country code"),
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  // fontFamily: "Tajawal",
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.black),
-                                            ),
-                                            Icon(
-                                              Icons.arrow_drop_down,
-                                              size: 27,
-                                              color: Colors.black,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
+//                          InkWell(
+//                            onTap: () {
+//                              bottomSheet(context, countries, "countries");
+//                            },
+//                            child: Container(
+//                              height: 50,
+//                              decoration: BoxDecoration(
+//                                border: Border.all(color: Colors.black54),
+//                                borderRadius: BorderRadius.all(
+//                                  Radius.circular(10),
+//                                ),
+//                              ),
+//                              child: Row(
+//                                children: <Widget>[
+//                                  Padding(
+//                                    padding: const EdgeInsets.all(5.5),
+//                                    child: InkWell(
+////                                      onTap: widget.onIconTap,
+//                                      child: CircleAvatar(
+//                                        radius: 17.5,
+//                                        backgroundColor: Colors.grey[200],
+//                                        child: Container(
+//                                          height: 25,
+//                                          width: 25,
+//                                          child: Icon(
+//                                            Icons.flag,
+//                                            size: 22,
+//                                            color: MyColors.orange,
+//                                          ),
+//                                        ),
+//                                      ),
+//                                    ),
+//                                  ),
+////                                  Expanded(
+////                                    child: Container(
+////                                      child: Padding(
+////                                        padding: const EdgeInsets.symmetric(
+////                                            horizontal: 4),
+////                                        child: Row(
+////                                          mainAxisAlignment:
+////                                              MainAxisAlignment.spaceBetween,
+////                                          children: <Widget>[
+////                                            Text(
+////                                        shownCountryCode ??  localization.text("choose country code"),
+////                                              style: TextStyle(
+////                                                  fontSize: 16,
+////                                                  // fontFamily: "Tajawal",
+////                                                  fontWeight: FontWeight.normal,
+////                                                  color: Colors.black),
+////                                            ),
+////                                            Icon(
+////                                              Icons.arrow_drop_down,
+////                                              size: 27,
+////                                              color: Colors.black,
+////                                            )
+////                                          ],
+////                                        ),
+////                                      ),
+////                                    ),
+////                                  )
+//                                ],
+//                              ),
+//                            ),
+//                          ),
                           SizedBox(height: 15),
                           SpecialButton(
                             onTap: () {
@@ -381,7 +383,7 @@ class _MobileForRegisterState extends State<MobileForRegister> {
                                   onTap: () {
                                     Navigator.pop(context);
                                     setState(() {
-                                      _countryId = list[index].id ;
+//                                      _countryId = list[index].id ;
                                       shownCountryCode = "${list[index].name}  ${list[index].code}" ;
                                     });
                                   },

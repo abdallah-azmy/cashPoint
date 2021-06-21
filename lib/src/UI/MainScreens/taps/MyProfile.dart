@@ -52,7 +52,8 @@ class _MyProfileState extends State<MyProfile> {
 
 //    print("api_token >>>>> $apiToken");
   }
-
+   var pointsToChange = 0;
+  var remainWithoutChange ;
   getDataForClient() async {
 //    LoadingDialog(_scafold, context).showLoadingDilaog();
     await ApiProvider(_scafold, context)
@@ -62,7 +63,26 @@ class _MyProfileState extends State<MyProfile> {
 //        print("correct connection");
         setState(() {
           details = value.data[0];
+
+          pointsToChange = (details.remain / details.minLimitReplacement).floor();
+          remainWithoutChange =  details.minLimitReplacement * pointsToChange;
         });
+
+//        if (details.remain >= details.minLimitReplacement) {
+//          pointsToChange = (details.remain / details.minLimitReplacement).floor();
+
+          print("###########${remainWithoutChange}");
+
+//          $valueTaken =  $min_limit_replacement * $times;
+//
+//          $cashValue =  $valueTaken;
+//          $totalPoint->pull =     $valueTaken;
+//      $totalPoint->remain =    $point - $valueTaken;
+//
+//      $totalPoint->save();
+//      }
+
+
 
         print(">>>>>>>>>>${details.member.color.substring(0, 1)}");
         details.status == 2 ?
@@ -331,9 +351,11 @@ class _MyProfileState extends State<MyProfile> {
                                               : details.remain == null
                                                   ? "0"
                                                   : "${details.remain}",
-                                          //remain
+                                          //((num + 99) / 100 ) * 100
+                                          //
                                           style: MyColors.styleBigBold,
                                         ),
+
                                       ],
                                     ),
 
@@ -585,6 +607,7 @@ class _MyProfileState extends State<MyProfile> {
                                                                               getData: () {
                                                                                 getDataForClient();
                                                                               },
+                                                                              remainWithoutChange: remainWithoutChange,
                                                                             )));
                                                           },
                                                         ),

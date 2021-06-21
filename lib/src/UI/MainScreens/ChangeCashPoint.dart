@@ -20,7 +20,8 @@ import 'package:url_launcher/url_launcher.dart';
 class ChangeCashPoint extends StatefulWidget {
   final getData;
   final order;
-  ChangeCashPoint({this.getData, this.order});
+  final remainWithoutChange;
+  ChangeCashPoint({this.getData, this.order,this.remainWithoutChange});
   @override
   _ChangeCashPointState createState() => _ChangeCashPointState();
 }
@@ -144,6 +145,29 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
                       child: ListView(
                     children: [
                       SizedBox(height: 25,),
+                      Row(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+
+                          Text(
+                            widget.remainWithoutChange == null
+                                ? ""
+                                : "${localization.text("Transferred points")}",
+                            //((num + 99) / 100 ) * 100
+                            //
+                            style: MyColors.styleBold1,
+                          ),
+                          SizedBox(width: 5,),
+                          Text(
+                            widget.remainWithoutChange == null
+                                ? ""
+                                : "${widget.remainWithoutChange}",
+                            //((num + 99) / 100 ) * 100
+                            //
+                            style: MyColors.styleBigBold,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 15,),
                       InkWell(
                         onTap: () {
                           bottomSheet(context, banks, "banks");
@@ -212,7 +236,7 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
                       SizedBox(height: 15,),
                       SpecialTextField(
                         hint: localization.text("_Bank account"),
-                        height: 40.0,keyboardType: TextInputType.text ,
+                        height: 40.0,keyboardType: TextInputType.number ,
 
 
                         onChange: (value) {

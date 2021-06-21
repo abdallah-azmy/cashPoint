@@ -32,6 +32,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   SharedPreferences _prefs;
   var apiToken;
   var details;
+  var logInType;
 
   callPhone(num) {
     String phoneNumber = "tel:" + num;
@@ -42,6 +43,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       apiToken = _prefs.getString("api_token");
+      logInType = _prefs.getString("login");
     });
     getData(widget.id);
   }
@@ -339,7 +341,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         SizedBox(
                           height: 10,
                         ),
-                        details.point == null
+                        logInType == null ? Container() : logInType == "متجر" || logInType == "كاشير" ? Container() :   details.point == null
                             ? Container()
                             : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,7 +375,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   ),
                                 ],
                               ),
-                        details.commission == null
+                        logInType == null ? Container() : logInType == "عميل" ? Container() : details.commission == null
                             ? Container()
                             : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

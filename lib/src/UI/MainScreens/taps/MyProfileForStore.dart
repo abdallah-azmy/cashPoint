@@ -164,7 +164,7 @@ var _image ;
         Navigator.pop(context);
 
         if(value.error[0].value == "my fatoora لاغٍ"){
-          LoadingDialog(_scafold, context).alertPopUp("يرجي المحاولة لاحقا");
+          LoadingDialog(_scafold, context).alertPopUp(localization.text("please try again later"));
         }else{
           LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
         }

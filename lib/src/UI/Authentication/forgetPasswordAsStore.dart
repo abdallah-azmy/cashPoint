@@ -13,20 +13,20 @@ import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ForgetPassword extends StatefulWidget {
+class ForgetPasswordAsStore extends StatefulWidget {
   @override
-  _ForgetPasswordState createState() => _ForgetPasswordState();
+  _ForgetPasswordAsStoreState createState() => _ForgetPasswordAsStoreState();
 }
 
-class _ForgetPasswordState extends State<ForgetPassword> {
+class _ForgetPasswordAsStoreState extends State<ForgetPasswordAsStore> {
   String phone ;
 
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
   SharedPreferences _prefs;
   var logo ;
-  int userType = 1;
-//  var logInType ;
+  int userType = 2 ;
+//  var logInType = 2 ;
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -46,8 +46,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       LoadingDialog(_scafold,context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
 
+//      logInType == "متجر" ?
+
+
       await ApiProvider(_scafold, context)
-          .forgetPassword(phone: phone, type: userType )
+          .forgetPassword(membership_num: phone, type: userType )
           .then((value) async {
         if (value.code == 200) {
           print('Name >>> ' + value.data.value);
@@ -71,6 +74,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           LoadingDialog(_scafold,context).showNotification(value.error[0].value);
         }
       });
+
+
     }
   }
 
@@ -188,7 +193,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          localization.text("_forget_password_client"),
+                          localization.text("_forget_password_store"),
                           style: MyColors.styleBold2grey,
                         ),
                       ],
@@ -202,13 +207,13 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           ),
                           SpecialTextField(
                             icon: Icon(
-                              Icons.phone_android,
+                              Icons.person_outline,
                               color: MyColors.orange,
-                              size: 19,
+                              size: 24,
                             ),
-                            hint: localization.text("phone_number"),
+                            hint: localization.text("Membership N"),
                             iconCircleColor: Colors.grey[200],
-                            keyboardType: TextInputType.phone,
+                            keyboardType: TextInputType.number ,
                             onChange: (value) {
                               setState(() {
                                 phone = value;
@@ -273,7 +278,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 //                              )
 //                            ],
 //                          ),
-
+//
 
 
 

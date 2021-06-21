@@ -123,6 +123,7 @@
 "shares":"الردود",
 "add_answer":"إضافة إجابة",
 "price":"المبلغ",
+"please try again later":"يرجي المحاولة لاحقا",
 "please try later":"يرجي المحاولة لاحقا",
 "its_price":"السعر",
 "add_comment":"اضافة تعليق",
@@ -203,10 +204,15 @@
 
 "whatsapp":"واتساب",
 "point":"نقطة",
+"change":"تحويل",
 "Total points since registration":"اجمالي النقاط منذ التسجيل :",
 "Waiting for management confirmation to convert points to cash":"في انتظار تأكيد الادارة لتحويل النقاط الي كاش",
 "Bank account":"الحساب البنكي :",
+"_Bank account":"(SA) الحساب البنكي",
+"_Bank account_length":"الحساب البنكي (SA) قصير",
 "call us":"تواصل معنا",
+"change the bank":"اختر البنك",
+"change cashpoint":"تحويل كاش بوينت",
 "call":"اتصال",
 "Wait for the administration to confirm the commission payment process":"انتظر تأكيد الادارة لعملية دفع العمولة",
 "call us phone":"اتصل بنا",
@@ -388,7 +394,12 @@
 "ad_status_chat":"محادثة بخصوص اعلان :",
   "enter_code": "ادخل كود التفعيل",
   "forget_password": "نسيت كلمة المرور ؟",
-  "_forget_password": "نسيت كلمة المرور",
+
+  "_forget_password_client": "نسيت كلمة المرور (عميل)",
+  "_forget_password_store": "نسيت كلمة المرور (منشأة)",
+  "_forget_password_cashier": "نسيت كلمة المرور (كاشير)",
+
+
   "enter_phone_and_send": "ادخل رقم الجوال واضغط ارسال كود التفعيل لتعيين كلمة المرور الجديد",
 
 

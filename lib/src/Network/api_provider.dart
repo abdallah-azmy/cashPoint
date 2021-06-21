@@ -49,12 +49,15 @@ class ApiProvider {
 
   ApiProvider(this._scafold, this.context);
 
+
+
   Future<LogIn> logIn(
-      {var phone, var password, var device_token, var type}) async {
+      {var phone, var password,var membership_num, var device_token, var type}) async {
     Map<String, String> headers = {
       "X-localization": localization.currentLanguage.toString(),
     };
     FormData formData = FormData.fromMap({
+      "membership_num": membership_num,
       "phone": phone,
       "password": password,
       "device_token": device_token,
@@ -68,12 +71,13 @@ class ApiProvider {
     return LogIn.fromJson(response.data);
   }
 
-  Future<ForgetPasswordModel> forgetPassword({var phone, var type}) async {
+  Future<ForgetPasswordModel> forgetPassword({var phone,var membership_num, var type}) async {
     Map<String, String> headers = {
       "X-localization": localization.currentLanguage.toString(),
     };
     FormData formData = FormData.fromMap({
       "phone": phone,
+      "membership_num": membership_num,
       "type": type,
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
@@ -117,13 +121,14 @@ class ApiProvider {
   }
 
 
-  Future<DeleteCashierModel> confirmForgetPassworfCashier({var phone,var code}) async {
+  Future<DeleteCashierModel> confirmForgetPassworfCashier({var phone,var membership_num,var code}) async {
     Map<String, String> headers = {
       "X-localization": localization.currentLanguage.toString(),
 //      "Authorization": "Bearer " + apiToken,
     };
     FormData formData = FormData.fromMap({
       "phone": phone,
+      "membership_num": membership_num,
       "code": code,
     });
     Response response = await NetworkUtil(_scafold, true, context).post(
@@ -135,12 +140,13 @@ class ApiProvider {
   }
 
   Future<ForgetPasswordModel> phoneVerificationForgetPassword(
-      {var phone, var code, var type}) async {
+      {var phone, var code,var membership_num, var type}) async {
     Map<String, String> headers = {
       "X-localization": localization.currentLanguage.toString(),
     };
     FormData formData = FormData.fromMap({
       "phone": phone,
+      "membership_num": membership_num,
       "code": code,
       "type": type,
     });
@@ -224,12 +230,13 @@ class ApiProvider {
   }
 
   Future<ResetPasswordModel> resetPassword(
-      {var phone, var password, var password_confirmation, var type}) async {
+      {var phone, var password, var password_confirmation,var membership_num, var type}) async {
     Map<String, String> headers = {
       "X-localization": localization.currentLanguage.toString(),
     };
     FormData formData = FormData.fromMap({
       "phone": phone,
+      "membership_num": membership_num,
       "password": password,
       "password_confirmation": password_confirmation,
       "type": type,

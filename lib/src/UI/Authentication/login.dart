@@ -231,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   hint: logInType == "متجر"
                                       ? "رقم الهاتف"
-                                      : localization.text("phone_number"),
+                                      : "${localization.text("phone_number")} / ${localization.text("Membership N")}",
                                   keyboardType: TextInputType.phone,
                                   iconCircleColor: Colors.grey[200],
                                   onChange: (value) {

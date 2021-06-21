@@ -63,6 +63,32 @@ class _SendingCodeForCashierState extends State<SendingCodeForCashier> {
           .showNotification(localization.text("short_code"));
     } else {
       LoadingDialog(_scafold, context).showLoadingDilaog();
+      logInType == "متجر" ?
+
+      await ApiProvider(_scafold, context)
+          .confirmForgetPassworfCashier(membership_num: widget.phone, code: verificationCode,)
+          .then((value) async {
+        if (value.code == 200) {
+          print('correct');
+          Navigator.pop(context);
+          LoadingDialog(_scafold,context).showNotification(localization.text("operation accomplished successfully"));
+          Future.delayed(Duration(seconds: 1,milliseconds: 250),(){
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => ChangePasswordCashier(phone:widget.phone ,logInType: widget.logInType,)));
+
+          });
+        } else {
+          print('error >>> ' + value.error[0].value);
+          Navigator.pop(context);
+
+          LoadingDialog(_scafold, context)
+              .showNotification(value.error[0].value);
+        }
+      })
+
+          :
+
+
 
       await ApiProvider(_scafold, context)
           .confirmForgetPassworfCashier(phone: widget.phone, code: verificationCode,)

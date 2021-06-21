@@ -161,18 +161,21 @@ class Member {
   Member({
     this.id,
     this.point,
+    this.color,
     this.title,
     this.createdAt,
   });
 
   int id;
   int point;
+  String color;
   String title;
   DateTime createdAt;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
     id: json["id"] == null ? null : json["id"],
     point: json["point"] == null ? null : json["point"],
+    color: json["color"] == null ? null : json["color"],
     title: json["title"] == null ? null : json["title"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
   );
@@ -180,6 +183,7 @@ class Member {
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
     "point": point == null ? null : point,
+    "color": color == null ? null : color,
     "title": title == null ? null : title,
     "created_at": createdAt == null ? null : "${createdAt.year.toString().padLeft(4, '0')}-${createdAt.month.toString().padLeft(2, '0')}-${createdAt.day.toString().padLeft(2, '0')}",
   };

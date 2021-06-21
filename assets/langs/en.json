@@ -7,7 +7,11 @@
   "first_welcome": "welcome to",
   "Register a new customer account": "Register a new customer account",
   "cashpoint application": "CashPoint application",
-  "_forget_password": "forget password",
+
+  "_forget_password_client": "Forget password (client)",
+  "_forget_password_store": "Forget password (store)",
+  "_forget_password_cashier": "Forget password (cashier)",
+
   "Activation": "Activation",
   "Log in as a store":"Log in store",
 
@@ -57,9 +61,17 @@
   "The bank payment was rejected": "rejected by management",
   "There are no payments":"There are no payments",
   "Advertise with us":"Advertise with us",
+  "_Bank account":"Bank account (SA)",
+  "change":"change",
+
+  "_Bank account_length":"Bank account is too short",
+
   "rate the application": "rate the application",
+  "please try again later":"please try again later",
   "Please complete the payment process": "Please complete the payment process",
   "Retrieved": "Retrieved",
+  "change the bank":"change the bank",
+  "change cashpoint":"change cashpoint",
   "The online payment process has not been completed, please contact the administration": "The online payment process has not been completed, please contact the administration",
   "The data is being processed..":"The data is being processed..",
   "Attach the conversion image": "Attach the conversion image",
@@ -82,7 +94,7 @@
   "payment confirmed": "payment confirmed",
   "please try later":"please try later",
   "operation accomplished successfully": "operation accomplished successfully",
-  "Membership N":"Membership No",
+  "Membership N":"Membership Number",
   "cashier": "cashier",
   "phone": "phone",
   "add cashier": "add cashier",

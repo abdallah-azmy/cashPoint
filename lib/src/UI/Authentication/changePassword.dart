@@ -33,7 +33,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
   SharedPreferences _prefs;
-//  var logInType ;
+  var logInType ;
   var logo ;
 
   _getShared() async {
@@ -41,6 +41,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     setState(() {
 //      logInType = _prefs.getString("login");
       logo = _prefs.getString("logo");
+      logInType = _prefs.getString("login");
     });
   }
 
@@ -58,6 +59,38 @@ class _ChangePasswordState extends State<ChangePassword> {
     } else {
       LoadingDialog(_scafold,context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
+
+
+
+      logInType == "متجر" ?
+
+
+
+      await ApiProvider(_scafold, context)
+          .resetPassword(password: password,password_confirmation: confirmPassword,type:widget.logInType ,membership_num: widget.phone )
+          .then((value) async {
+        if (value.code == 200) {
+          print('Name >>> ' + value.data);
+
+          Navigator.pop(context);
+          LoadingDialog(_scafold,context).showNotification(value.data);
+          Future.delayed(Duration(seconds: 1,milliseconds: 250),(){
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+
+          });
+
+        } else {
+          print('error >>> ' + value.error[0].value);
+          Navigator.pop(context);
+          LoadingDialog(_scafold,context).showNotification(value.error[0].value);
+        }
+      })
+
+
+:
+
+
       await ApiProvider(_scafold, context)
           .resetPassword(password: password,password_confirmation: confirmPassword,type:widget.logInType ,phone: widget.phone )
           .then((value) async {

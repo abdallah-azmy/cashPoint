@@ -63,6 +63,8 @@ class _MyProfileState extends State<MyProfile> {
         setState(() {
           details = value.data[0];
         });
+
+        print(">>>>>>>>>>${details.member.color.substring(0, 1)}");
         details.status == 2 ?
         LoadingDialog(_scafold, context).showHighNotification(localization.text("Request to transfer points to active cash"))
             :
@@ -458,20 +460,7 @@ class _MyProfileState extends State<MyProfile> {
                                           SizedBox(
                                             height: 10,
                                           ),
-//                                          Text(
-//                                            "${localization.text("Membership No")} ${details == null ? " " : details.userMembershipNum == null ? " " : "${details.userMembershipNum}"}",
-//                                            style: MyColors.styleNormalSmall,
-//                                          ),
-//                                          Text(
-//                                            "${localization.text(
-//                                                "Membership type")} : ${ details == null
-//                                                ? " "
-//                                                : details.member ==
-//                                                null
-//                                                ? " "
-//                                                : "${details.member.title}"}",
-//                                            style: MyColors.styleNormalSmall,
-//                                          ),
+
                                         ],
                                       ),
                                     ),
@@ -524,7 +513,16 @@ class _MyProfileState extends State<MyProfile> {
                                                         ? " "
                                                         : "${details.member.title}",
                                                 style:
-                                                    MyColors.styleNormal15Grey,
+                                                TextStyle(
+                                                  color: details == null
+                                                      ? Colors.black
+                                                      : details.member == null
+                                                      ? Colors.black
+                                                      :details.member.color == null ? Colors.black : Color(int.parse('0xff${details.member.color.substring(1)}')),
+                                                  fontSize: 16,
+                                                  // fontFamily: "Tajawal",
+//      fontWeight: FontWeight.bold
+                                                ),
                                               ),
                                             ],
                                           )

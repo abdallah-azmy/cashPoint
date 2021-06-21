@@ -187,7 +187,7 @@ class _ForgetPasswordForCashierState extends State<ForgetPasswordForCashier> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          localization.text("_forget_password"),
+                          localization.text("_forget_password_cashier"),
                           style: MyColors.styleBold2grey,
                         ),
                       ],

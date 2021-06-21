@@ -11,6 +11,7 @@ import 'package:cashpoint/src/UI/MainWidgets/Special_Text_Field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
@@ -32,7 +33,7 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
   var shownBank;
 
   var _bankId;
-  var _bank_account;
+  String _bank_account = "";
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
@@ -64,21 +65,27 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
 
   replacePoints() async {
     LoadingDialog(_key, context).showLoadingDilaog();
-    await ApiProvider(_key, context).replacePoints(apiToken: apiToken,type: 0,bank_account: _bank_account,bank_id: _bankId).then((value) async {
-      if (value.code == 200) {
-        print("correct connection");
-        Navigator.pop(context);
-        LoadingDialog(_key, context).showNotification(value.data.value);
-        Future.delayed(Duration(seconds: 1,milliseconds: 500),(){
+    if(_bank_account.length < 12){
+      Navigator.pop(context);
+      LoadingDialog(_key, context).showNotification(localization.text("_Bank account_length"));
+    }else{
+      await ApiProvider(_key, context).replacePoints(apiToken: apiToken,type: 0,bank_account: _bank_account,bank_id: _bankId).then((value) async {
+        if (value.code == 200) {
+          print("correct connection");
           Navigator.pop(context);
-        });
-      } else {
-        print('error >>> ' + value.error[0].value);
-        Navigator.pop(context);
+          LoadingDialog(_key, context).showNotification(value.data.value);
+          Future.delayed(Duration(seconds: 1,milliseconds: 500),(){
+            Navigator.pop(context);
+          });
+        } else {
+          print('error >>> ' + value.error[0].value);
+          Navigator.pop(context);
 
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
-      }
-    });
+          LoadingDialog(_key, context).showNotification(value.error[0].value);
+        }
+      });
+    }
+
   }
 
   @override
@@ -114,7 +121,7 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "تحويل كاش بوينت",
+                       localization.text("change cashpoint"),
                         style: MyColors.styleBold2,
                       ),
                       InkWell(
@@ -181,7 +188,7 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(
-                                          shownBank ?? "اختر البنك",
+                                          shownBank ?? localization.text("change the bank"),
                                           style: TextStyle(
                                               fontSize: 16,
                                               // fontFamily: "Tajawal",
@@ -204,8 +211,9 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
                       ),
                       SizedBox(height: 15,),
                       SpecialTextField(
-                        hint: "الحساب البنكي",
-                        height: 40.0,
+                        hint: localization.text("_Bank account"),
+                        height: 40.0,keyboardType: TextInputType.text ,
+
 
                         onChange: (value) {
                           setState(() {
@@ -216,7 +224,7 @@ class _ChangeCashPointState extends State<ChangeCashPoint> {
 
                       SizedBox(height: 25,),
 
-                      SpecialButton(text: "تحويل",
+                      SpecialButton(text: localization.text("change"),
                       onTap: (){
 
                         replacePoints();

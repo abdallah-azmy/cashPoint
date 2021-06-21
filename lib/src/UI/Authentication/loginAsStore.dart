@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cashpoint/src/UI/Authentication/forgetPasswordAsStore.dart';
 import 'package:cashpoint/src/UI/Intro/loginType.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cashpoint/src/MyColors.dart';
@@ -83,7 +84,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
       if (_deviceToken != null) {
         print("gbna el device topoooooooooken");
         await ApiProvider(_scafold, context)
-            .logIn(password: _password, device_token: _deviceToken,phone: _phone,type:  2 )
+            .logIn(password: _password, device_token: _deviceToken,membership_num: _phone,type:  2 )
             .then((value) async {
           if (value.code == 200) {
             print('Name >>> ' + value.data.name);
@@ -246,12 +247,12 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
                           ),
                           SpecialTextField(
                             icon: Icon(
-                              Icons.phone_android,
+                              Icons.person_outline,
                               color: MyColors.orange,
-                              size: 19,
+                              size: 24,
                             ),
-                            hint:localization.text("phone_number"),
-                            keyboardType: TextInputType.phone,
+                            hint:localization.text("Membership N"),
+                            keyboardType: TextInputType.number,
                             iconCircleColor: Colors.grey[200],
                             onChange: (value) {
                               setState(() {
@@ -297,7 +298,7 @@ class _LoginPageForStoreState extends State<LoginPageForStore> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ForgetPassword()));
+                                                    ForgetPasswordAsStore()));
                                     },
                                     child: Text(
                                       localization.text("forget_password"),

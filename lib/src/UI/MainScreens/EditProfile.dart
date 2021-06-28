@@ -7,11 +7,15 @@ import 'dart:io';
 import 'package:cashpoint/src/UI/MainWidgets/Comment_Card.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Edit_Text_Field.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Button.dart';
+import 'package:cashpoint/src/UI/MainWidgets/mapCard.dart';
+import 'package:cashpoint/src/helper/map_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:flutter/painting.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -41,13 +45,21 @@ class _EditProfileState extends State<EditProfile> {
   var shownCountryCode;
 //  var countries = [];
 
+
+  var positionPicked ;
+  String lat ;
+  String long ;
+
   var _currentPassword = "";
   var _newPassword = "";
   var _confirmNewPassword = "";
   var _name = "";
   var _phone = "";
   var _email = "";
-//  var _countryId;
+  var _latitude ;
+  var _longitude ;
+
+  var countryController;
   var _description;
 
   _getShared() async {
@@ -110,6 +122,18 @@ class _EditProfileState extends State<EditProfile> {
   }
 
 
+  getNameOfLocation(lat, long) async {
+    final coordinates = new Coordinates(double.parse(lat), double.parse(long));
+    var addresses =
+    await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = addresses.first;
+    print(
+        ' ${first.locality}, ${first.adminArea},${first.subLocality}, ${first.subAdminArea},${first.addressLine}, ${first.featureName},${first.thoroughfare}, ${first.subThoroughfare}');
+
+    setState(() {
+      countryController = first.addressLine;
+    });
+  }
 
 
   getData() async {
@@ -123,6 +147,14 @@ class _EditProfileState extends State<EditProfile> {
         setState(() {
           details = value.data;
         });
+
+        if(details != null){
+          if(details.latitude != null){
+            getNameOfLocation(details.latitude,details.longitude);
+          }
+        }
+
+
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
@@ -205,30 +237,6 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-//
-//  getCountries() async {
-//    LoadingDialog(_scafold, context).showLoadingDilaog();
-//    await ApiProvider(_scafold, context)
-//        .getCountries()
-//        .then((value) async {
-//      if (value.code == 200) {
-//        print('correct');
-//        Navigator.pop(context);
-//
-//        setState(() {
-//          countries = value.data ;
-//        });
-//
-//      } else {
-//        print('error >>> ' + value.error[0].value);
-//        Navigator.pop(context);
-//
-//        LoadingDialog(_scafold, context)
-//            .showNotification(value.error[0].value);
-//      }
-//    });
-//
-//  }
 
   changePhone() async {
     if (_phone.trim().isEmpty) {
@@ -278,7 +286,7 @@ class _EditProfileState extends State<EditProfile> {
       LoadingDialog(_scafold, context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
       await ApiProvider(_scafold, context)
-          .editClintProfile(apiToken: apiToken, image: _image, name: _name,email:_email )
+          .editClintProfile(apiToken: apiToken, image: _image, name: _name,email:_email, )
           .then((value) async {
         if (value.code == 200) {
           print('Name >>> ' + value.data.name);
@@ -302,7 +310,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   editProfileForStore() async {
-    if (_name.trim().isEmpty && _email.trim().isEmpty && _image == null) {
+    if (_name.trim().isEmpty && _description == null && _image == null && _longitude == null && _latitude == null) {
       LoadingDialog(_scafold, context)
           .showNotification(localization.text("needed_information"));
     } else {
@@ -312,7 +320,7 @@ class _EditProfileState extends State<EditProfile> {
           .editStoreProfile(
               apiToken: apiToken,
               image: _image,
-              name: _name,
+              name: _name,longitude: _longitude,latitude: _latitude,
               description: _description)
           .then((value) async {
         if (value.code == 200) {
@@ -537,6 +545,7 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                 ],
                               ),
+
                               logInType == "متجر"
                                   ? Column(
                                       children: [
@@ -566,6 +575,69 @@ class _EditProfileState extends State<EditProfile> {
                                         ),
                                       ],
                                     )
+                                  : Container(),
+
+
+                              logInType == "متجر"
+                                  ?  Column(
+                                children: [
+                                  SizedBox(height: 10,),
+                                  MapCard(    scaffoldKey: _scafold,
+                                    picked: positionPicked,
+                                    onChange: (v) {
+                                      setState(() {
+                                        lat = v.latitude.toString();
+                                        long = v.longitude.toString();
+                                      });
+                                      print(v.latitude);
+                                    },
+                                    onTap: () {
+                                      setState(() {
+                                        _longitude = long ??
+                                            Provider.of<MapHelper>(context, listen: false)
+                                                .position
+                                                .longitude
+                                                .toString();
+                                        _latitude = lat ??
+                                            Provider.of<MapHelper>(context, listen: false)
+                                                .position
+                                                .latitude
+                                                .toString();
+                                        positionPicked = true;
+                                        getNameOfLocation(_latitude, _longitude);
+                                      });
+                                      print(
+                                          "aaaaaaaaaaaaa $_latitude +++++++++ $_longitude");
+                                      Navigator.pop(context);
+                                    },
+                                    onTextChange: (v) {},),
+
+                                  countryController == null
+                                      ? Container()
+                                      : Padding(
+                                    padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                    child: Column(
+                                      children: <Widget>[
+                                        countryController == null
+                                            ? Container()
+                                            : Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                          children: <Widget>[
+                                            Flexible(
+                                                child: Text(
+                                                  "- $countryController -",
+                                                  style: MyColors.styleNormal1,
+                                                  textAlign: TextAlign.center,
+                                                )),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
                                   : Container(),
                             ],
                           ),

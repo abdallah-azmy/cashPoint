@@ -390,7 +390,7 @@ class ApiProvider {
   }
 
   Future<AllDataModelForStore> editStoreProfile(
-      {var name,var description, var image,var apiToken}) async {
+      {var name,var longitude,var latitude,var description, var image,var apiToken}) async {
     Map<String, String> headers = {
       "X-localization": localization.currentLanguage.toString(),
       "Authorization": "Bearer " + apiToken,
@@ -398,6 +398,8 @@ class ApiProvider {
     FormData formData = FormData.fromMap({
       "name": name,
       "description": description,
+      "longitude": longitude,
+      "latitude": latitude,
       "logo": image == null ? null : await MultipartFile.fromFile(image.path),
     });
     Response response = await NetworkUtil(_scafold, true, context).post(

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cashpoint/src/UI/Authentication/ForCashier/loginAsCashier.dart';
 import 'package:cashpoint/src/UI/Intro/loginType.dart';
+import 'package:cashpoint/src/UI/MainScreens/language.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cashpoint/src/MyColors.dart';
 
@@ -51,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 //    getData();
     print("api_token >>>>> $apiToken");
+    print("lang >>>>> ${localization.currentLanguage.toString()}");
   }
 
 
@@ -168,8 +170,24 @@ class _LoginPageState extends State<LoginPage> {
                       ListView(
                         children: <Widget>[
 
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .03,
+                          Container(
+//                            height: MediaQuery.of(context).size.height * .03,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditLanguage()));
+                                },
+                                child: Row(children: [
+                                  Icon(Icons.language),
+                                  SizedBox(width: 3,),
+                                  Text(localization.currentLanguage.toString() == "en" ? "English" : "عربي")
+                                ],),
+                              ),
+                            ),
                           ),
                           Align(
                             alignment: Alignment.center,
@@ -209,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Column(
                               children: <Widget>[
                                 SizedBox(
-                                  height: 25,
+                                  height: 15,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

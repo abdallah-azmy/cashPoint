@@ -86,7 +86,7 @@ class _SettingsCashierState extends State<SettingsCashier> {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -112,7 +112,7 @@ class _SettingsCashierState extends State<SettingsCashier> {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
     print("22222222222222222222222222222");
@@ -132,7 +132,7 @@ class _SettingsCashierState extends State<SettingsCashier> {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }

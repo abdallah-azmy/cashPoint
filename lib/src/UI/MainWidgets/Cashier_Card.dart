@@ -79,14 +79,14 @@ class _CashierCardState extends State<CashierCard> {
 //        print('Branch says >>>>> ' + value.data.value);
 
         Navigator.pop(context);
-        LoadingDialog(widget.scaffold,context).showNotification(value.data.message);
+        LoadingDialog(widget.scaffold,context).alertPopUp(value.data.message);
         widget.getData();
       } else {
 //        print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
 //        Navigator.pop(context);
 
-        LoadingDialog(widget.scaffold,context).showNotification(value.error[0].value);
+        LoadingDialog(widget.scaffold,context).alertPopUp(value.error[0].value);
       }
     });
   }

@@ -144,7 +144,7 @@ class _EditProfileCashierState extends State<EditProfileCashier> {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -156,7 +156,7 @@ class _EditProfileCashierState extends State<EditProfileCashier> {
         _longitude == null &&
         _latitude == null) {
       LoadingDialog(_scafold, context)
-          .showNotification(localization.text("needed_information"));
+          .alertPopUp(localization.text("needed_information"));
     } else {
       LoadingDialog(_scafold, context).showLoadingDilaog();
       print("gbna el device topoooooooooken");
@@ -179,14 +179,14 @@ class _EditProfileCashierState extends State<EditProfileCashier> {
 
           Navigator.pop(context);
           LoadingDialog(_scafold, context)
-              .showNotification(localization.text("edit_success"));
+              .alertPopUp(localization.text("edit_success"));
 
           getData();
         } else {
           print('error >>> ' + value.error[0].value);
           Navigator.pop(context);
           LoadingDialog(_scafold, context)
-              .showNotification(value.error[0].value);
+              .alertPopUp(value.error[0].value);
         }
       });
     }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
@@ -22,38 +23,79 @@ class NetworkUtil {
   Dio dio = Dio();
 
   Future<Response> get(String url, {Map headers}) async {
-    var response;
-    try {
+    if (await connectivity() == ConnectivityResult.mobile || await connectivity() == ConnectivityResult.wifi ){
+      var response;
+      try {
 //https://cashpoint21.com/
-      dio.options.baseUrl = "https://app.cashpoint21.com/api/v1/";
+        dio.options.baseUrl = "https://app.cashpoint21.com/api/v1/";
 //      dio.options.baseUrl = "https://cashpoint21.com/api/v1/";
 //    dio.options.baseUrl = "http://demo.easymenu.site/api/v1/";
-      response = await dio.get(url, options: Options(headers: headers));
-    } on DioError catch (e) {
-      if (e.response != null) {
-        response = e.response;
+        response = await dio.get(url, options: Options(headers: headers));
+      } on DioError catch (e) {
+        if (e.response != null) {
+          response = e.response;
+        }
       }
+      return handleResponse(response);
+    }else{
+
+//      LoadingDialog(_scafold,context).showAlert("no internet");
+
+      return Response(
+        statusCode: 102,
+        data: {
+          "mainCode": 0,
+          "code": 102,
+          "data": null,
+          "error": [
+            {"key": "internet", "value": localization.text("no internet connection")}
+          ]
+        },
+      );
+
+
+
     }
-    return handleResponse(response);
+
   }
 
   Future<Response> post(String url,
       {Map headers, FormData body, encoding}) async {
-    var response;
-    dio.options.baseUrl = "https://app.cashpoint21.com/api/v1/";
+    if (await connectivity() == ConnectivityResult.mobile || await connectivity() == ConnectivityResult.wifi ){
+
+      var response;
+      dio.options.baseUrl = "https://app.cashpoint21.com/api/v1/";
 //    dio.options.baseUrl = "https://cashpoint21.com/api/v1/";
 
 //    dio.options.baseUrl = "http://demo.easymenu.site/api/v1/";
-    try {
-      response = await dio.post(url,
-          data: body,
-          options: Options(headers: headers, requestEncoder: encoding));
-    } on DioError catch (e) {
-      if (e.response != null) {
-        response = e.response;
+      try {
+        response = await dio.post(url,
+            data: body,
+            options: Options(headers: headers, requestEncoder: encoding));
+      } on DioError catch (e) {
+        if (e.response != null) {
+          response = e.response;
+        }
       }
+      return handleResponse(response);
+    }else{
+      return Response(
+        statusCode: 102,
+        data: {
+          "mainCode": 0,
+          "code": 102,
+          "data": null,
+          "error": [
+            {"key": "internet", "value": localization.text("no internet connection")}
+          ]
+        },
+      );
+
+
+
     }
-    return handleResponse(response);
+
+
   }
 
   var connectivityResult;
@@ -63,33 +105,7 @@ class NetworkUtil {
   }
 
   Future<Response> handleResponse(Response response) async {
-    if (await connectivity() == ConnectivityResult.mobile) {
-      try {
-        print("status code >>>>>>>>> ${response.statusCode}");
-        if (response.statusCode == 200) {
-          print("correrct request handleResponse : " + response.toString());
-          return response;
-        }else if(response.statusCode == 401){
-          _prefs = await SharedPreferences.getInstance();
-          _prefs.clear();
-          Navigator.pushAndRemoveUntil(context,
-              MaterialPageRoute(
-                  builder: (_)=> SplashScreen()
-              ), (route) => false);
-        } else {
-          print("request error handleResponse : " + response.toString());
-          if (networkError == null) {
-            LoadingDialog(_scafold,context).showAlert("error");
-            print("gwaaaaaaaaaaaaaaaaaaa handleResponse");
-          }
-          return response;
-        }
-      } on SocketException catch (e) {
-        print('not connected');
-        LoadingDialog(_scafold,context).showAlert("${e.message}");
-        print("baraaaaaaaaaaaaaa we gwa handleResponse");
-      }
-    } else if (await connectivity() == ConnectivityResult.wifi) {
+    if (await connectivity() == ConnectivityResult.mobile || await connectivity() == ConnectivityResult.wifi ) {
       try {
         if (response.statusCode == 200) {
           print("correrct request handleResponse : " + response.toString());

@@ -64,7 +64,7 @@ class _MyOrdersState extends State<MyOrders> {
           loading = "done";
         });
 
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }

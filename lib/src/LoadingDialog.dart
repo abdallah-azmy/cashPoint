@@ -22,17 +22,19 @@ class LoadingDialog {
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.all(0),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            backgroundColor: Colors.transparent,
-            content:
-            SpinKitChasingDots(
-              color: MyColors.darkRed,
-              size: 45.0,
-            )
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              contentPadding: EdgeInsets.all(0),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              backgroundColor: Colors.transparent,
+              content:
+              SpinKitChasingDots(
+                color: MyColors.darkRed,
+                size: 45.0,
+              )
 //              BarProgressIndicator(
 //                numberOfBars: 4,
 //                color: Colors.white,
@@ -48,6 +50,7 @@ class LoadingDialog {
 //                controller: AnimationController(vsync: this, duration: const Duration(milliseconds: 1200)),
 //              )
 
+            ),
           );
         });
   }

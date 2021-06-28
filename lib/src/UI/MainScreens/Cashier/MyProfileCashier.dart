@@ -68,7 +68,7 @@ class _MyProfileCashierState extends State<MyProfileCashier> {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }

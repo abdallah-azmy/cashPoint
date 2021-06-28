@@ -26,7 +26,7 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
-  GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> scaffold = new GlobalKey<ScaffoldState>();
 
   var barCode =
       "https://www.qr-code-generator.com/wp-content/themes/qr/new_structure/markets/core_market_full/generator/dist/generator/assets/images/websiteQRCode_noFrame.png";
@@ -56,7 +56,7 @@ class _MyProfileState extends State<MyProfile> {
   var remainWithoutChange ;
   getDataForClient() async {
 //    LoadingDialog(_scafold, context).showLoadingDilaog();
-    await ApiProvider(_scafold, context)
+    await ApiProvider(scaffold, context)
         .getMyProfileClient(apiToken: apiToken)
         .then((value) async {
       if (value.code == 200) {
@@ -64,8 +64,12 @@ class _MyProfileState extends State<MyProfile> {
         setState(() {
           details = value.data[0];
 
-          pointsToChange = (details.remain / details.minLimitReplacement).floor();
-          remainWithoutChange =  details.minLimitReplacement * pointsToChange;
+          if(details.remain != null ){
+            pointsToChange = (details.remain / details.minLimitReplacement).floor();
+            remainWithoutChange =  details.minLimitReplacement * pointsToChange;
+          }
+
+
         });
 
 //        if (details.remain >= details.minLimitReplacement) {
@@ -84,24 +88,24 @@ class _MyProfileState extends State<MyProfile> {
 
 
 
-        print(">>>>>>>>>>${details.member.color.substring(0, 1)}");
         details.status == 2 ?
-        LoadingDialog(_scafold, context).showHighNotification(localization.text("Request to transfer points to active cash"))
+        LoadingDialog(scaffold, context).showHighNotification(localization.text("Request to transfer points to active cash"))
             :
         details.status == 3 ?
-        LoadingDialog(_scafold, context).showHighNotification(localization.text("Confirm transfer request"))
+        LoadingDialog(scaffold, context).showHighNotification(localization.text("Confirm transfer request"))
         :
         details.status == 4 ?
-        LoadingDialog(_scafold, context).showHighNotification(localization.text("Transfer request denied"))
+        LoadingDialog(scaffold, context).showHighNotification(localization.text("Transfer request denied"))
             : details.status == 1 ?
-        LoadingDialog(_scafold, context).showHighNotification(localization.text("There is no current transfer request")) :
+        LoadingDialog(scaffold, context).showHighNotification(localization.text("There is no current transfer request")) :
         print("no requist");
 //        Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+//        LoadingDialog(scaffold, context).showNotification(value.error[0].value);
+        LoadingDialog(scaffold, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -128,7 +132,7 @@ class _MyProfileState extends State<MyProfile> {
                             ? TextDirection.ltr
                             : TextDirection.rtl,
                     child: Scaffold(
-                        key: _scafold,
+                        key: scaffold,
                         resizeToAvoidBottomInset: true,
                         backgroundColor: Color(0xffF5F6F8),
                         body: RefreshIndicator(
@@ -618,7 +622,7 @@ class _MyProfileState extends State<MyProfile> {
                                     details == null
                                         ? Container()
                                         : details.pull == 0 ? Container() :
-                                    details.status == 3 ? Container() :
+                                    details.status == 3 ||  details.status == null ? Container() :
                                         Column(
                                           children: [
                                             SizedBox(height: 5,),
@@ -628,7 +632,7 @@ class _MyProfileState extends State<MyProfile> {
                                                 textAlign: TextAlign.center,
                                               ))
                                             ],),
-                                            Row(mainAxisAlignment: MainAxisAlignment.center,children: [
+                                            details.pull == null ? Container() :  Row(mainAxisAlignment: MainAxisAlignment.center,children: [
                                               Flexible(child: Text("${details.pull} ${localization.text("point")}",
                                                 style: MyColors.styleBold0,
                                                 textAlign: TextAlign.center,

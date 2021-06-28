@@ -51,6 +51,7 @@ class _ChangePasswordCashierState extends State<ChangePasswordCashier> {
     if (password.trim().isEmpty || confirmPassword.trim().isEmpty) {
       LoadingDialog(_scafold,context)
           .showNotification(localization.text("needed_information"));
+
     }else if (password.length < 6){
       LoadingDialog(_scafold,context)
           .showNotification(localization.text("short_password"));

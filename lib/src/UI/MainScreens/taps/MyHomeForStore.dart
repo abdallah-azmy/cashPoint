@@ -79,7 +79,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
+//        LoadingDialog(_key, context).showNotification(value.error[0].value);
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
 
@@ -95,7 +96,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
+//        LoadingDialog(_key, context).showNotification(value.error[0].value);
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }

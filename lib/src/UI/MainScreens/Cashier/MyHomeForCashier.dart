@@ -95,7 +95,7 @@ class _MyHomeForCashierState extends State<MyHomeForCashier> with WidgetsBinding
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }

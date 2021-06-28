@@ -86,7 +86,7 @@ class _SettingsState extends State<Settings> {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -106,7 +106,7 @@ class _SettingsState extends State<Settings> {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -128,7 +128,7 @@ class _SettingsState extends State<Settings> {
         print('error >>> ' + value.error[0].value);
 //        Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
 
@@ -146,7 +146,7 @@ class _SettingsState extends State<Settings> {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
 
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
       }
     });
   }

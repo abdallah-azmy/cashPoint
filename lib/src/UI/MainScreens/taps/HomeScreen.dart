@@ -121,7 +121,7 @@ class HomeScreenState extends State<HomeScreen> {
         setState(() {
           loading = false;
         });
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }

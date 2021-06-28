@@ -63,7 +63,7 @@ class _MyOrdersCashierState extends State<MyOrdersCashier> {
           loading = "done";
         });
 
-        LoadingDialog(_key, context).showNotification(value.error[0].value);
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }

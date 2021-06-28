@@ -28,7 +28,7 @@ class SplashScreenState extends State<SplashScreen> {
   final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   SharedPreferences _prefs;
   bool loggedIn;
-  bool firstOpen;
+//  bool firstOpen;
   var settings ;
   var logo ;
   var logInType ;
@@ -38,12 +38,12 @@ class SplashScreenState extends State<SplashScreen> {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       loggedIn = _prefs.getBool("loggedIn");
-      firstOpen = _prefs.getBool("firstOpen");
+//      firstOpen = _prefs.getBool("firstOpen");
       logo = _prefs.getString("logo");
       logInType = _prefs.getString("login");
     });
 
-    print("cheeeeeeeeeeeck $firstOpen");
+//    print("cheeeeeeeeeeeck $firstOpen");
 
     getSettings();
 
@@ -86,10 +86,10 @@ class SplashScreenState extends State<SplashScreen> {
 //      }else
 //        if (loggedIn == true) {
 
-     if (firstOpen == null){
-       _prefs.setBool("firstOpen",true);
-       Navigator.of(context).pushReplacement(
-         MaterialPageRoute(builder: (context) => EditLanguage(fromSplash: "true",))) ;}else{
+//     if (firstOpen == null){
+//       _prefs.setBool("firstOpen",true);
+//       Navigator.of(context).pushReplacement(
+//         MaterialPageRoute(builder: (context) => EditLanguage(fromSplash: "true",))) ;}else{
 
        logInType == "كاشير" ?
        Navigator.of(context).pushReplacement(
@@ -98,7 +98,7 @@ class SplashScreenState extends State<SplashScreen> {
        Navigator.of(context).pushReplacement(
            MaterialPageRoute(builder: (context) => MainScreen()));
 
-     }
+//     }
 
 //      } else {
 //        Navigator.of(context).pushReplacement(

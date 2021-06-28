@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Row(children: [
                                   Icon(Icons.language),
                                   SizedBox(width: 3,),
-                                  Text(localization.currentLanguage.toString() == "en" ? "English" : "عربي")
+                                  Text(localization.currentLanguage.toString() == "en" ? "اللغة" : "language")
                                 ],),
                               ),
                             ),

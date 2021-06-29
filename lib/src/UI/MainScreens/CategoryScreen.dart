@@ -406,9 +406,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               loadingPinned == null
                                   ? Container()
                                   : pinnedCategory.length == 0
-                                  ? Center(
-                                child: Text("لا توجد متاجر"),
-                              )
+                                  ? Container()
                                   :   ListView.builder(
                                   shrinkWrap: true,
                                   physics:  NeverScrollableScrollPhysics(),
@@ -437,7 +435,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   }),
 
 
-                              Divider(thickness: 3,),
+                              loadingPinned == null
+                                  ? Container()
+                                  : pinnedCategory.length == 0
+                                  ? Container()
+                                  :     Divider(thickness: 3,),
 
 
 

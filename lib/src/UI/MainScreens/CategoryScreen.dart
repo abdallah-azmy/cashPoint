@@ -46,8 +46,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   var loading;
   var loadingPinned;
 
-  var allHomeCategories = [
-  ];
+  var allHomeCategories = [];
 
   var _loading = true;
   var _image;
@@ -59,39 +58,51 @@ class _CategoryScreenState extends State<CategoryScreen> {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       apiToken = _prefs.getString("api_token");
+      loading = null;
     });
     getAllPinnedStoresOfCategory().then((value) {
-
-
       Provider.of<MapHelper>(context, listen: false)
           .getLocation()
           .then((value) async {
-        Provider.of<MapHelper>(context, listen: false).position == null
-            ? LoadingDialog(_scafold, context)
-            .showNotification(localization.text("Location must be specified"))
-            : getDataByLat(
-            Provider.of<MapHelper>(context, listen: false)
-                .position
-                .latitude
-                .toString(),
-            Provider.of<MapHelper>(context, listen: false)
-                .position
-                .longitude
-                .toString());
+        if (Provider.of<MapHelper>(context, listen: false).position == null) {
+//          LoadingDialog(_scafold, context).showNotification(
+//              localization.text("Location must be specified"));
+
+          getDataByLat(
+//              lat:
+//          Provider.of<MapHelper>(context, listen: false)
+//              .position
+//              .latitude
+//              .toString()
+//              ,
+//              long:  Provider.of<MapHelper>(context, listen: false)
+//                  .position
+//                  .longitude
+//                  .toString()
+          );
+
+        } else {
+          getDataByLat(lat: Provider.of<MapHelper>(context, listen: false)
+              .position
+              .latitude
+              .toString()
+              ,
+             long:  Provider.of<MapHelper>(context, listen: false)
+                 .position
+                 .longitude
+                 .toString()
+          );
+        }
       });
     });
-
 
     print("api_token >>>>> $apiToken");
   }
 
-
-
-
   getAllPinnedStoresOfCategory() async {
     setState(() {
       pinnedCategory = [];
-      loadingPinned = null ;
+      loadingPinned = null;
     });
     LoadingDialog(_scafold, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
@@ -105,22 +116,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
         print("correct connection");
         setState(() {
 //          pinnedCategory = value.data.map((m)=> m.arranging != null ).toList();
-          pinnedCategory =  value.data
-              .where((x) => x.arranging != null)
-              .toList();
+          pinnedCategory =
+              value.data.where((x) => x.arranging != null).toList();
           pinnedCategory.sort((m1, m2) {
             var r = m1.arranging.compareTo(m2.arranging);
             return r;
           });
 //          pinnedCategory = pinnedCategory.reversed.toList();
-          loadingPinned = "done" ;
+          loadingPinned = "done";
         });
 
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
         setState(() {
-          loadingPinned = "done" ;
+          loadingPinned = "done";
         });
         Navigator.pop(context);
 
@@ -132,7 +142,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   getAllStoresOfCategory() async {
     setState(() {
       category = [];
-      loading = null ;
+      loading = null;
     });
     LoadingDialog(_scafold, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
@@ -148,19 +158,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
           category = value.data;
 //          category = value.data;
 
-          for (var i = 0; i < pinnedCategory.length ; i++) {
+          for (var i = 0; i < pinnedCategory.length; i++) {
             category.removeWhere((item) => item.id == pinnedCategory[i].id);
           }
 
 //          pinnedCategory = value.data.map((m)=> m!= null ).toList();
-          loading = "done" ;
+          loading = "done";
         });
 //        print("${pinnedCategory.length}");
         Navigator.pop(context);
       } else {
         print('error >>> ' + value.error[0].value);
         setState(() {
-          loading = "done" ;
+          loading = "done";
         });
         Navigator.pop(context);
 
@@ -169,10 +179,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     });
   }
 
-  getDataByLat(lat, long) async {
+  getDataByLat({lat, long}) async {
     setState(() {
       category = [];
-      loading = null ;
+      loading = null;
     });
     LoadingDialog(_scafold, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
@@ -187,7 +197,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         print("correct connection");
         setState(() {
           category = value.data;
-          for (var i = 0; i < pinnedCategory.length ; i++) {
+          for (var i = 0; i < pinnedCategory.length; i++) {
             category.removeWhere((item) => item.id == pinnedCategory[i].id);
           }
           loading = "done";
@@ -200,7 +210,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
         setState(() {
           loading = "done";
         });
-        LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        if(value.error[0].key == "latitude"){
+          LoadingDialog(_scafold, context).showNotification(localization.text("Location must be specified"));
+        }else{
+          LoadingDialog(_scafold, context).showNotification(value.error[0].value);
+        }
+
       }
     });
   }
@@ -367,14 +382,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                 homeCategories:
                                                                     widget
                                                                         .homeCategories)));
-
                                               },
                                               child: Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 8,
                                                       vertical: 2),
                                                   decoration: BoxDecoration(
-                                                      color:widget.categoryName == widget.homeCategories[i].name ? MyColors.orange : Colors.white,
+                                                      color: widget
+                                                                  .categoryName ==
+                                                              widget
+                                                                  .homeCategories[
+                                                                      i]
+                                                                  .name
+                                                          ? MyColors.orange
+                                                          : Colors.white,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               7)),
@@ -402,17 +423,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
 //                            )
 //                          :
                   Column(
-                            children: [
-                              loadingPinned == null
-                                  ? Container()
-                                  : pinnedCategory.length == 0
-                                  ? Container()
-                                  :   ListView.builder(
+                    children: [
+                      loadingPinned == null
+                          ? Container()
+                          : pinnedCategory.length == 0
+                              ? Container()
+                              : ListView.builder(
                                   shrinkWrap: true,
-                                  physics:  NeverScrollableScrollPhysics(),
+                                  physics: NeverScrollableScrollPhysics(),
                                   itemCount: pinnedCategory.length,
                                   itemBuilder: (context, i) {
-
                                     return InkWell(
                                       onTap: () {
                                         Navigator.push(
@@ -421,7 +441,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                 builder: (context) =>
                                                     CategoryItemDetails(
                                                       id: pinnedCategory[i].id,
-                                                      categoryName: widget.categoryName,
+                                                      categoryName:
+                                                          widget.categoryName,
                                                     )));
                                       },
                                       child: CategoryCard(
@@ -433,49 +454,60 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       ),
                                     );
                                   }),
-
-
-                              loadingPinned == null
-                                  ? Container()
-                                  : pinnedCategory.length == 0
-                                  ? Container()
-                                  :     Divider(thickness: 3,),
-
-
-
-                              loading == null
-                                  ? Container()
-                                  : category.length == 0
-                                  ? Center(
-                                child: Text("لا توجد متاجر"),
-                              )
-                                  :  ListView.builder(
-                                  shrinkWrap: true,
-                      physics:  NeverScrollableScrollPhysics(),
-                                  itemCount: category.length,
-                                  itemBuilder: (context, i) {
-
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CategoryItemDetails(
-                                                      id: category[i].id,
-                                                      categoryName: widget.categoryName,
-                                                    )));
-                                      },
-                                      child: CategoryCard(
-                                        name: category[i].name,
-                                        category: category[i],
-                                        img: category[i].logo,
-                                        rate: category[i].stars,
+                      loadingPinned == null
+                          ? Container()
+                          : pinnedCategory.length == 0
+                              ? Container()
+                              : Divider(
+                                  thickness: 3,
+                                ),
+                      loading == null
+                          ? Container()
+//                          : Provider.of<MapHelper>(context, listen: false)
+//                                      .position ==
+//                                  null
+//                              ? Container(
+//                                  height: MediaQuery.of(context).size.width,
+//                                  child: Center(
+//                                    child: Text(localization
+//                                        .text("Location must be specified")),
+//                                  ),
+//                                )
+                              : category.length == 0
+                                  ? Container(
+                                      height: MediaQuery.of(context).size.width,
+                                      child: Center(
+                                        child: Text(localization.text(
+                                            "There are no stores in your domain")),
                                       ),
-                                    );
-                                  }),
-                            ],
-                          ),
+                                    )
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: category.length,
+                                      itemBuilder: (context, i) {
+                                        return InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CategoryItemDetails(
+                                                          id: category[i].id,
+                                                          categoryName: widget
+                                                              .categoryName,
+                                                        )));
+                                          },
+                                          child: CategoryCard(
+                                            name: category[i].name,
+                                            category: category[i],
+                                            img: category[i].logo,
+                                            rate: category[i].stars,
+                                          ),
+                                        );
+                                      }),
+                    ],
+                  ),
                   SizedBox(
                     height: 10,
                   )
@@ -540,18 +572,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       Provider.of<MapHelper>(context, listen: false)
                           .getLocation()
                           .then((value) async {
-                        Provider.of<MapHelper>(context, listen: false).position == null
-                            ? LoadingDialog(_scafold, context)
-                            .showNotification(localization.text("Location must be specified"))
+                        Provider.of<MapHelper>(context, listen: false)
+                                    .position ==
+                                null
+                            ? LoadingDialog(_scafold, context).showNotification(
+                                localization.text("Location must be specified"))
                             : getDataByLat(
-                            Provider.of<MapHelper>(context, listen: false)
-                                .position
-                                .latitude
-                                .toString(),
-                            Provider.of<MapHelper>(context, listen: false)
-                                .position
-                                .longitude
-                                .toString());
+//                                Provider.of<MapHelper>(context, listen: false)
+//                                    .position
+//                                    .latitude
+//                                    .toString(),
+//                                Provider.of<MapHelper>(context, listen: false)
+//                                    .position
+//                                    .longitude
+//                                    .toString()
+                        );
                       });
                     },
                     text: localization.text("nearest"),

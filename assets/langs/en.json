@@ -8,6 +8,7 @@
   "Register a new customer account": "Register a new customer account",
   "cashpoint application": "CashPoint application",
   "no internet connection":"no internet connection",
+  "There are no stores in your domain": "There are no stores in your domain",
 
   "_forget_password_client": "Forget password (client)",
   "_forget_password_store": "Forget password (store)",

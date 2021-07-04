@@ -222,7 +222,8 @@ class _CategoryCardState extends State<CategoryCard> {
 
                             ],
                           ),
-                          Row(
+                Provider.of<MapHelper>(context, listen: false)
+                                      .position == null ? Container() :  Row(
 //                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

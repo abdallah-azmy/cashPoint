@@ -68,6 +68,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 //          LoadingDialog(_scafold, context).showNotification(
 //              localization.text("Location must be specified"));
 
+        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
           getDataByLat(
 //              lat:
 //          Provider.of<MapHelper>(context, listen: false)
@@ -82,6 +83,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           );
 
         } else {
+          print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
           getDataByLat(lat: Provider.of<MapHelper>(context, listen: false)
               .position
               .latitude

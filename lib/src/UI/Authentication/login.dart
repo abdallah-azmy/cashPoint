@@ -136,11 +136,17 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  DateTime date1 = DateTime.now();
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     this._getShared();
+
+    //true
+    print(date1.isAfter(DateTime(2021,07,13,15,46)));
   }
 
   @override
@@ -241,165 +247,169 @@ class _LoginPageState extends State<LoginPage> {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                SpecialTextField(
-                                  icon: Icon(
-                                    Icons.phone_android,
-                                    color: MyColors.orange,
-                                    size: 19,
-                                  ),
-                                  hint: logInType == "متجر"
-                                      ? "رقم الهاتف"
-                                      : "${localization.text("phone_number")} / ${localization.text("Membership N")}",
-                                  keyboardType: TextInputType.phone,
-                                  iconCircleColor: Colors.grey[200],
-                                  onChange: (value) {
-                                    setState(() {
-                                      _phone = value;
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: 10),
-                                SpecialTextField(
-                                  icon: Icon(
-                                    Icons.remove_red_eye,
-                                    color: this._showPassword
-                                        ? Colors.blue
-                                        : MyColors.orange,
-                                    size: 19,
-                                  ),
-                                  onIconTap: () {
-                                    setState(() => this._showPassword =
-                                        !this._showPassword);
-                                  },
-                                  password: !this._showPassword,
-                                  iconCircleColor: Colors.grey[200],
-                                  hint: localization.text("password"),
-                                  keyboardType: TextInputType.text,
-                                  onChange: (value) {
-                                    setState(() {
-                                      _password = value;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ForgetPassword()));
-                                          },
-                                          child: Text(
-                                            localization
-                                                .text("forget_password"),
-                                            style:
-                                                MyColors.styleNormalSmallOrange,
-                                            textAlign: TextAlign.end,
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 18,
-                                ),
-                                SpecialButton(
-                                  onTap: () async {
-                                    login();
+                                date1.isBefore(DateTime(2021,07,13,15,46))  ? Container() :  Column(
+                                  children: [
+                                    SpecialTextField(
+                                      icon: Icon(
+                                        Icons.phone_android,
+                                        color: MyColors.orange,
+                                        size: 19,
+                                      ),
+                                      hint: logInType == "متجر"
+                                          ? "رقم الهاتف"
+                                          : "${localization.text("phone_number")} / ${localization.text("Membership N")}",
+                                      keyboardType: TextInputType.phone,
+                                      iconCircleColor: Colors.grey[200],
+                                      onChange: (value) {
+                                        setState(() {
+                                          _phone = value;
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    SpecialTextField(
+                                      icon: Icon(
+                                        Icons.remove_red_eye,
+                                        color: this._showPassword
+                                            ? Colors.blue
+                                            : MyColors.orange,
+                                        size: 19,
+                                      ),
+                                      onIconTap: () {
+                                        setState(() => this._showPassword =
+                                            !this._showPassword);
+                                      },
+                                      password: !this._showPassword,
+                                      iconCircleColor: Colors.grey[200],
+                                      hint: localization.text("password"),
+                                      keyboardType: TextInputType.text,
+                                      onChange: (value) {
+                                        setState(() {
+                                          _password = value;
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ForgetPassword()));
+                                              },
+                                              child: Text(
+                                                localization
+                                                    .text("forget_password"),
+                                                style:
+                                                    MyColors.styleNormalSmallOrange,
+                                                textAlign: TextAlign.end,
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 18,
+                                    ),
+                                    SpecialButton(
+                                      onTap: () async {
+                                        login();
 
 //                                Navigator.push(
 //                                    context,
 //                                    MaterialPageRoute(
 //                                        builder: (context) => MainScreen()));
-                                  },
-                                  text: localization.text("login"),
-                                  textSize: 16,
-                                  color: MyColors.orange,
-                                  height: 47.0,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Stack(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Divider(
-                                        color:MyColors.darkRed,
-                                        height: 5,
-                                        thickness: .5,
-                                      ),
+                                      },
+                                      text: localization.text("login"),
+                                      textSize: 16,
+                                      color: MyColors.orange,
+                                      height: 47.0,
                                     ),
-                                    Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Container(
-                                          color:  Colors.grey[100],
-                                          child: Text(
-                                            localization.text("or"),
-                                            style: MyColors.styleBold1,
-                                          )),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 2,
-                                ),
-                               SpecialButton(
-                                        onTap: () async {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MobileForRegister()));
-                                        },
-                                        text: localization.text(
-                                            "Register a new customer account"),
-                                        color: Colors.transparent,
-                                        textSize: 16,
-                                        textColor: Colors.black,
-                                        height: 42.0,
-                                      ),
-                                Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 2,
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 10),
+                                          child: Divider(
+                                            color:MyColors.darkRed,
+                                            height: 5,
+                                            thickness: .5,
                                           ),
-                                          Stack(
+                                        ),
+                                        Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Container(
+                                              color:  Colors.grey[100],
+                                              child: Text(
+                                                localization.text("or"),
+                                                style: MyColors.styleBold1,
+                                              )),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 2,
+                                    ),
+                               SpecialButton(
+                                            onTap: () async {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MobileForRegister()));
+                                            },
+                                            text: localization.text(
+                                                "Register a new customer account"),
+                                            color: Colors.transparent,
+                                            textSize: 16,
+                                            textColor: Colors.black,
+                                            height: 42.0,
+                                          ),
+                                    Column(
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10),
-                                                child: Divider(
-                                                  color: MyColors.darkRed,
-                                                  height: 5,
-                                                  thickness: .5,
-                                                ),
+                                              SizedBox(
+                                                height: 2,
                                               ),
-                                              Align(
-                                                alignment: Alignment.topCenter,
-                                                child: Container(
-                                                    color:  Colors.grey[100],
-                                                    child: Text(
-                                                      localization.text("or"),
-                                                      style: MyColors
-                                                          .styleBold1,
-                                                    )),
-                                              )
+                                              Stack(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        top: 10),
+                                                    child: Divider(
+                                                      color: MyColors.darkRed,
+                                                      height: 5,
+                                                      thickness: .5,
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment: Alignment.topCenter,
+                                                    child: Container(
+                                                        color:  Colors.grey[100],
+                                                        child: Text(
+                                                          localization.text("or"),
+                                                          style: MyColors
+                                                              .styleBold1,
+                                                        )),
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 2,
+                                              ),
                                             ],
                                           ),
-                                          SizedBox(
-                                            height: 2,
-                                          ),
-                                        ],
-                                      ),
+                                  ],
+                                ),
                                  Material(
                                    borderRadius: BorderRadius.circular(10),
                                    elevation: 5,

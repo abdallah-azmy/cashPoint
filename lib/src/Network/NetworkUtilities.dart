@@ -107,25 +107,42 @@ class NetworkUtil {
   Future<Response> handleResponse(Response response) async {
     if (await connectivity() == ConnectivityResult.mobile || await connectivity() == ConnectivityResult.wifi ) {
       try {
-        if (response.statusCode == 200) {
-          print("correrct request handleResponse : " + response.toString());
 
-          return response;
-        }else if(response.statusCode == 401){
-          _prefs = await SharedPreferences.getInstance();
-          _prefs.clear();
+        if (response == null || response.data.runtimeType == String) {
+          return Response(
+            statusCode: 102,
+            data: {
+              "mainCode": 0,
+              "code": 102,
+              "data": null,
+              "error": [
+                {"key": "internet", "value": "هناك خطا يرجي اعادة المحاولة"}
+              ]
+            },
+//          requestOptions: null
+          );
+        }else {
+          if (response.statusCode == 200) {
+            print("correrct request handleResponse : " + response.toString());
 
-          Navigator.pushAndRemoveUntil(context,
-              MaterialPageRoute(
-                  builder: (_)=> SplashScreen()
-              ), (route) => false);
-        } else {
-          print("request error handleResponse: " + response.toString());
-          if (networkError == null) {
-            LoadingDialog(_scafold,context).showAlert("error");
+            return response;
+          }else if(response.statusCode == 401){
+            _prefs = await SharedPreferences.getInstance();
+            _prefs.clear();
+
+            Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(
+                    builder: (_)=> SplashScreen()
+                ), (route) => false);
+          } else {
+            print("request error handleResponse: " + response.toString());
+            if (networkError == null) {
+              LoadingDialog(_scafold,context).showAlert("error");
+            }
+            return response;
           }
-          return response;
         }
+
       } on SocketException catch (e) {
         LoadingDialog(_scafold,context).showAlert("${e.message}");
       }

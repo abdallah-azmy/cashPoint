@@ -112,6 +112,7 @@
 "non_discussion_price":" غير قابل للنقاش",
 "new_product":"جديد",
 "old":"مستعمل",
+"my commissions":"عمولاتي",
 "note":"ملحوظة",
 "to the store":"الي المنشأة",
 "ad_details":"تفاصيل الاعلان",
@@ -154,6 +155,7 @@
 "block":"حظر",
 "total":"الاجمالي",
 "There are no payments":"لا توجد مدفوعات",
+"There are no commissions":"لا توجد عمولات",
 "how_price":"كم سعر ؟",
 "Evaluation":"تقييم خدمتنا",
 "edit location":"تعديل العنوان",
@@ -462,6 +464,8 @@
   "number_of_calories": "عدد سعرات الوجبة",
   "calories": "السعرات الحرارية",
   "Number of points": "عدد النقاط",
+  "commission": "العمولة :",
+  "_Number of points": "عدد النقاط :",
   "The amount deducted from the store": "المبلغ المخصوم من المنشأة",
 
   "The price includes tax": "السعر شامل الضريبة",
@@ -581,8 +585,10 @@
   "order_number": "رقم الطلب",
   "_order_number": "رقم الطلب :",
   "customer_name": "اسم العميل",
+  "_customer_name": "اسم العميل :",
 
   "customer": "عميل",
+  "_price": "المبلغ :",
   "store name": "اسم المنشأة",
   "store": "منشأة",
 

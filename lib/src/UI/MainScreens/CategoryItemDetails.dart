@@ -55,15 +55,20 @@ class _CategoryItemDetailsState extends State<CategoryItemDetails> {
 
 
   Future<double> getDistance(lat, long) async {
+    print("@@@@@@@@@@@@@@@@${Provider.of<MapHelper>(context, listen: false).position.latitude}");
+    print("${Provider.of<MapHelper>(context, listen: false).position.longitude}");
+    print("${lat}");
+    print("${long}");
+
     double _distanceInMeters = Geolocator.distanceBetween(
       Provider.of<MapHelper>(context, listen: false).position.latitude,
       Provider.of<MapHelper>(context, listen: false).position.longitude,
       lat,
       long,
     );
-
-    print("111111 $_distanceInMeters");
-    return _distanceInMeters;
+    print("${_distanceInMeters}");
+//    print("111111 $_distanceInMeters");
+    return _distanceInMeters * .001;
   }
 
   callPhone(num) {

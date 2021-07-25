@@ -11,6 +11,7 @@ import 'package:cashpoint/src/UI/MainScreens/ContactUs.dart';
 
 import 'package:cashpoint/src/UI/MainScreens/EditProfile.dart';
 import 'package:cashpoint/src/UI/MainScreens/MyCashiers.dart';
+import 'package:cashpoint/src/UI/MainScreens/MyCommissions.dart';
 import 'package:cashpoint/src/UI/MainScreens/MyPayments.dart';
 import 'package:cashpoint/src/UI/MainScreens/About.dart';
 import 'package:cashpoint/src/UI/MainScreens/Slider.dart';
@@ -39,12 +40,11 @@ class _SettingsState extends State<Settings> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   GlobalKey<ScaffoldState> _scafold = new GlobalKey<ScaffoldState>();
 
-
   var profileImage =
       "https://homepages.cae.wisc.edu/~ece533/images/peppers.png";
 
   SharedPreferences _prefs;
-  String _deviceToken ;
+  String _deviceToken;
   var apiToken;
   var details;
   var name;
@@ -133,7 +133,7 @@ class _SettingsState extends State<Settings> {
     });
 
     await ApiProvider(_scafold, context)
-        .logOut(apiToken: apiToken,device_token: _deviceToken)
+        .logOut(apiToken: apiToken, device_token: _deviceToken)
         .then((value) async {
       if (value.code == 200) {
         print("correct logOut");
@@ -141,7 +141,7 @@ class _SettingsState extends State<Settings> {
 
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => SplashScreen()),
-                (Route<dynamic> route) => false);
+            (Route<dynamic> route) => false);
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
@@ -163,9 +163,7 @@ class _SettingsState extends State<Settings> {
     return loadingToken == true
         ? Container()
         : apiToken == null
-            ?
-    LoginPage()
-
+            ? LoginPage()
             : Directionality(
                 textDirection: localization.currentLanguage.toString() == "en"
                     ? TextDirection.ltr
@@ -215,7 +213,7 @@ class _SettingsState extends State<Settings> {
 //                                                    : details.image == null
 //                                                        ? " "
 //                                                        : "${details.image}",
-                                              "$imgFromCach"
+                                                "$imgFromCach"
 //                                                  != null ? " " : "$imgFromCach"
                                             ,
                                             imageBuilder:
@@ -261,13 +259,18 @@ class _SettingsState extends State<Settings> {
                                             ),
                                             placeholderFadeInDuration:
                                                 Duration(milliseconds: 500),
-                                            errorWidget: (context, url, error) =>  Container(
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
                                               height: 80,
                                               width: 80,
 //                                      color: MyColors.grey,
                                               child: Center(
-                                                  child:
-                                                  Icon(Icons.error,color: Colors.white,size: 30,)),
+                                                  child: Icon(
+                                                Icons.error,
+                                                color: Colors.white,
+                                                size: 30,
+                                              )),
                                             ),
 //                                            errorWidget:
 //                                                (context, url, error) =>
@@ -282,7 +285,6 @@ class _SettingsState extends State<Settings> {
 //                                              ),
 //                                            ),
                                           ),
-
                                         ],
                                       ),
                                     ),
@@ -299,7 +301,6 @@ class _SettingsState extends State<Settings> {
                                         )),
                                   ],
                                 ),
-
                                 SizedBox(
                                   height: 3,
                                 ),
@@ -329,14 +330,13 @@ class _SettingsState extends State<Settings> {
                                 logInType == "متجر"
                                     ? Container()
                                     : Text(
-                                  details == null
-                                      ? " "
-                                      : details.email == null
-                                      ? " "
-                                      : "${details.email}",
-                                  style: MyColors
-                                      .styleBoldOrangeSmall,
-                                ),
+                                        details == null
+                                            ? " "
+                                            : details.email == null
+                                                ? " "
+                                                : "${details.email}",
+                                        style: MyColors.styleBoldOrangeSmall,
+                                      ),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -432,26 +432,23 @@ class _SettingsState extends State<Settings> {
                                   )
                                 else
                                   Container(),
-
                                 logInType == "متجر"
                                     ? SettingsRow(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MyCashiers()));
-                                  },
-                                  text: localization.text("cashier"),
-                                  icon: Icon(
-                                    Icons.supervised_user_circle,
-                                    color: Colors.black54,
-                                    size: 25,
-                                  ),
-                                )
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MyCashiers()));
+                                        },
+                                        text: localization.text("cashier"),
+                                        icon: Icon(
+                                          Icons.supervised_user_circle,
+                                          color: Colors.black54,
+                                          size: 25,
+                                        ),
+                                      )
                                     : Container(),
-
-
                                 if (logInType == "متجر")
                                   SettingsRow(
                                     onTap: () {
@@ -461,7 +458,8 @@ class _SettingsState extends State<Settings> {
                                               builder: (context) =>
                                                   Advertisements()));
                                     },
-                                    text: localization.text("Advertise with us"),
+                                    text:
+                                        localization.text("Advertise with us"),
                                     icon: Icon(
                                       Icons.add_photo_alternate,
                                       color: Colors.black54,
@@ -472,7 +470,6 @@ class _SettingsState extends State<Settings> {
                                   Container(),
                                 SettingsRow(
                                   onTap: () {
-
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -489,12 +486,30 @@ class _SettingsState extends State<Settings> {
                                 ),
                                 SettingsRow(
                                     onTap: () {},
-                                    text: localization.text("rate the application"),
+                                    text: localization
+                                        .text("rate the application"),
                                     icon: Icon(
                                       Icons.rate_review,
                                       color: Colors.black54,
                                       size: 23,
                                     )),
+                                logInType == "متجر"
+                                    ? SettingsRow(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MyCommissions()));
+                                        },
+                                        text:
+                                            localization.text("my commissions"),
+                                        icon: Icon(
+                                          Icons.attach_money,
+                                          color: Colors.black54,
+                                          size: 25,
+                                        ))
+                                    : Container(),
                                 logInType == "متجر"
                                     ? SettingsRow(
                                         onTap: () {
@@ -528,22 +543,20 @@ class _SettingsState extends State<Settings> {
                                     width: 22,
                                   ),
                                 ),
-
-
                                 SettingsRow(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => EditLanguage()));
-                                  },
-                                  text: localization.text("choose_lang"),
-                                  icon: Icon(
-                                    Icons.language,
-                                    color: Colors.black54,
-                                    size: 23,
-                                  )
-                                ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EditLanguage()));
+                                    },
+                                    text: localization.text("choose_lang"),
+                                    icon: Icon(
+                                      Icons.language,
+                                      color: Colors.black54,
+                                      size: 23,
+                                    )),
                                 InkWell(
                                     onTap: () {
                                       LoadingDialog(widget.scaffold, context)
@@ -572,15 +585,15 @@ class _SettingsState extends State<Settings> {
                                         )
                                       ],
                                     )),
-                                SizedBox(height: 120,)
+                                SizedBox(
+                                  height: 120,
+                                )
                               ],
                             ),
                           ),
-
                         ],
                       ),
                     )),
               );
   }
-
 }

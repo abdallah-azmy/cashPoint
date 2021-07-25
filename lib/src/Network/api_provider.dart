@@ -33,6 +33,7 @@ import 'package:cashpoint/src/Models/readMembershipNum.dart';
 import 'package:cashpoint/src/Models/readNotifictionCashier.dart';
 import 'package:cashpoint/src/Models/replacePoints.dart';
 import 'package:cashpoint/src/Models/resetPassword.dart';
+import 'package:cashpoint/src/Models/showMyCommisionModel.dart';
 import 'package:cashpoint/src/Models/showOrderModel.dart';
 import 'package:cashpoint/src/Models/signUp.dart';
 import 'package:cashpoint/src/Models/storeDetails.dart';
@@ -1068,6 +1069,30 @@ class ApiProvider {
   }
 
 
+  Future<PayOffCommissionModel> payOffCommission1({
+    var apiToken,
+    var payment_type,
+    var image,
+    var my_fatoora,
+  }) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    FormData formData = FormData.fromMap({
+      "payment_type": payment_type,
+      "my_fatoora": my_fatoora,
+      "image": image == null ? null : await MultipartFile.fromFile(image.path),
+    });
+    Response response = await NetworkUtil(_scafold, true, context).post(
+      "pay-off-commission",
+      body: formData,
+      headers: headers,
+    );
+    return PayOffCommissionModel.fromJson(response.data);
+  }
+
+
   Future<CashierModel> getCashiers(
       {String apiToken, bool networkError}) async {
     Map<String, String> headers = {
@@ -1101,6 +1126,19 @@ class ApiProvider {
         .get("advertisements", headers: headers);
     return AdvertisementsModel.fromJson(response.data);
   }
+
+  Future<ShowMyCommisionModel> showMyCommission(
+      {String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("show-my-commissions", headers: headers);
+    return ShowMyCommisionModel.fromJson(response.data);
+  }
+
+
 
   Future<BanksModel> getBanks(
       {String apiToken, bool networkError}) async {

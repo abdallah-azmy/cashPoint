@@ -216,30 +216,30 @@ class _CommissionCardState extends State<CommissionCard> {
                     ),
 
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-//                      Text("نقاط ${widget.points}"),
-                        SizedBox(
-                          width: 7,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              localization.text("_Number of points"),
-                              style: MyColors.styleBoldOrange,
-                            ),
-                            SizedBox(
-                              width: 3,
-                            ),
-                            Text(
-                              "${widget.points}",
-                              style: MyColors.styleBoldOrange,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+//                    Row(
+//                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                      children: [
+////                      Text("نقاط ${widget.points}"),
+//                        SizedBox(
+//                          width: 7,
+//                        ),
+//                        Row(
+//                          children: [
+//                            Text(
+//                              localization.text("_Number of points"),
+//                              style: MyColors.styleBoldOrange,
+//                            ),
+//                            SizedBox(
+//                              width: 3,
+//                            ),
+//                            Text(
+//                              "${widget.points}",
+//                              style: MyColors.styleBoldOrange,
+//                            ),
+//                          ],
+//                        ),
+//                      ],
+//                    ),
 
                     Divider(thickness: 2,)
                   ],

@@ -288,7 +288,7 @@ class _MyCommissionsState extends State<MyCommissions> {
                         children: [
                           Flexible(
                               child: Text(
-                                localization.text("Total cashpoint commissions"),
+                                localization.text("Total commission payable"),
                                 style: MyColors.styleNormal1,
                               )),
                           Row(

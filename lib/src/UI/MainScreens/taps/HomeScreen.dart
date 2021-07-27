@@ -43,6 +43,10 @@ class HomeScreenState extends State<HomeScreen> {
   SharedPreferences _prefs;
   var apiToken;
   String restaurantSearch;
+
+  var lastLogin;
+
+
   var details;
   var loading;
   var loadingWelcomeMessage;
@@ -58,6 +62,7 @@ class HomeScreenState extends State<HomeScreen> {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
       apiToken = _prefs.getString("api_token");
+      lastLogin = _prefs.getBool("lastLogin");
       name = _prefs.getString("name");
       getData();
     });
@@ -68,6 +73,24 @@ class HomeScreenState extends State<HomeScreen> {
   getData() async {
     LoadingDialog(_key, context).showLoadingDilaog();
     print("api_token >>>>> $apiToken");
+    apiToken == null ? print("no token") : lastLogin == true ? print("true lastLogin")  :   await ApiProvider(_key, context)
+        .logOutService(apiToken: apiToken)
+        .then((value) async {
+      if (value.code == 200) {
+        print("correct logOut");
+        _prefs.setBool('lastLogin', true);
+//        Navigator.pop(context);
+//
+//        Navigator.of(context).pushAndRemoveUntil(
+//            MaterialPageRoute(builder: (context) => SplashScreen()),
+//            (Route<dynamic> route) => false);
+      } else {
+        print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+      }
+    });
     await ApiProvider(_key, context).getGeneralSlider().then((value) async {
       if (value.code == 200) {
         print("correct connection");

@@ -41,6 +41,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
   var _memberShipNum;
   var _cash;
   var _image;
+  var lastLoginStore;
   var imgFromCach;
   var name;
   bool onlinePaymentURL = false ;
@@ -52,6 +53,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
     setState(() {
       apiToken = _prefs.getString("api_token");
       logInType = _prefs.getString("login");
+      lastLoginStore = _prefs.getBool("lastLoginStore");
       loading = false;
       imgFromCach = _prefs.getString("image");
       name = _prefs.getString("name");
@@ -63,6 +65,24 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
   getData() async {
     print("api_token >>44444444444444888884>>> $apiToken");
     LoadingDialog(_key, context).showLoadingDilaog();
+    apiToken == null ? print("no token") : lastLoginStore == true ? print("true lastLogin")  :  await ApiProvider(_key, context)
+        .logOutService(apiToken: apiToken)
+        .then((value) async {
+      if (value.code == 200) {
+        print("correct logOut");
+        _prefs.setBool('lastLoginStore', true);
+//        Navigator.pop(context);
+//
+//        Navigator.of(context).pushAndRemoveUntil(
+//            MaterialPageRoute(builder: (context) => SplashScreen()),
+//            (Route<dynamic> route) => false);
+      } else {
+        print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+      }
+    });
     await ApiProvider(_key, context)
         .getMyProfileStore(apiToken: apiToken)
         .then((value) async {

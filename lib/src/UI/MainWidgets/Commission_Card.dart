@@ -14,6 +14,7 @@ class CommissionCard extends StatefulWidget {
   final num;
   final points;
   final commission;
+  final commissionIsPaid;
   final name;
   final price;
   final status;
@@ -31,6 +32,7 @@ class CommissionCard extends StatefulWidget {
       this.apiToken,
       this.rateFunction,
       this.price,
+      this.commissionIsPaid,
       this.status,
       this.commission,
       this.name,
@@ -49,7 +51,6 @@ class CommissionCard extends StatefulWidget {
 }
 
 class _CommissionCardState extends State<CommissionCard> {
-
   List<ImageOfOrder> images = [];
   @override
   Widget build(BuildContext context) {
@@ -68,12 +69,10 @@ class _CommissionCardState extends State<CommissionCard> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -83,8 +82,6 @@ class _CommissionCardState extends State<CommissionCard> {
                             style: MyColors.styleNormalSmal2,
                           ),
                         ),
-
-
                         Text(
                           "${widget.time}",
                           style: MyColors.styleNormalSmal2,
@@ -105,11 +102,9 @@ class _CommissionCardState extends State<CommissionCard> {
                       ],
                     ),
 
-
                     SizedBox(
                       height: 5,
                     ),
-
 
 //                    widget.status == 2 ?  Column(
 //                      children: [
@@ -159,11 +154,9 @@ class _CommissionCardState extends State<CommissionCard> {
                               localization.text("_price"),
                               style: MyColors.styleBoldOrange,
                             ),
-
                             SizedBox(
                               width: 3,
                             ),
-
                             Text(
                               "SR",
                               style: MyColors.styleBoldOrange,
@@ -180,7 +173,6 @@ class _CommissionCardState extends State<CommissionCard> {
                       ],
                     ),
 
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -194,11 +186,9 @@ class _CommissionCardState extends State<CommissionCard> {
                               localization.text("commission"),
                               style: MyColors.styleBoldOrange,
                             ),
-
                             SizedBox(
                               width: 3,
                             ),
-
                             Text(
                               "SR",
                               style: MyColors.styleBoldOrange,
@@ -214,7 +204,6 @@ class _CommissionCardState extends State<CommissionCard> {
                         ),
                       ],
                     ),
-
 
 //                    Row(
 //                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -241,7 +230,25 @@ class _CommissionCardState extends State<CommissionCard> {
 //                      ],
 //                    ),
 
-                    Divider(thickness: 2,)
+                    Divider(
+                      thickness: 2,
+                    ),
+
+                    widget.commissionIsPaid == 2
+                        ? Column(
+                            children: [
+                              Flexible(
+                                  child: Text(
+                                localization.text(
+                                    "Waiting for bank payment confirmation"),
+                                style: MyColors.styleBold0,
+                              )),
+                              Divider(
+                                thickness: 2,
+                              ),
+                            ],
+                          )
+                        : Container()
                   ],
                 ),
               ),

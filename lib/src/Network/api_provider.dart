@@ -22,6 +22,7 @@ import 'package:cashpoint/src/Models/generalSlider.dart';
 import 'package:cashpoint/src/Models/getAllData.dart';
 import 'package:cashpoint/src/Models/getAllDataForClient.dart';
 import 'package:cashpoint/src/Models/getGeneralData.dart';
+import 'package:cashpoint/src/Models/isPaidCommision.dart';
 import 'package:cashpoint/src/Models/lastLogin.dart';
 import 'package:cashpoint/src/Models/myNotifications.dart';
 import 'package:cashpoint/src/Models/myPayments.dart';
@@ -533,6 +534,18 @@ class ApiProvider {
     Response response = await NetworkUtil(_scafold, networkError, context)
         .get("my-profile", headers: headers);
     return MyProfileDataForStoreModel.fromJson(response.data);
+  }
+
+
+  Future<IsPaidCommissionModel> getIsPaidCommissions({String apiToken, bool networkError}) async {
+    Map<String, String> headers = {
+//      "X-localization": localization.currentLanguage.toString(),
+      "Authorization": "Bearer " + apiToken,
+    };
+
+    Response response = await NetworkUtil(_scafold, networkError, context)
+        .get("is-paid-Commission", headers: headers);
+    return IsPaidCommissionModel.fromJson(response.data);
   }
 
   Future<AllOrdersModel> getAllOrders({String apiToken, bool networkError}) async {

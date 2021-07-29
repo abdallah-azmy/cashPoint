@@ -48,6 +48,7 @@ class Datum {
     this.cash,
     this.point,
     this.commission,
+    this.commissionIsPaid,
     this.orderNumber,
     this.status,
     this.ratedOrNot,
@@ -71,6 +72,7 @@ class Datum {
   int cash;
   int point;
   String commission;
+  int commissionIsPaid;
   int orderNumber;
   int status;
   int ratedOrNot;
@@ -94,6 +96,7 @@ class Datum {
     cash: json["cash"] == null ? null : json["cash"],
     point: json["point"] == null ? null : json["point"],
     commission: json["commission"] == null ? null : "${json["commission"]}",
+    commissionIsPaid: json["commission_is_paid"] == null ? null : json["commission_is_paid"],
     orderNumber: json["order_number"] == null ? null : json["order_number"],
     status: json["status"] == null ? null : json["status"],
     ratedOrNot: json["rated_or_not"] == null ? null : json["rated_or_not"],
@@ -118,6 +121,7 @@ class Datum {
     "cash": cash == null ? null : cash,
     "point": point == null ? null : point,
     "commission": commission == null ? null : commission,
+    "commission_is_paid": commissionIsPaid == null ? null : commissionIsPaid,
     "order_number": orderNumber == null ? null : orderNumber,
     "status": status == null ? null : status,
     "rated_or_not": ratedOrNot == null ? null : ratedOrNot,

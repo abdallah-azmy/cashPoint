@@ -33,9 +33,11 @@ class _MyCommissionsState extends State<MyCommissions> {
 
   var commissions = [];
   var loading;
+  bool showNotification;
   SharedPreferences _prefs;
   var apiToken;
   var details;
+  var isPaidCommission;
   var detailsOfGeneralData;
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
@@ -49,19 +51,30 @@ class _MyCommissionsState extends State<MyCommissions> {
   getData() async {
     LoadingDialog(_key, context).showLoadingDilaog();
     await ApiProvider(_key, context)
-        .getMyProfileStore(apiToken: apiToken)
+        .getIsPaidCommissions(apiToken: apiToken)
         .then((value) async {
       if (value.code == 200) {
 //        print("correct connection");
         setState(() {
-          details = value.data[0];
+          isPaidCommission = value.data;
         });
-        print(">>>>>>>>>>> ${value.data[0].isPaid}");
+        print(">>>>>>>>>>> ${isPaidCommission.isPaid}");
 
-        details.isPaid == 1
-            ? LoadingDialog(_key, context)
-                .showNotification(localization.text("payment confirmed"))
-            : print("aaa");
+//        isPaidCommission == 1
+//            ? LoadingDialog(_key, context)
+//                .showNotification(localization.text("payment confirmed"))
+//            : print("aaa");
+        _prefs = await SharedPreferences.getInstance();
+        showNotification = _prefs.getBool("showNotification");
+        if (isPaidCommission.isPaid == 1) {
+          if ((showNotification == true || showNotification == null)) {
+            LoadingDialog(_key, context)
+                .showHighNotification(localization.text("payment confirmed"));
+            _prefs.setBool('showNotification', false);
+          }
+        } else {
+          _prefs.setBool('showNotification', true);
+        }
 
 //        Navigator.pop(context);
       } else {
@@ -72,9 +85,7 @@ class _MyCommissionsState extends State<MyCommissions> {
       }
     });
 
-    await ApiProvider(_key, context)
-        .getGeneralData()
-        .then((value) async {
+    await ApiProvider(_key, context).getGeneralData().then((value) async {
       if (value.code == 200) {
         setState(() {
           detailsOfGeneralData = value.data;
@@ -109,6 +120,35 @@ class _MyCommissionsState extends State<MyCommissions> {
         });
 
         LoadingDialog(_key, context).showNotification(value.error[0].value);
+      }
+    });
+  }
+
+  getOnlinePayment() async {
+    LoadingDialog(_key, context).showLoadingDilaog();
+    await ApiProvider(_key, context)
+        .getMyProfileStore(apiToken: apiToken)
+        .then((value) async {
+      if (value.code == 200) {
+//        print("correct connection");
+        setState(() {
+          details = value.data[0];
+        });
+        print(">>>>>>>>>>> ${value.data[0].isPaid}");
+
+//        details.isPaid == 1
+//            ? LoadingDialog(_key, context)
+//            .showNotification(localization.text("payment confirmed"))
+//            : print("aaa");
+
+        Navigator.pop(context);
+
+        chooseFiltrationMethod(context);
+      } else {
+        print('error >>> ' + value.error[0].value);
+        Navigator.pop(context);
+
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
       }
     });
   }
@@ -247,8 +287,8 @@ class _MyCommissionsState extends State<MyCommissions> {
                                           MediaQuery.of(context).size.height *
                                               .8,
                                       child: Center(
-                                          child: Text(localization
-                                              .text("There are no commissions"))),
+                                          child: Text(localization.text(
+                                              "There are no commissions"))),
                                     ),
                                   ],
                                 ),
@@ -266,6 +306,8 @@ class _MyCommissionsState extends State<MyCommissions> {
                                         points: commissions[i].point,
                                         price: commissions[i].cash,
                                         commission: commissions[i].commission,
+                                        commissionIsPaid:
+                                            commissions[i].commissionIsPaid,
                                         status: commissions[i].status,
                                         time: commissions[i].createdAt,
                                         apiToken: apiToken,
@@ -277,41 +319,126 @@ class _MyCommissionsState extends State<MyCommissions> {
                                   itemCount: commissions.length,
                                 ),
                               ),
-
-
-
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          Flexible(
-                              child: Text(
+                          (isPaidCommission.isPaid == 0)
+                              ? Container(
+                                  color: Colors.green[900],
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              localization.text(
+                                                  "Wait for the administration to confirm the commission payment process"),
+                                              style: MyColors.styleNormalWhite,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            localization.text("price"),
+                                            style: MyColors.styleNormalWhite,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            "${isPaidCommission.paidCommissions}",
+                                            style: MyColors.styleNormalWhite,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 3,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : isPaidCommission.isPaid == 1
+                                  ? Container()
+                                  : isPaidCommission.isPaid == 2
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 25),
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                color: Colors.red[900],
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      localization.text(
+                                                          "The payment request was rejected"),
+                                                      style: MyColors
+                                                          .styleNormalWhite,
+                                                    ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                                                    SizedBox(
+                                                      height: 3,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : isPaidCommission.isPaid == 4
+                                          ? Container()
+                                          : Container(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                  child: Text(
                                 localization.text("Total commission payable"),
                                 style: MyColors.styleNormal1,
                               )),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "SR",
-                                style: MyColors.styleBoldOrange,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "SR",
+                                    style: MyColors.styleBoldOrange,
+                                  ),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Text(
+                                    isPaidCommission == null
+                                        ? " "
+                                        : isPaidCommission.currentCommissions ==
+                                                null
+                                            ? " "
+                                            : "${isPaidCommission.currentCommissions}",
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Text( details == null
-                                  ? " "
-                                  : details.totalCommissions == null
-                                  ? " "
-                                  : "${details.totalCommissions}",),
                             ],
                           ),
                         ],
                       ),
                     ),
-
                     commissions.length == 0
                         ? Container()
                         : Padding(
@@ -319,7 +446,7 @@ class _MyCommissionsState extends State<MyCommissions> {
                             child: SpecialButton(
                               text: localization.text("Pay"),
                               onTap: () {
-                                chooseFiltrationMethod(context);
+                                getOnlinePayment();
                               },
                             ),
                           ),

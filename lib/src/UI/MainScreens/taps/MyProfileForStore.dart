@@ -42,8 +42,9 @@ class _MyProfileForStoreState extends State<MyProfileForStore> {
   var loading = true;
   var imgFromCach;
   var name;
+  bool showNotification;
 
-  bool onlinePaymentURL = false ;
+  bool onlinePaymentURL = false;
 
   _getShared() async {
     _prefs = await SharedPreferences.getInstance();
@@ -70,7 +71,18 @@ class _MyProfileForStoreState extends State<MyProfileForStore> {
         });
         print(">>>>>>>>>>> ${value.data[0].isPaid}");
 
-        details.isPaid == 1 ? LoadingDialog(_scafold, context).showHighNotification(localization.text("payment confirmed")) : print("aaa");
+        _prefs = await SharedPreferences.getInstance();
+        showNotification = _prefs.getBool("showNotification");
+        if (details.isPaid == 1) {
+          if ((showNotification == true || showNotification == null)) {
+            LoadingDialog(_scafold, context)
+                .showHighNotification(localization.text("payment confirmed"));
+            _prefs.setBool('showNotification', false);
+          }
+        } else {
+          _prefs.setBool('showNotification', true);
+        }
+//        details.isPaid == 1 ? LoadingDialog(_scafold, context).showHighNotification(localization.text("payment confirmed")) : print("aaa");
 
 //        Navigator.pop(context);
       } else {
@@ -81,10 +93,7 @@ class _MyProfileForStoreState extends State<MyProfileForStore> {
       }
     });
 
-
-    await ApiProvider(_scafold, context)
-        .getGeneralData()
-        .then((value) async {
+    await ApiProvider(_scafold, context).getGeneralData().then((value) async {
       if (value.code == 200) {
         setState(() {
           detailsOfGeneralData = value.data;
@@ -97,7 +106,8 @@ class _MyProfileForStoreState extends State<MyProfileForStore> {
       }
     });
   }
-var _image ;
+
+  var _image;
 
   Future getImage() async {
     var pic = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -108,71 +118,64 @@ var _image ;
 //    uploadPic(context);
   }
 
-
-
   payOffCommission(type, fatoora) async {
     LoadingDialog(_scafold, context).showLoadingDilaog();
     await ApiProvider(_scafold, context)
         .payOffCommission(
-        apiToken: apiToken,
-        image: _image,
-        payment_type: type,
-        my_fatoora: fatoora)
+            apiToken: apiToken,
+            image: _image,
+            payment_type: type,
+            my_fatoora: fatoora)
         .then((value) async {
       if (value.code == 200) {
         Navigator.pop(context);
-        value.data.paymentUrl != null ?
-        LoadingDialog(_scafold, context).alertPopUp(localization.text("Please complete the payment process"))
-            :
-        LoadingDialog(_scafold, context).alertPopUp(localization.text("operation accomplished successfully"));
+        value.data.paymentUrl != null
+            ? LoadingDialog(_scafold, context).alertPopUp(
+                localization.text("Please complete the payment process"))
+            : LoadingDialog(_scafold, context).alertPopUp(
+                localization.text("operation accomplished successfully"));
 
-
-
-        if(value.data.paymentUrl != null){
+        if (value.data.paymentUrl != null) {
           setState(() {
-            onlinePaymentURL = true ;
+            onlinePaymentURL = true;
           });
         }
 
         Future.delayed(Duration(milliseconds: 750), () {
           Navigator.pop(context);
-          getData().then((anotherValue){
-
-            if(value.data.paymentUrl != null){
+          getData().then((anotherValue) {
+            if (value.data.paymentUrl != null) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => OnlinePaymentScreen(
-                      url: value.data.paymentUrl,
-                      getData: (){
-                        _getShared();
-                      },
-                    )),
+                          url: value.data.paymentUrl,
+                          getData: () {
+                            _getShared();
+                          },
+                        )),
               );
-              Future.delayed(Duration(seconds: 2),(){
+              Future.delayed(Duration(seconds: 2), () {
                 setState(() {
-                  onlinePaymentURL = false ;
+                  onlinePaymentURL = false;
                 });
               });
-
             }
           });
         });
-
       } else {
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
 
-        if(value.error[0].value == "my fatoora لاغٍ"){
-          LoadingDialog(_scafold, context).alertPopUp(localization.text("please try again later"));
-        }else{
+        if (value.error[0].value == "my fatoora لاغٍ") {
+          LoadingDialog(_scafold, context)
+              .alertPopUp(localization.text("please try again later"));
+        } else {
           LoadingDialog(_scafold, context).alertPopUp(value.error[0].value);
         }
-
       }
     });
   }
-
 
   @override
   void initState() {
@@ -193,7 +196,7 @@ var _image ;
           resizeToAvoidBottomInset: true,
           backgroundColor: Color(0xfff5f6f8),
           body: RefreshIndicator(
-            onRefresh: (){
+            onRefresh: () {
               return getData();
             },
             child: SafeArea(
@@ -233,7 +236,7 @@ var _image ;
 //                                            : details.logo == null
 //                                                ? " "
 //                                                : "${details.logo}",
-                                      "$imgFromCach",
+                                        "$imgFromCach",
                                     imageBuilder: (context, imageProvider) =>
                                         ClipRRect(
                                       borderRadius:
@@ -244,8 +247,7 @@ var _image ;
                                           padding: const EdgeInsets.all(3.0),
                                           child: ClipRRect(
                                             borderRadius:
-                                                BorderRadius.circular(
-                                                    10000.0),
+                                                BorderRadius.circular(10000.0),
                                             child: Container(
                                               height: 80,
                                               width: 80,
@@ -271,16 +273,19 @@ var _image ;
                                     ),
                                     placeholderFadeInDuration:
                                         Duration(milliseconds: 500),
-                                    errorWidget: (context, url, error) =>  Container(
+                                    errorWidget: (context, url, error) =>
+                                        Container(
                                       height: 80,
                                       width: 80,
 //                                      color: MyColors.grey,
                                       child: Center(
-                                          child:
-                                          Icon(Icons.error,color: Colors.white,size: 30,)),
+                                          child: Icon(
+                                        Icons.error,
+                                        color: Colors.white,
+                                        size: 30,
+                                      )),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -395,11 +400,10 @@ var _image ;
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                 localization.text("My total sales"),
+                                  localization.text("My total sales"),
                                   style: MyColors.styleNormal1,
                                 ),
                                 Row(
@@ -411,11 +415,13 @@ var _image ;
                                     SizedBox(
                                       width: 4,
                                     ),
-                                    Text(  details == null
-                                        ? " "
-                                        : details.totalSales == null
-                                        ? " "
-                                        : "${details.totalSales}",),
+                                    Text(
+                                      details == null
+                                          ? " "
+                                          : details.totalSales == null
+                                              ? " "
+                                              : "${details.totalSales}",
+                                    ),
                                   ],
                                 ),
                               ],
@@ -436,12 +442,12 @@ var _image ;
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
                                     child: Text(
-                                      localization.text("Total cashpoint commissions"),
+                                  localization
+                                      .text("Total cashpoint commissions"),
                                   style: MyColors.styleNormal1,
                                 )),
                                 Row(
@@ -454,19 +460,19 @@ var _image ;
                                     SizedBox(
                                       width: 4,
                                     ),
-                                    Text( details == null
-                                        ? " "
-                                        : details.totalCommissions == null
-                                        ? " "
-                                        : "${details.totalCommissions}",),
+                                    Text(
+                                      details == null
+                                          ? " "
+                                          : details.totalCommissions == null
+                                              ? " "
+                                              : "${details.totalCommissions}",
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
                         ),
-
-
                         SizedBox(
                           height: 10,
                         ),
@@ -481,14 +487,14 @@ var _image ;
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
                                     child: Text(
-                                      localization.text("Current cashpoint commission"),
-                                      style: MyColors.styleNormal1,
-                                    )),
+                                  localization
+                                      .text("Current cashpoint commission"),
+                                  style: MyColors.styleNormal1,
+                                )),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -499,205 +505,214 @@ var _image ;
                                     SizedBox(
                                       width: 4,
                                     ),
-                                    Text( details == null
-                                        ? " "
-                                        : details.currentCommissions == null
-                                        ? " "
-                                        : "${details.currentCommissions}",),
+                                    Text(
+                                      details == null
+                                          ? " "
+                                          : details.currentCommissions == null
+                                              ? " "
+                                              : "${details.currentCommissions}",
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
                         ),
-
                       ],
                     ),
                   ),
-
 
                   SizedBox(
                     height: 60,
                   ),
 
-
-
-
-
-
-
-
                   details == null
                       ? Container()
-                      : onlinePaymentURL == true ? Container() :   (details.isPaid == 0 && details.fatoora != null )  ?
-                  Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Column(
-                      children: [
-                        Container(
-                          color: Colors.red[900],
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10),
-                          width:
-                          MediaQuery.of(context).size.width,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      localization.text("The online payment process has not been completed, please contact the administration"),
-                                      style:
-                                      MyColors.styleNormalWhite,
-                                      textAlign: TextAlign.center,
-                                    ),
+                      : onlinePaymentURL == true
+                          ? Container()
+                          : (details.isPaid == 0 && details.fatoora != null)
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        color: Colors.red[900],
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    localization.text(
+                                                        "The online payment process has not been completed, please contact the administration"),
+                                                    style: MyColors
+                                                        .styleNormalWhite,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                )
+                              : (details.isPaid == 0)
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(top: 25),
+                                      child: Container(
+                                        color: Colors.green[900],
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    localization.text(
+                                                        "Wait for the administration to confirm the commission payment process"),
+                                                    style: MyColors
+                                                        .styleNormalWhite,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  localization.text("price"),
+                                                  style:
+                                                      MyColors.styleNormalWhite,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  "${details.paidCommissions}",
+                                                  style:
+                                                      MyColors.styleNormalWhite,
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : details.isPaid == 3
+                                      ? Column(
+                                          children: [
+                                            Text(
+                                              localization.text(
+                                                  "The due commission must be paid"),
+                                              style: MyColors.styleNormal1,
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: SpecialButton(
+                                                text: localization.text("Pay"),
+                                                onTap: () {
+                                                  chooseFiltrationMethod(
+                                                      context);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : details.isPaid == 1
+                                          ? Container()
+                                          : details.isPaid == 2
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 25),
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        color: Colors.red[900],
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 10),
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                              localization.text(
+                                                                  "The payment request was rejected"),
+                                                              style: MyColors
+                                                                  .styleNormalWhite,
+                                                            ),
 //                              Icon(Icons.ch,size: 20,color: Colors.white,),
 
-                              SizedBox(
-                                height: 3,
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                      ],
-                    ),
-                  )
-
-                      :
-
-                  (details.isPaid == 0)
-
-
-                      ? Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Container(
-                      color: Colors.green[900],
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10),
-                      width:
-                      MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  localization.text("Wait for the administration to confirm the commission payment process"),
-                                  style:
-                                  MyColors.styleNormalWhite,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                localization.text("price"),
-                                style: MyColors
-                                    .styleNormalWhite,
-                              ),
-                              SizedBox(width: 5,),
-                              Text(
-                                "${details.paidCommissions}",
-                                style: MyColors
-                                    .styleNormalWhite,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 3,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                      :
-
-
-                  details.isPaid == 3 ?
-                  Column(
-                    children: [
-                      Text(
-                       localization.text("The due commission must be paid"),
-                        style:
-                        MyColors.styleNormal1,
-                      ),
-                      SizedBox(height: 10,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: SpecialButton(
-                          text: localization.text("Pay"),
-                          onTap: (){
-
-                            chooseFiltrationMethod(context);
-
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                      :  details.isPaid == 1 ?
-
-                      Container()
-
-                      :   details.isPaid == 2 ?
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Column(
-                      children: [
-                        Container(
-                          color: Colors.red[900],
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10),
-                          width:
-                          MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: [
-                              Text(
-                                localization.text("The payment request was rejected"),
-                                style:
-                                MyColors.styleNormalWhite,
-                              ),
-//                              Icon(Icons.ch,size: 20,color: Colors.white,),
-
-                              SizedBox(
-                                height: 3,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: 10,),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: SpecialButton(
-                            text: localization.text("Pay"),
-                            onTap: (){
-
-                              chooseFiltrationMethod(context);
-
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ): details.isPaid == 4  ? Container()  : Container()
+                                                            SizedBox(
+                                                              height: 3,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 20),
+                                                        child: SpecialButton(
+                                                          text: localization
+                                                              .text("Pay"),
+                                                          onTap: () {
+                                                            chooseFiltrationMethod(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : details.isPaid == 4
+                                                  ? Container()
+                                                  : Container()
                 ],
               ),
             ),
           )),
     );
   }
+
   chooseFiltrationMethod(BuildContext context) {
     return showModalBottomSheet<dynamic>(
         isScrollControlled: true,
@@ -741,29 +756,29 @@ var _image ;
 //                    },
 //                  ),
 //                ),
-                details.onlinePayment == 0 ? Container() :  Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SpecialButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                      chooseMyFatoora(context);
+                details.onlinePayment == 0
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SpecialButton(
+                          onTap: () {
+                            Navigator.pop(context);
+                            chooseMyFatoora(context);
 //                      payOffCommission(1, 1);
-                      //مدي واحد
-                    },
-                    text: localization.text("pay by myfatoora"),
-                  ),
-                ),
+                            //مدي واحد
+                          },
+                          text: localization.text("pay by myfatoora"),
+                        ),
+                      ),
 
-                details.onlinePayment == 0 ? Container() :    Divider(),
+                details.onlinePayment == 0 ? Container() : Divider(),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
                     onTap: () {
                       Navigator.pop(context);
 
-
-                      uploadPaymentPhoto(
-                          context);
+                      uploadPaymentPhoto(context);
 //                      getImage().then((value) async {
 //                        _image == null
 //                            ? print("choose the image")
@@ -801,7 +816,6 @@ var _image ;
 //                  ],
 //                ),
 
-
                 SizedBox(
                   height: 20,
                 ),
@@ -825,7 +839,6 @@ var _image ;
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
@@ -837,39 +850,34 @@ var _image ;
                     text: localization.text("pay_by_my_fatoora"),
                   ),
                 ),
-
                 details.onlinePayment == 0
                     ? Container()
                     : Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SpecialButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                      payOffCommission(1, 1);
-                      //مدي واحد
-                    },
-                    text: localization.text("Pay by Mada"),
-                  ),
-                ),
-
-
-                Platform.isIOS != true ? Container()  :
-                details.onlinePayment == 0
+                        padding: const EdgeInsets.all(10.0),
+                        child: SpecialButton(
+                          onTap: () {
+                            Navigator.pop(context);
+                            payOffCommission(1, 1);
+                            //مدي واحد
+                          },
+                          text: localization.text("Pay by Mada"),
+                        ),
+                      ),
+                Platform.isIOS != true
                     ? Container()
-                    : Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SpecialButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                      payOffCommission(1, 3);
-                      //مدي واحد
-                    },
-                    text: localization.text("pay_by_my_apple"),
-                  ),
-                ),
-
-
-
+                    : details.onlinePayment == 0
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: SpecialButton(
+                              onTap: () {
+                                Navigator.pop(context);
+                                payOffCommission(1, 3);
+                                //مدي واحد
+                              },
+                              text: localization.text("pay_by_my_apple"),
+                            ),
+                          ),
                 SizedBox(
                   height: 10,
                 ),
@@ -878,9 +886,6 @@ var _image ;
           );
         });
   }
-
-
-
 
   uploadPaymentPhoto(BuildContext context) {
     return showModalBottomSheet<dynamic>(
@@ -896,29 +901,24 @@ var _image ;
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-
-
-
-                detailsOfGeneralData == null ? Container() :  Column(
-                  children: [
-
-                    detailsOfGeneralData.bankName == null ? Container() :
-                    Text("${detailsOfGeneralData.bankName}"),
-
-                    SizedBox(
-                      height: 3,
-                    ),
-                    detailsOfGeneralData.bankName == null ? Container() :
-                    Text("SA${detailsOfGeneralData.bankAccount}"),
-
-                    SizedBox(
-                      height: 15,
-                    ),
-                  ],
-                ),
-
-
-
+                detailsOfGeneralData == null
+                    ? Container()
+                    : Column(
+                        children: [
+                          detailsOfGeneralData.bankName == null
+                              ? Container()
+                              : Text("${detailsOfGeneralData.bankName}"),
+                          SizedBox(
+                            height: 3,
+                          ),
+                          detailsOfGeneralData.bankName == null
+                              ? Container()
+                              : Text("SA${detailsOfGeneralData.bankAccount}"),
+                          SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
@@ -928,23 +928,16 @@ var _image ;
                       getImage().then((value) async {
                         _image == null
                             ? print("choose the image")
-                            : LoadingDialog(widget.scaffold, context)
-                            .payByBank(
-                            localization.text(
-                                "Attach the link image"),
-                                () {
-                              Navigator.pop(context);
-                              payOffCommission(0, null);
-                            });
-
-
+                            : LoadingDialog(widget.scaffold, context).payByBank(
+                                localization.text("Attach the link image"), () {
+                                Navigator.pop(context);
+                                payOffCommission(0, null);
+                              });
                       });
                     },
                     text: localization.text("Attach the conversion image"),
                   ),
                 ),
-
-
                 SizedBox(
                   height: 10,
                 ),
@@ -953,5 +946,4 @@ var _image ;
           );
         });
   }
-
 }

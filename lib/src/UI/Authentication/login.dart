@@ -247,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                date1.isBefore(DateTime(2021,07,13,15,46))  ? Container() :  Column(
+                                date1.isBefore(DateTime(2021,08,4,15,46))  ? Container() :  Column(
                                   children: [
                                     SpecialTextField(
                                       icon: Icon(

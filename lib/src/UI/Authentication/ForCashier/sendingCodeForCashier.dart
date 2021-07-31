@@ -495,7 +495,7 @@ class _SendingCodeForCashierState extends State<SendingCodeForCashier> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0, horizontal: 5),
                                       child: PinCodeTextField(
-//                                      appContext: context,
+                                     appContext: context,
 //                                      pastedTextStyle: TextStyle(
 //                                        color: Colors.green.shade600,
 //                                        fontWeight: FontWeight.bold,

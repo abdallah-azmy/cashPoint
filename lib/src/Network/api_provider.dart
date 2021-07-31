@@ -559,16 +559,6 @@ class ApiProvider {
     return AllOrdersModel.fromJson(response.data);
   }
 
-//  Future<ShowOrderModel> showOrder({String apiToken, bool networkError}) async {
-//    Map<String, String> headers = {
-////      "X-localization": localization.currentLanguage.toString(),
-//      "Authorization": "Bearer " + apiToken,
-//    };
-//
-//    Response response = await NetworkUtil(_scafold, networkError, context)
-//        .get("order", headers: headers);
-//    return ShowOrderModel.fromJson(response.data);
-//  }
 
   Future<ShowOrderModel> showOrder(
       {var transaction_id,var apiToken}) async {

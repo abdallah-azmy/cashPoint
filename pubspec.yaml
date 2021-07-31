@@ -45,7 +45,7 @@ dependencies:
   uuid: ^2.2.2
   firebase_messaging:
   flutter_ringtone_player: ^2.0.0
-  path_provider: ^1.6.27
+  # path_provider: 
   pin_code_fields: ^6.1.0
 
 dev_dependencies:

@@ -69,7 +69,7 @@ class SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 1, milliseconds: 200), () {
 
       DateTime date1 = DateTime.now();
-      date1.isBefore(DateTime(2021,07,13,15,46))  ? Navigator.of(context).pushReplacement(
+      date1.isBefore(DateTime(2021,07,17,15,46))  ? Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => LoginPage())) :
       logInType == "كاشير"
           ? Navigator.of(context).pushReplacement(

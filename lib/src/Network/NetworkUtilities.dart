@@ -4,7 +4,6 @@ import 'package:cashpoint/src/firebaseNotification/appLocalization.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:cashpoint/src/LoadingDialog.dart';
-import 'package:cashpoint/src/UI/Authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:cashpoint/src/UI/Intro/splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,10 +25,7 @@ class NetworkUtil {
     if (await connectivity() == ConnectivityResult.mobile || await connectivity() == ConnectivityResult.wifi ){
       var response;
       try {
-//https://cashpoint21.com/
         dio.options.baseUrl = "https://app.cashpoint21.com/api/v1/";
-//      dio.options.baseUrl = "https://cashpoint21.com/api/v1/";
-//    dio.options.baseUrl = "http://demo.easymenu.site/api/v1/";
         response = await dio.get(url, options: Options(headers: headers));
       } on DioError catch (e) {
         if (e.response != null) {
@@ -65,9 +61,6 @@ class NetworkUtil {
 
       var response;
       dio.options.baseUrl = "https://app.cashpoint21.com/api/v1/";
-//    dio.options.baseUrl = "https://cashpoint21.com/api/v1/";
-
-//    dio.options.baseUrl = "http://demo.easymenu.site/api/v1/";
       try {
         response = await dio.post(url,
             data: body,

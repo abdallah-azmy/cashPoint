@@ -203,7 +203,7 @@ class _ContactUsState extends State<ContactUs> {
                           ),
                           InkWell(
                             onTap: (){
-                              _launchURL("${details.twitter}");
+                              _launchURL("${details.instagram}");
                             },
                             child: Text(
                               details == null

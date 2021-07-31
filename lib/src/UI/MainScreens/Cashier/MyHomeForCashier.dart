@@ -34,6 +34,11 @@ class _MyHomeForCashierState extends State<MyHomeForCashier> with WidgetsBinding
   var loading = true;
   String restaurantSearch;
   var details;
+
+
+  var lastLoginCashier;
+
+
   var memberDetails;
   var addingPointsProcessDetails;
 
@@ -50,6 +55,7 @@ class _MyHomeForCashierState extends State<MyHomeForCashier> with WidgetsBinding
     setState(() {
       apiToken = _prefs.getString("api_token");
       logInType = _prefs.getString("login");
+      lastLoginCashier = _prefs.getBool("lastLoginCashier");
       loading = false;
       imgFromCach = _prefs.getString("image");
       name = _prefs.getString("name");
@@ -61,6 +67,25 @@ class _MyHomeForCashierState extends State<MyHomeForCashier> with WidgetsBinding
   getData() async {
     print("api_token >>44444444444444888884>>> $apiToken");
     LoadingDialog(_key, context).showLoadingDilaog();
+    apiToken == null ? print("no token") : await ApiProvider(_key, context)
+        .logOutServiceCashier(apiToken: apiToken)
+        .then((value) async {
+      if (value.code == 200) {
+        print("11111111111111111111111111");
+        print("correct logOut");
+        _prefs.setBool('lastLoginCashier', true);
+//        Navigator.pop(context);
+
+//        Navigator.of(context).pushAndRemoveUntil(
+//            MaterialPageRoute(builder: (context) => SplashScreen()),
+//            (Route<dynamic> route) => false);
+      } else {
+        print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+        LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+      }
+    });
     await ApiProvider(_key, context)
         .checkPaidCashier(apiToken: apiToken)
         .then((value) async {

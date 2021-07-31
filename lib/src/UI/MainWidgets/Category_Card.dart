@@ -82,8 +82,8 @@ class _CategoryCardState extends State<CategoryCard> {
       long,
     );
 
-    print("111111 $_distanceInMeters");
-    return _distanceInMeters;
+//    print("111111 $_distanceInMeters");
+    return _distanceInMeters * .001 ;
   }
 
 

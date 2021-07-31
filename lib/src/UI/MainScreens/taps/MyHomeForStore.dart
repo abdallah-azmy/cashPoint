@@ -26,7 +26,8 @@ class MyHomeForStore extends StatefulWidget {
   _MyHomeForStoreState createState() => _MyHomeForStoreState();
 }
 
-class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObserver{
+class _MyHomeForStoreState extends State<MyHomeForStore>
+    with WidgetsBindingObserver {
   FirebaseNotifications appPushNotifications = FirebaseNotifications();
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   SharedPreferences _prefs;
@@ -41,9 +42,11 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
   var _memberShipNum;
   var _cash;
   var _image;
+  var lastLoginStore;
   var imgFromCach;
   var name;
-  bool onlinePaymentURL = false ;
+  bool onlinePaymentURL = false;
+  bool showNotification;
 
   var detailsOfGeneralData;
 
@@ -52,6 +55,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
     setState(() {
       apiToken = _prefs.getString("api_token");
       logInType = _prefs.getString("login");
+      lastLoginStore = _prefs.getBool("lastLoginStore");
       loading = false;
       imgFromCach = _prefs.getString("image");
       name = _prefs.getString("name");
@@ -63,6 +67,28 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
   getData() async {
     print("api_token >>44444444444444888884>>> $apiToken");
     LoadingDialog(_key, context).showLoadingDilaog();
+    apiToken == null
+        ? print("no token")
+        : lastLoginStore == true
+            ? print("true lastLogin")
+            : await ApiProvider(_key, context)
+                .logOutService(apiToken: apiToken)
+                .then((value) async {
+                if (value.code == 200) {
+                  print("correct logOut");
+                  _prefs.setBool('lastLoginStore', true);
+//        Navigator.pop(context);
+//
+//        Navigator.of(context).pushAndRemoveUntil(
+//            MaterialPageRoute(builder: (context) => SplashScreen()),
+//            (Route<dynamic> route) => false);
+                } else {
+                  print('error >>> ' + value.error[0].value);
+//        Navigator.pop(context);
+
+                  LoadingDialog(_key, context).alertPopUp(value.error[0].value);
+                }
+              });
     await ApiProvider(_key, context)
         .getMyProfileStore(apiToken: apiToken)
         .then((value) async {
@@ -72,7 +98,20 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
           details = value.data[0];
         });
 
-        details.isPaid == 1 ? LoadingDialog(_key, context).showHighNotification(localization.text("payment confirmed")) : print("aaa");
+        _prefs = await SharedPreferences.getInstance();
+        showNotification = _prefs.getBool("showNotification");
+        if (details.isPaid == 1) {
+          if((showNotification == true || showNotification == null)){
+            LoadingDialog(_key, context)
+                .showHighNotification(localization.text("payment confirmed"));
+            _prefs.setBool('showNotification', false);
+          }
+        } else {
+          _prefs.setBool('showNotification', true);
+        }
+//        details.isPaid == 1 ?
+//        LoadingDialog(_key, context).showHighNotification(localization.text("payment confirmed"))
+//            : print("aaa");
 
 //        Navigator.pop(context);
       } else {
@@ -84,10 +123,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
       }
     });
 
-
-    await ApiProvider(_key, context)
-        .getGeneralData()
-        .then((value) async {
+    await ApiProvider(_key, context).getGeneralData().then((value) async {
       if (value.code == 200) {
         setState(() {
           detailsOfGeneralData = value.data;
@@ -118,7 +154,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
         Navigator.pop(context);
 
         if (value.error == "Sorry something went wrong, please try again") {
-          LoadingDialog(_key, context).alertPopUp(localization.text("An error occurred client not found"));
+          LoadingDialog(_key, context).alertPopUp(
+              localization.text("An error occurred client not found"));
         } else {
           LoadingDialog(_key, context).alertPopUp(value.error);
         }
@@ -142,7 +179,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
         Navigator.pop(context);
 
         if (value.error == "Sorry something went wrong, please try again") {
-          LoadingDialog(_key, context).alertPopUp(localization.text("An error occurred client not found"));
+          LoadingDialog(_key, context).alertPopUp(
+              localization.text("An error occurred client not found"));
         } else {
           LoadingDialog(_key, context).alertPopUp(value.error);
         }
@@ -226,15 +264,15 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
       if (value.code == 200) {
         print("correct connection333333333333333");
         Navigator.pop(context);
-        value.data.paymentUrl != null ?
-        LoadingDialog(_key, context).alertPopUp(localization.text("Please complete the payment process"))
-            :
-        LoadingDialog(_key, context).alertPopUp(localization.text("operation accomplished successfully"));
+        value.data.paymentUrl != null
+            ? LoadingDialog(_key, context).alertPopUp(
+                localization.text("Please complete the payment process"))
+            : LoadingDialog(_key, context).alertPopUp(
+                localization.text("operation accomplished successfully"));
 
-
-        if(value.data.paymentUrl != null){
+        if (value.data.paymentUrl != null) {
           setState(() {
-            onlinePaymentURL = true ;
+            onlinePaymentURL = true;
           });
         }
 
@@ -250,15 +288,15 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                 MaterialPageRoute(
                     builder: (context) => OnlinePaymentScreen(
                           url: value.data.paymentUrl,
-                      getData: (){
-                        _getShared();
-                      },
+                          getData: () {
+                            _getShared();
+                          },
                         )),
               );
 
-              Future.delayed(Duration(seconds: 2),(){
+              Future.delayed(Duration(seconds: 2), () {
                 setState(() {
-                  onlinePaymentURL = false ;
+                  onlinePaymentURL = false;
                 });
               });
             }
@@ -269,16 +307,14 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
         print('error >>> ' + value.error[0].value);
         Navigator.pop(context);
         if (value.error[0].value == "my fatoora لاغٍ") {
-          LoadingDialog(_key, context).alertPopUp(localization.text("please try later"));
+          LoadingDialog(_key, context)
+              .alertPopUp(localization.text("please try later"));
         } else {
           LoadingDialog(_key, context).alertPopUp(value.error[0].value);
         }
       }
     });
   }
-
-
-
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -320,9 +356,11 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
         print("------------------XXXXXX-------- ${data.length}");
         if (Platform.isIOS == true) {
           print("ios");
-          LoadingDialog(_key, context).showDoubleNotification(data['aps']['alert']['title'],data['aps']['alert']['body']);
+          LoadingDialog(_key, context).showDoubleNotification(
+              data['aps']['alert']['title'], data['aps']['alert']['body']);
         } else {
-          LoadingDialog(_key, context).showDoubleNotification( data['notification']['title'],data['notification']['body']);
+          LoadingDialog(_key, context).showDoubleNotification(
+              data['notification']['title'], data['notification']['body']);
         }
       }).onError((err) {
         print("------------------- $err");
@@ -330,7 +368,6 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
 //      if (this.mounted) {
 //      _getShared();
 //      }
-
     });
   }
 
@@ -374,7 +411,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                               height: 15,
                             ),
                             Text(
-                             localization.text("hello"),
+                              localization.text("hello"),
                               style: MyColors.styleNormalOrange1,
                             ),
                             SizedBox(
@@ -392,24 +429,21 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                             SizedBox(
                               height: 4,
                             ),
-
-                            details == null ? Container() :    SmoothStarRating(
-                                allowHalfRating: false,
-                                onRated: (v) {},
-                                starCount: 5,
-                                rating: details.stars,
-                                size: 17.0,
-                                isReadOnly: true,
-                                color: Colors.amber,
-                                borderColor: Colors.orange,
-                                spacing: 1.0),
-
+                            details == null
+                                ? Container()
+                                : SmoothStarRating(
+                                    allowHalfRating: false,
+                                    onRated: (v) {},
+                                    starCount: 5,
+                                    rating: details.stars,
+                                    size: 17.0,
+                                    isReadOnly: true,
+                                    color: Colors.amber,
+                                    borderColor: Colors.orange,
+                                    spacing: 1.0),
                             SizedBox(
                               height: 10,
                             ),
-
-
-
                           ],
                         ),
                       ],
@@ -553,7 +587,7 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                             Column(
                               children: [
                                 Text(
-                                 localization.text("Scan a code"),
+                                  localization.text("Scan a code"),
                                   style: TextStyle(height: 1),
                                 ),
                                 Text(
@@ -572,233 +606,255 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                             ),
                             details == null
                                 ? Container()
-                                :   onlinePaymentURL == true ? Container() :
-
-
-
-                            (details.isPaid == 0 && details.fatoora != null )  ?
-                            Padding(
-                              padding: const EdgeInsets.only(top: 25),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    color: Colors.red[900],
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    width:
-                                    MediaQuery.of(context).size.width,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                localization.text("The online payment process has not been completed, please contact the administration"),
-                                                style:
-                                                MyColors.styleNormalWhite,
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-//                              Icon(Icons.ch,size: 20,color: Colors.white,),
-
-                                        SizedBox(
-                                          height: 3,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-
-                                ],
-                              ),
-                            )
-
-                                :
-
-
-                            (details.isPaid == 0)
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 25),
-                                        child: Container(
-                                          color: Colors.green[900],
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Column(
-                                            children: [
-                                              Row(mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Flexible(
-                                                    child: Text(
-                                                     localization.text("Wait for the administration to confirm the commission payment process"),
-                                                      style:
-                                                          MyColors.styleNormalWhite,
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    localization.text("price"),
-                                                    style: MyColors
-                                                        .styleNormalWhite,
-                                                  ),
-                                                  SizedBox(width: 5,),
-                                                  Text(
-                                                    "${details.paidCommissions}",
-                                                    style: MyColors
-                                                        .styleNormalWhite,
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 3,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : (details.isPaid == 3)
+                                : onlinePaymentURL == true
+                                    ? Container()
+                                    : (details.isPaid == 0 &&
+                                            details.fatoora != null)
                                         ? Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 25),
-                                            child: Container(
-                                              color: Colors.red,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10),
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    localization.text("The due commission must be paid"),
-                                                    style: MyColors
-                                                        .styleNormalWhite,
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  color: Colors.red[900],
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              localization.text(
+                                                                  "The online payment process has not been completed, please contact the administration"),
+                                                              style: MyColors
+                                                                  .styleNormalWhite,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+//                              Icon(Icons.ch,size: 20,color: Colors.white,),
+
+                                                      SizedBox(
+                                                        height: 3,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    "${details.currentCommissions}",
-                                                    style: MyColors
-                                                        .styleNormalWhite,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 12,
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 25),
-                                                    child: SpecialButton(
-                                                      onTap: () {
-                                                        chooseFiltrationMethod(
-                                                            context);
-                                                      },
-                                                      text: localization.text("pay"),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
                                           )
-                                        : (details.isPaid == 1 ||
-                                                details.isPaid == 4)
-                                            ? Column(
-                                                children: [
-                                                  Padding(
+                                        : (details.isPaid == 0)
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 25),
+                                                child: Container(
+                                                  color: Colors.green[900],
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              localization.text(
+                                                                  "Wait for the administration to confirm the commission payment process"),
+                                                              style: MyColors
+                                                                  .styleNormalWhite,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            localization
+                                                                .text("price"),
+                                                            style: MyColors
+                                                                .styleNormalWhite,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Text(
+                                                            "${details.paidCommissions}",
+                                                            style: MyColors
+                                                                .styleNormalWhite,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 3,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            : (details.isPaid == 3)
+                                                ? Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                            top: 15),
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          getLink().then(
-                                                              (value) async {
-                                                            print(
-                                                                "333333333 $value");
-                                                            value.toString() ==
-                                                                    "-1"
-                                                                ? print(
-                                                                    "no value")
-                                                                : await readMembershipQR(
-                                                                    "$value");
-                                                          });
+                                                            top: 25),
+                                                    child: Container(
+                                                      color: Colors.red,
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 10),
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            localization.text(
+                                                                "The due commission must be paid"),
+                                                            style: MyColors
+                                                                .styleNormalWhite,
+                                                          ),
+                                                          Text(
+                                                            "${details.currentCommissions}",
+                                                            style: MyColors
+                                                                .styleNormalWhite,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 12,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        25),
+                                                            child:
+                                                                SpecialButton(
+                                                              onTap: () {
+                                                                chooseFiltrationMethod(
+                                                                    context);
+                                                              },
+                                                              text: localization
+                                                                  .text("pay"),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                : (details.isPaid == 1 ||
+                                                        details.isPaid == 4)
+                                                    ? Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 15),
+                                                            child: Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  getLink().then(
+                                                                      (value) async {
+                                                                    print(
+                                                                        "333333333 $value");
+                                                                    value.toString() ==
+                                                                            "-1"
+                                                                        ? print(
+                                                                            "no value")
+                                                                        : await readMembershipQR(
+                                                                            "$value");
+                                                                  });
 
-                                                          print(
-                                                              "$barcodeScanRes");
-                                                        },
-                                                        child: Material(
-                                                          elevation: 8,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(18),
-                                                          child: Stack(
-                                                            children: [
-                                                              Container(
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            18),
-                                                                    border: Border.all(
-                                                                        color: MyColors
-                                                                            .orange)),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          9.0),
-                                                                  child:
+                                                                  print(
+                                                                      "$barcodeScanRes");
+                                                                },
+                                                                child: Material(
+                                                                  elevation: 8,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              18),
+                                                                  child: Stack(
+                                                                    children: [
                                                                       Container(
-                                                                    height: 110,
-                                                                    width: 110,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                      image: DecorationImage(
-                                                                          image: AssetImage(
-                                                                            "assets/cashpoint/qr.png",
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            borderRadius: BorderRadius.circular(18),
+                                                                            border: Border.all(color: MyColors.orange)),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.all(9.0),
+                                                                          child:
+                                                                              Container(
+                                                                            height:
+                                                                                110,
+                                                                            width:
+                                                                                110,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(8),
+                                                                              image: DecorationImage(
+                                                                                  image: AssetImage(
+                                                                                    "assets/cashpoint/qr.png",
+                                                                                  ),
+                                                                                  fit: BoxFit.fill),
+                                                                            ),
                                                                           ),
-                                                                          fit: BoxFit.fill),
-                                                                    ),
+                                                                        ),
+                                                                      ),
+                                                                      Positioned(
+                                                                        child: Icon(
+                                                                            Icons.camera_alt),
+                                                                        bottom:
+                                                                            5,
+                                                                        left: 9,
+                                                                      )
+                                                                    ],
                                                                   ),
                                                                 ),
                                                               ),
-                                                              Positioned(
-                                                                child: Icon(Icons
-                                                                    .camera_alt),
-                                                                bottom: 5,
-                                                                left: 9,
-                                                              )
-                                                            ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Text(
-                                                    "QR",
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 13,
-                                                  ),
+                                                          SizedBox(
+                                                            height: 15,
+                                                          ),
+                                                          Text(
+                                                            "QR",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 13,
+                                                          ),
 //                                                  details.isPaid == 4
 //                                                      ? Container()
 //                                                      : Column(
@@ -841,113 +897,125 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
 //                                                            ),
 //                                                          ],
 //                                                        ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 35,
-                                                            left: 35,
-                                                            bottom: 10),
-                                                    child: SpecialTextField(
-                                                      hint:
-                                                         localization.text("Enter the customer's phone number or membership"),
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      onChange: (value) {
-                                                        setState(() {
-                                                          _memberShipNum =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 35,
-                                                            left: 35,
-                                                            bottom: 10),
-                                                    child: SpecialButton(
-                                                      text: localization
-                                                          .text("send"),
-                                                      onTap: () {
-                                                        if (_memberShipNum ==
-                                                            null) {
-                                                          LoadingDialog(
-                                                                  _key, context)
-                                                              .alertPopUp(
-                                                                  localization.text(
-                                                                      "needed_information"));
-                                                        } else {
-                                                          readMembershipNum();
-                                                        }
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : details.isPaid == 2
-                                                ? Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 25),
-                                                    child: Column(
-                                                      children: [
-                                                        Container(
-                                                          color: Colors.red[900],
-                                                          padding: const EdgeInsets
-                                                                  .symmetric(
-                                                              vertical: 10),
-                                                          width:
-                                                              MediaQuery.of(context)
-                                                                  .size
-                                                                  .width,
-                                                          child: Column(
-                                                            children: [
-                                                              Text(
-                                                               localization.text("The payment request was rejected"),
-                                                                style: MyColors
-                                                                    .styleNormalWhite,
-                                                              ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 35,
+                                                                    left: 35,
+                                                                    bottom: 10),
+                                                            child:
+                                                                SpecialTextField(
+                                                              hint: localization
+                                                                  .text(
+                                                                      "Enter the customer's phone number or membership"),
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              onChange:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  _memberShipNum =
+                                                                      value;
+                                                                });
+                                                              },
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 35,
+                                                                    left: 35,
+                                                                    bottom: 10),
+                                                            child:
+                                                                SpecialButton(
+                                                              text: localization
+                                                                  .text("send"),
+                                                              onTap: () {
+                                                                if (_memberShipNum ==
+                                                                    null) {
+                                                                  LoadingDialog(
+                                                                          _key,
+                                                                          context)
+                                                                      .alertPopUp(
+                                                                          localization
+                                                                              .text("needed_information"));
+                                                                } else {
+                                                                  readMembershipNum();
+                                                                }
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : details.isPaid == 2
+                                                        ? Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 25),
+                                                            child: Column(
+                                                              children: [
+                                                                Container(
+                                                                  color: Colors
+                                                                      .red[900],
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          10),
+                                                                  width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Text(
+                                                                        localization
+                                                                            .text("The payment request was rejected"),
+                                                                        style: MyColors
+                                                                            .styleNormalWhite,
+                                                                      ),
 //                              Icon(Icons.ch,size: 20,color: Colors.white,),
 
-                                                              SizedBox(
-                                                                height: 3,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-
-
-
-
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-
-                                                        Text(
-                                                          "${details.currentCommissions}",
-                                                          style: MyColors
-                                                              .styleNormal1,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 12,
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 25),
-                                                          child: SpecialButton(
-                                                            onTap: () {
-                                                              chooseFiltrationMethod(
-                                                                  context);
-                                                            },
-                                                            text: localization.text("Pay"),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                : Container(),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            3,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                Text(
+                                                                  "${details.currentCommissions}",
+                                                                  style: MyColors
+                                                                      .styleNormal1,
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 12,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          25),
+                                                                  child:
+                                                                      SpecialButton(
+                                                                    onTap: () {
+                                                                      chooseFiltrationMethod(
+                                                                          context);
+                                                                    },
+                                                                    text: localization
+                                                                        .text(
+                                                                            "Pay"),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : Container(),
                             SizedBox(
                               height: 120,
                             ),
@@ -1045,7 +1113,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          localization.text("phone_number"),
+                                                          localization.text(
+                                                              "phone_number"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1062,7 +1131,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                         localization.text("Membership N"),
+                                                          localization.text(
+                                                              "Membership N"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1112,7 +1182,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          localization.text("order_number"),
+                                                          localization.text(
+                                                              "order_number"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1129,7 +1200,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          localization.text("price"),
+                                                          localization
+                                                              .text("price"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1146,7 +1218,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                         localization.text("Number of points"),
+                                                          localization.text(
+                                                              "Number of points"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1163,7 +1236,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                         localization.text("The amount deducted from the store"),
+                                                          localization.text(
+                                                              "The amount deducted from the store"),
                                                           style: MyColors
                                                               .styleBold1white,
                                                         ),
@@ -1194,7 +1268,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                               left: 5,
                                                               bottom: 12),
                                                       child: SpecialTextField(
-                                                        hint:localization.text("price"),
+                                                        hint: localization
+                                                            .text("price"),
                                                         keyboardType:
                                                             TextInputType
                                                                 .number,
@@ -1218,10 +1293,13 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                                       _key,
                                                                       context)
                                                                   .alertPopUp(
-                                                                      localization.text("The amount must be entered"))
+                                                                      localization
+                                                                          .text(
+                                                                              "The amount must be entered"))
                                                               : addPoints();
                                                         },
-                                                        text: localization.text("add points"),
+                                                        text: localization
+                                                            .text("add points"),
                                                       ),
                                                     ),
                                                   ],
@@ -1236,7 +1314,8 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                                                     onTap: () {
                                                       confirmAddingPoints();
                                                     },
-                                                    text: localization.text("Confirm adding points"),
+                                                    text: localization.text(
+                                                        "Confirm adding points"),
                                                   ),
                                                 ),
                                         ],
@@ -1270,7 +1349,9 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                           ],
                         ),
 
-                  SizedBox(height: 200,)
+                  SizedBox(
+                    height: 200,
+                  )
                 ],
               ),
             ),
@@ -1321,29 +1402,29 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
 //                    },
 //                  ),
 //                ),
-                details.onlinePayment == 0 ? Container() :  Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SpecialButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                      chooseMyFatoora(context);
+                details.onlinePayment == 0
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SpecialButton(
+                          onTap: () {
+                            Navigator.pop(context);
+                            chooseMyFatoora(context);
 //                      payOffCommission(1, 1);
-                      //مدي واحد
-                    },
-                    text: localization.text("pay by myfatoora"),
-                  ),
-                ),
+                            //مدي واحد
+                          },
+                          text: localization.text("pay by myfatoora"),
+                        ),
+                      ),
 
-                details.onlinePayment == 0 ? Container() :    Divider(),
+                details.onlinePayment == 0 ? Container() : Divider(),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
                     onTap: () {
                       Navigator.pop(context);
 
-
-                      uploadPaymentPhoto(
-                          context);
+                      uploadPaymentPhoto(context);
 //                      getImage().then((value) async {
 //                        _image == null
 //                            ? print("choose the image")
@@ -1381,7 +1462,6 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
 //                  ],
 //                ),
 
-
                 SizedBox(
                   height: 20,
                 ),
@@ -1405,7 +1485,6 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
@@ -1417,7 +1496,6 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                     text: localization.text("pay_by_my_fatoora"),
                   ),
                 ),
-
                 details.onlinePayment == 0
                     ? Container()
                     : Padding(
@@ -1431,25 +1509,21 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                           text: localization.text("Pay by Mada"),
                         ),
                       ),
-
-
-                Platform.isIOS != true ? Container()  :
-                details.onlinePayment == 0
+                Platform.isIOS != true
                     ? Container()
-                    : Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SpecialButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                      payOffCommission(1, 3);
-                      //مدي واحد
-                    },
-                    text: localization.text("pay_by_my_apple"),
-                  ),
-                ),
-
-
-
+                    : details.onlinePayment == 0
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: SpecialButton(
+                              onTap: () {
+                                Navigator.pop(context);
+                                payOffCommission(1, 3);
+                                //مدي واحد
+                              },
+                              text: localization.text("pay_by_my_apple"),
+                            ),
+                          ),
                 SizedBox(
                   height: 10,
                 ),
@@ -1458,9 +1532,6 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
           );
         });
   }
-
-
-
 
   uploadPaymentPhoto(BuildContext context) {
     return showModalBottomSheet<dynamic>(
@@ -1476,29 +1547,24 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-
-
-
-                detailsOfGeneralData == null ? Container() :  Column(
-                  children: [
-
-                    detailsOfGeneralData.bankName == null ? Container() :
-                    Text("${detailsOfGeneralData.bankName}"),
-
-                    SizedBox(
-                      height: 3,
-                    ),
-                    detailsOfGeneralData.bankName == null ? Container() :
-                    Text("SA${detailsOfGeneralData.bankAccount}"),
-
+                detailsOfGeneralData == null
+                    ? Container()
+                    : Column(
+                        children: [
+                          detailsOfGeneralData.bankName == null
+                              ? Container()
+                              : Text("${detailsOfGeneralData.bankName}"),
+                          SizedBox(
+                            height: 3,
+                          ),
+                          detailsOfGeneralData.bankName == null
+                              ? Container()
+                              : Text("SA${detailsOfGeneralData.bankAccount}"),
                           SizedBox(
                             height: 15,
                           ),
-                  ],
-                ),
-
-
-
+                        ],
+                      ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SpecialButton(
@@ -1508,23 +1574,16 @@ class _MyHomeForStoreState extends State<MyHomeForStore> with WidgetsBindingObse
                       getImage().then((value) async {
                         _image == null
                             ? print("choose the image")
-                            : LoadingDialog(widget.scaffold, context)
-                            .payByBank(
-                            localization.text(
-                                "Attach the link image"),
-                                () {
-                              Navigator.pop(context);
-                              payOffCommission(0, null);
-                            });
-
-
+                            : LoadingDialog(widget.scaffold, context).payByBank(
+                                localization.text("Attach the link image"), () {
+                                Navigator.pop(context);
+                                payOffCommission(0, null);
+                              });
                       });
                     },
                     text: localization.text("Attach the conversion image"),
                   ),
                 ),
-
-
                 SizedBox(
                   height: 10,
                 ),

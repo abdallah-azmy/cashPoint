@@ -323,11 +323,15 @@ class _MyCommissionsState extends State<MyCommissions> {
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Column(
                         children: [
-                          (isPaidCommission.isPaid == 0)
+                          isPaidCommission == null ? Container() :   (isPaidCommission.isPaid == 0)
                               ? Container(
-                                  color: Colors.green[900],
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[900],
+                                    borderRadius: BorderRadius.circular(15)
+                                  ),
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
+                                      const EdgeInsets.symmetric(vertical: 4),
                                   width: MediaQuery.of(context).size.width,
                                   child: Column(
                                     children: [
@@ -339,7 +343,7 @@ class _MyCommissionsState extends State<MyCommissions> {
                                             child: Text(
                                               localization.text(
                                                   "Wait for the administration to confirm the commission payment process"),
-                                              style: MyColors.styleNormalWhite,
+                                              style: MyColors.styleNormalWhitesmall,
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -351,19 +355,19 @@ class _MyCommissionsState extends State<MyCommissions> {
                                         children: [
                                           Text(
                                             localization.text("price"),
-                                            style: MyColors.styleNormalWhite,
+                                            style: MyColors.styleNormalWhitesmall,
                                           ),
                                           SizedBox(
                                             width: 5,
                                           ),
                                           Text(
                                             "${isPaidCommission.paidCommissions}",
-                                            style: MyColors.styleNormalWhite,
+                                            style: MyColors.styleNormalWhitesmall,
                                           ),
                                         ],
                                       ),
                                       SizedBox(
-                                        height: 3,
+                                        height: 1,
                                       ),
                                     ],
                                   ),
@@ -377,10 +381,15 @@ class _MyCommissionsState extends State<MyCommissions> {
                                           child: Column(
                                             children: [
                                               Container(
-                                                color: Colors.red[900],
+
+
+                                                decoration: BoxDecoration(
+                                                    color: Colors.red[900],
+                                                    borderRadius: BorderRadius.circular(15)
+                                                ),
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 10),
+                                                        vertical: 5),
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width,
@@ -390,7 +399,7 @@ class _MyCommissionsState extends State<MyCommissions> {
                                                       localization.text(
                                                           "The payment request was rejected"),
                                                       style: MyColors
-                                                          .styleNormalWhite,
+                                                          .styleNormalWhitesmall,
                                                     ),
 //                              Icon(Icons.ch,size: 20,color: Colors.white,),
 
@@ -441,7 +450,7 @@ class _MyCommissionsState extends State<MyCommissions> {
                     ),
                     commissions.length == 0
                         ? Container()
-                        : Padding(
+                        : isPaidCommission.currentCommissions == 0 ? Container() : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: SpecialButton(
                               text: localization.text("Pay"),

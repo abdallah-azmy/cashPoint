@@ -236,6 +236,7 @@ class _CommissionCardState extends State<CommissionCard> {
 
                     widget.commissionIsPaid == 2
                         ? Column(
+                      mainAxisSize: MainAxisSize.min,
                             children: [
                               Flexible(
                                   child: Text(

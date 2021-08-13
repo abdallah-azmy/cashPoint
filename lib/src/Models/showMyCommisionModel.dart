@@ -69,7 +69,7 @@ class Datum {
   int storeId;
   String storeName;
   String storePhone;
-  int cash;
+  String cash;
   int point;
   String commission;
   int commissionIsPaid;
@@ -93,7 +93,7 @@ class Datum {
     storeId: json["store_id"] == null ? null : json["store_id"],
     storeName: json["store_name"] == null ? null : json["store_name"],
     storePhone: json["store_phone"] == null ? null : json["store_phone"],
-    cash: json["cash"] == null ? null : json["cash"],
+    cash: json["cash"] == null ? null : "${json["cash"]}",
     point: json["point"] == null ? null : json["point"],
     commission: json["commission"] == null ? null : "${json["commission"]}",
     commissionIsPaid: json["commission_is_paid"] == null ? null : json["commission_is_paid"],

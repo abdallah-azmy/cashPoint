@@ -44,12 +44,12 @@ class Data {
   });
 
   int isPaid;
-  int currentCommissions;
+  String currentCommissions;
   int paidCommissions;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     isPaid: json["is_paid"] == null ? null : json["is_paid"],
-    currentCommissions: json["current_commissions"] == null ? null : json["current_commissions"],
+    currentCommissions: json["current_commissions"] == null ? null : "${json["current_commissions"]}",
     paidCommissions: json["paid_commissions"] == null ? null : json["paid_commissions"],
   );
 

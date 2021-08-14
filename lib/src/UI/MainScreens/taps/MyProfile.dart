@@ -7,6 +7,7 @@ import 'package:cashpoint/src/UI/Authentication/login.dart';
 import 'package:cashpoint/src/UI/Authentication/sendingCode.dart';
 import 'package:cashpoint/src/UI/MainScreens/ChangeCashPoint.dart';
 import 'package:cashpoint/src/UI/MainScreens/taps/MyProfileForStore.dart';
+import 'package:cashpoint/src/UI/MainWidgets/CustomProductImage.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Settings_Row.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Button.dart';
 import 'package:cashpoint/src/UI/MainWidgets/Special_Text_Field.dart';
@@ -364,7 +365,7 @@ class _MyProfileState extends State<MyProfile> {
                                     ),
 
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(vertical: 10,
                                           horizontal: 30),
                                       child: Column(
                                         children: [
@@ -376,72 +377,82 @@ class _MyProfileState extends State<MyProfile> {
                                                   elevation: 8,
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  child: CachedNetworkImage(
-                                                    height: 150,
-                                                    width: 150,
-                                                    fit: BoxFit.fill,
-                                                    imageUrl: details == null
-                                                        ? " "
-                                                        : details.qrcode == null
+                                                  child:
+
+                                                  Container( height: 150,
+                                                      width: 150,child: CustomProductImage(
+                                                        image: details == null
                                                             ? " "
-                                                            : "${details.qrcode}",
-                                                    imageBuilder: (context,
-                                                            imageProvider) =>
-                                                        Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(2),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(15.0),
-                                                        child: Container(
-                                                          height: 150,
-                                                          width: 150,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        3),
-                                                            image: DecorationImage(
-                                                                image:
-                                                                    imageProvider,
-                                                                fit: BoxFit
-                                                                    .cover),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            new Container(
-                                                      height: 85,
-                                                      width: 85,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-//                                      color: MyColors.grey,
-                                                      child: Center(
-                                                          child:
-                                                              CircularProgressIndicator()),
-                                                    ),
-                                                    placeholderFadeInDuration:
-                                                        Duration(
-                                                            milliseconds: 500),
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            new Container(
-                                                      height: 85,
-                                                      width: 85,
-//                                                    color: MyColors.grey,
-                                                    ),
-                                                  ),
+                                                            : details.qrcode == null
+                                                            ? " "
+                                                            : details.qrcode,
+                                                      ))
+//                                                  CachedNetworkImage(
+//                                                    height: 150,
+//                                                    width: 150,
+//                                                    fit: BoxFit.fill,
+//                                                    imageUrl: details == null
+//                                                        ? " "
+//                                                        : details.qrcode == null
+//                                                            ? " "
+//                                                            : details.qrcode,
+//                                                    imageBuilder: (context,
+//                                                            imageProvider) =>
+//                                                        Container(
+//                                                      decoration: BoxDecoration(
+//                                                        color: Colors.white,
+//                                                        borderRadius:
+//                                                            BorderRadius
+//                                                                .circular(2),
+//                                                      ),
+//                                                      child: Padding(
+//                                                        padding:
+//                                                            const EdgeInsets
+//                                                                .all(15.0),
+//                                                        child: Container(
+//                                                          height: 150,
+//                                                          width: 150,
+//                                                          decoration:
+//                                                              BoxDecoration(
+//                                                            borderRadius:
+//                                                                BorderRadius
+//                                                                    .circular(
+//                                                                        3),
+//                                                            image: DecorationImage(
+//                                                                image:
+//                                                                    imageProvider,
+//                                                                fit: BoxFit
+//                                                                    .cover),
+//                                                          ),
+//                                                        ),
+//                                                      ),
+//                                                    ),
+//                                                    placeholder:
+//                                                        (context, url) =>
+//                                                            new Container(
+//                                                      height: 85,
+//                                                      width: 85,
+//                                                      decoration: BoxDecoration(
+//                                                        borderRadius:
+//                                                            BorderRadius
+//                                                                .circular(8),
+//                                                      ),
+////                                      color: MyColors.grey,
+//                                                      child: Center(
+//                                                          child:
+//                                                              CircularProgressIndicator()),
+//                                                    ),
+//                                                    placeholderFadeInDuration:
+//                                                        Duration(
+//                                                            milliseconds: 500),
+//                                                    errorWidget:
+//                                                        (context, url, error) =>
+//                                                            new Container(
+//                                                      height: 85,
+//                                                      width: 85,
+////                                                    color: MyColors.grey,
+//                                                    ),
+//                                                  ),
                                                 ),
                                               ],
                                             ),

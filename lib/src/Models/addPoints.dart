@@ -62,7 +62,7 @@ class Data {
   String storeName;
   String storePhone;
   String cash;
-  int point;
+  String point;
   String commission;
   int orderNumber;
   int status;
@@ -78,7 +78,7 @@ class Data {
     storeName: json["store_name"] == null ? null : json["store_name"],
     storePhone: json["store_phone"] == null ? null : json["store_phone"],
     cash: json["cash"] == null ? null : "${json["cash"]}",
-    point: json["point"] == null ? null : json["point"],
+    point: json["point"] == null ? null : "${json["point"]}",
     commission: json["commission"] == null ? null : "${json["commission"]}",
     orderNumber: json["order_number"] == null ? null : json["order_number"],
     status: json["status"] == null ? null : json["status"],

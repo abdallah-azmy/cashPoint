@@ -68,8 +68,8 @@ class Datum {
   String userImage;
   String qrcode;
   String userMembershipNum;
-  int main;
-  int remain;
+  String main;
+  double remain;
   int pull;
   int status;
   int bankId;
@@ -91,8 +91,8 @@ class Datum {
     userImage: json["user_image"] == null ? null : json["user_image"],
     qrcode: json["qrcode"] == null ? null : json["qrcode"],
     userMembershipNum: json["user_membership_num"] == null ? null : json["user_membership_num"],
-    main: json["main"] == null ? null : json["main"],
-    remain: json["remain"] == null ? null : json["remain"],
+    main: json["main"] == null ? null : "${json["main"]}",
+    remain: json["remain"] == null ? null : double.parse("${json["remain"]}") ,
     pull: json["pull"] == null ? null : json["pull"],
     status: json["status"] == null ? null : json["status"],
     bankId: json["bank_id"] == null ? null : json["bank_id"],

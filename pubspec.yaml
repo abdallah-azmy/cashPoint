@@ -5,7 +5,7 @@ description: A new Flutter application.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+6
+version: 1.0.0+7
 
 environment:
   sdk: ">=2.8.0 <3.0.0"
